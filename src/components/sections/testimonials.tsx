@@ -61,9 +61,9 @@ export default function TestimonialsSection() {
               </Card>
             ))}
           </div>
-           {/* Add fade effect at the edges */}
-          <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-muted/30 dark:from-muted/10 to-transparent pointer-events-none"></div>
-          <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-muted/30 dark:from-muted/10 to-transparent pointer-events-none"></div>
+           {/* Add fade effect at the edges - Increased width and changed color */}
+          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent pointer-events-none"></div>
+          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
         </div>
       </div>
       {/* Removed <style jsx> block as animations are now handled by globals.css and tailwind.config.js */}
