@@ -6,7 +6,8 @@ import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 import MobileCTA from '@/components/layout/mobile-cta';
-import PageTransition from '@/components/page-transition'; // Import the new component
+import PageTransition from '@/components/page-transition'; // Import the page transition component
+import ScrollToTopButton from '@/components/scroll-to-top-button'; // Import the scroll to top button
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -64,6 +65,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <MobileCTA />
+          <ScrollToTopButton /> {/* Add the scroll to top button */}
           <Toaster />
         </ThemeProvider>
       </body>
