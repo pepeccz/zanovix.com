@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ThemeSwitcher } from '@/components/theme-switcher';
 import { Button } from '@/components/ui/button';
-import { Logo } from '@/components/logo'; // Placeholder for Logo component
+import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 
 export default function Header() {
@@ -27,6 +27,7 @@ export default function Header() {
 
     // Recalculate hero height on resize
     const handleResize = () => {
+      const heroElement = document.getElementById('hero-section');
       if (heroElement) {
         setHeroHeight(heroElement.offsetHeight);
       }
@@ -56,8 +57,9 @@ export default function Header() {
       aria-hidden={!isVisible} // Improve accessibility
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link href="/" aria-label="Zanovix AI Home">
-          <Logo className="h-8 w-auto text-foreground" />
+        <Link href="/" aria-label="Zanovix AI Home" className="block h-8 w-auto">
+          {/* Adjusted className for size control */}
+          <Logo className="h-full w-auto" />
         </Link>
         <div className="flex items-center space-x-4">
           <ThemeSwitcher />
