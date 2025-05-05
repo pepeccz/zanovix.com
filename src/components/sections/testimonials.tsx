@@ -37,7 +37,8 @@ export default function TestimonialsSection() {
            </h2>
         </div>
         {/* The `group` class enables pausing animation on hover */}
-        <div className="relative w-full overflow-hidden group">
+        {/* Added py-4 to give space for scaled cards */}
+        <div className="relative w-full overflow-hidden group py-4">
           {/* The `hover:pause` utility requires custom CSS or plugin, ensure it's defined */}
           <div className="flex space-x-8 animate-scroll group-hover:[animation-play-state:paused]">
             {duplicatedTestimonials.map((testimonial, index) => (
