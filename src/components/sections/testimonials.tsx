@@ -1,3 +1,5 @@
+"use client"; // Required because hover effects are client-side interactions
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -32,12 +34,14 @@ export default function TestimonialsSection() {
         <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           Lo que dicen nuestros clientes
         </h2>
-        <div className="relative w-full overflow-hidden">
-          <div className="group flex space-x-8 animate-scroll hover:pause">
+        {/* The `group` class enables pausing animation on hover */}
+        <div className="relative w-full overflow-hidden group">
+          {/* The `hover:pause` utility requires custom CSS or plugin, ensure it's defined */}
+          <div className="flex space-x-8 animate-scroll group-hover:[animation-play-state:paused]">
             {duplicatedTestimonials.map((testimonial, index) => (
               <Card
                 key={`${testimonial.id}-${index}`}
-                className="w-80 flex-shrink-0 snap-center transition-transform duration-300 ease-in-out group-hover:scale-[0.98] hover:!scale-100 bg-card shadow-lg"
+                className="w-80 flex-shrink-0 snap-center transition-transform duration-300 ease-in-out bg-card shadow-lg"
               >
                 <CardContent className="flex flex-col items-start p-6 pt-8">
                   <Avatar className="mb-4 h-16 w-16 border-2 border-primary">
@@ -60,23 +64,7 @@ export default function TestimonialsSection() {
           <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-muted/30 dark:from-muted/10 to-transparent pointer-events-none"></div>
         </div>
       </div>
-      <style jsx>{`
-        .animate-scroll {
-          animation: scroll 60s linear infinite; /* Adjust duration as needed */
-        }
-        .group:hover .animate-scroll {
-          animation-play-state: paused;
-        }
-         @keyframes scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(calc(-100% - ${testimonials.length * 2}rem)); } /* 2rem = space-x-8 / 4 */
-        }
-        /* Ensure hover pause works correctly */
-        .hover\\:pause:hover {
-          animation-play-state: paused;
-        }
-
-      `}</style>
+      {/* Removed <style jsx> block as animations are now handled by globals.css and tailwind.config.js */}
     </section>
   );
 }

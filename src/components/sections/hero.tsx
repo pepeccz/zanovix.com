@@ -7,8 +7,9 @@ export default function HeroSection() {
   return (
     <section id="hero-section" className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-b from-background to-secondary dark:from-background dark:to-secondary/30 py-20 md:py-32">
        {/* Background Glow - Subtle effect */}
+       {/* Added animation-delay directly via Tailwind or custom utility if needed */}
        <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 bg-primary/10 rounded-full blur-[100px] opacity-30 dark:opacity-20 animate-pulse" />
-       <div className="absolute bottom-1/4 right-1/4 w-1/3 h-1/3 bg-accent/10 rounded-full blur-[80px] opacity-40 dark:opacity-25 animate-pulse animation-delay-2000" />
+       <div className="absolute bottom-1/4 right-1/4 w-1/3 h-1/3 bg-accent/10 rounded-full blur-[80px] opacity-40 dark:opacity-25 animate-pulse [animation-delay:2s]" />
 
       <div className="container relative z-10 mx-auto px-4 text-center">
         <Logo className="mx-auto mb-6 h-16 w-auto text-primary" />
@@ -37,12 +38,5 @@ export default function HeroSection() {
   );
 }
 
-// Add animation delay utility if needed, or use Tailwind's built-in delay classes
-const styles = `
-.animation-delay-2000 { animation-delay: 2s; }
-`;
-if (typeof window !== 'undefined') {
-  const styleSheet = document.createElement("style");
-  styleSheet.innerText = styles;
-  document.head.appendChild(styleSheet);
-}
+// Removed inline style block causing client-side document access in Server Component.
+// Ensure animation delays are handled via Tailwind's arbitrary values or utilities if needed.
