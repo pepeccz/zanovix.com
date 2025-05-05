@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 import MobileCTA from '@/components/layout/mobile-cta';
+import PageTransition from '@/components/page-transition'; // Import the new component
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -49,15 +50,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased flex flex-col min-h-screen`}> {/* Added flex classes */}
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem
-          disableTransitionOnChange
+          // disableTransitionOnChange // Removed to allow framer-motion to handle transitions
         >
           <Header />
-          <main>{children}</main>
+           {/* Wrap the main content area with PageTransition */}
+          <main className="flex-grow flex flex-col"> {/* Added flex flex-col */}
+            <PageTransition>{children}</PageTransition>
+          </main>
           <Footer />
           <MobileCTA />
           <Toaster />
