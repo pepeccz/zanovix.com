@@ -67,5 +67,24 @@
 }
 
 .animate-scroll {
-  animation: scroll 40s linear infinite;
+  animation: scroll 60s linear infinite;
+}
+
+/* Glowing border animation for section labels */
+@keyframes glowing-border-animation {
+  0% { border-color: hsl(180 100% 85%); } /* Bright Cyan/Diamond */
+  25% { border-color: hsl(210 100% 90%); } /* Bright Silver/Platinum */
+  50% { border-color: hsl(164 46% 55%); }  /* Accent color */
+  75% { border-color: hsl(210 100% 90%); } /* Bright Silver/Platinum */
+  100% { border-color: hsl(180 100% 85%); } /* Bright Cyan/Diamond */
+}
+
+.glowing-border {
+  @apply border-2 border-transparent; /* Start with transparent border */
+  animation: glowing-border-animation 4s linear infinite;
+}
+
+/* Pause animation on hover */
+.glowing-border:hover {
+  animation-play-state: paused;
 }

@@ -17,7 +17,7 @@ export default function AboutSection() {
             />
           </div>
           <div>
-             <h2 className="mb-6 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary">
+             <h2 className="glowing-border mb-6 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary hover:[animation-play-state:paused]">
                Sobre Nosotros
              </h2>
             <p className="mb-6 text-lg text-muted-foreground">

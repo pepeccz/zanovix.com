@@ -33,7 +33,7 @@ export default function FaqSection() {
     <section id="faq" className="py-16 md:py-24 bg-muted/30 dark:bg-muted/10">
       <div className="container mx-auto px-4">
         <div className="mb-12 text-center">
-           <h2 className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary">
+           <h2 className="glowing-border inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary hover:[animation-play-state:paused]">
              Preguntas Frecuentes
            </h2>
         </div>
