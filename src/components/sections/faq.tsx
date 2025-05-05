@@ -72,7 +72,10 @@ export default function FaqSection() {
         <Accordion type="single" collapsible className="mx-auto max-w-3xl">
           {faqItems.map((item, index) => (
             <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className="text-left text-lg font-medium hover:no-underline">
+              <AccordionTrigger
+                className="text-left text-lg font-medium hover:no-underline"
+                data-cursor-hover-target="true" // Add target attribute here
+              >
                 {item.question}
               </AccordionTrigger>
               <AccordionContent className="text-base text-muted-foreground">
