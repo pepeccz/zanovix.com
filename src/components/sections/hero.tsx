@@ -1,11 +1,34 @@
- 'use client'; // Needed for group-hover interaction
+'use client'; // Needed for group-hover interaction and onClick handler
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
 import { ArrowDown } from 'lucide-react';
+import type React from 'react'; // Import React type for event handling
 
 export default function HeroSection() {
+
+  // Smooth scroll handler
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault(); // Prevent default jump
+
+    // Get the target ID from the href (e.g., "#services")
+    const href = e.currentTarget.getAttribute('href');
+    if (!href || !href.startsWith('#')) return; // Ensure it's an anchor link
+
+    const targetId = href.substring(1); // Remove the '#'
+    const targetElement = document.getElementById(targetId);
+
+    if (targetElement) {
+      // Use scrollIntoView with smooth behavior
+      targetElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start' // Align the top of the element to the top of the viewport
+      });
+    }
+  };
+
+
   return (
     <section id="hero-section" className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-b from-background to-secondary dark:from-background dark:to-secondary/30 py-20 md:py-32 group">
        {/* Background Glow - Subtle effect */}
@@ -28,7 +51,8 @@ export default function HeroSection() {
             <Link href="/consultoria">Agendar consultoría gratuita</Link>
           </Button>
           <Button size="lg" variant="outline" asChild>
-            <Link href="#services">
+            {/* Added onClick handler for smooth scrolling */}
+            <Link href="#services" onClick={handleScroll}>
               Comenzar
               <ArrowDown className="ml-2 h-5 w-5" />
             </Link>
