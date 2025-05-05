@@ -14,13 +14,13 @@ import CursorFollower from '@/components/cursor-follower'; // Import the cursor 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'Zanovix AI - Impulsa el futuro de tu negocio con IA',
+  title: 'Zanovix AI - Agencia de inteligencia artificial en Málaga',
   description: 'Ofrecemos soluciones de desarrollo de IA, consultoría y formación para potenciar tu empresa con inteligencia artificial real y efectiva.',
   keywords: ['inteligencia artificial', 'AI', 'desarrollo AI', 'consultoría AI', 'formación AI', 'Zanovix AI'],
   robots: 'index, follow',
   openGraph: {
-    title: 'Zanovix AI - Impulsa el futuro de tu negocio con IA',
-    description: 'Soluciones innovadoras de Inteligencia Artificial para empresas.',
+    title: 'Zanovix AI - Agencia de inteligencia artificial en Málaga',
+    description: 'Soluciones y formaciones innovadoras de Inteligencia Artificial para empresas.',
     url: 'https://www.zanovix.ai', // Replace with actual domain
     siteName: 'Zanovix AI',
     // images: [ // Add actual image URL later
@@ -35,8 +35,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Zanovix AI - Impulsa el futuro de tu negocio con IA',
-    description: 'Soluciones innovadoras de Inteligencia Artificial para empresas.',
+    title: 'Zanovix AI - Agencia de inteligencia artificial en Málaga',
+    description: 'Soluciones y formaciones innovadoras de Inteligencia Artificial para empresas.',
     // images: ['https://www.zanovix.ai/twitter-image.png'], // Add actual image URL later
   },
   // Add sitemap link if generated separately
