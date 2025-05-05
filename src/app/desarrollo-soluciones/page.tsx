@@ -1,3 +1,4 @@
+
 // Placeholder page for /desarrollo-soluciones
 
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,7 @@ export default function DesarrolloSolucionesPage() {
             <li><strong>Implementación y Despliegue:</strong> Integramos la solución en tu entorno.</li>
             <li><strong>Monitorización y Mantenimiento:</strong> Garantizamos el funcionamiento óptimo a largo plazo.</li>
           </ol>
+          {/* This Button will inherit data-cursor-hover-target="true" */}
            <Button variant="link" className="p-0 text-primary" asChild>
             <Link href="/consultoria">
               Discutir tu proyecto de desarrollo <ArrowRight className="ml-2 h-4 w-4" />
@@ -49,6 +51,7 @@ export default function DesarrolloSolucionesPage() {
         </div>
       </div>
 
+      {/* This Button will inherit data-cursor-hover-target="true" */}
        <Button variant="outline" className="mt-12" asChild>
          <Link href="/">Volver al Inicio</Link>
        </Button>

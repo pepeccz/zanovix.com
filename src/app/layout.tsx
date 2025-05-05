@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google'; // Using Inter font for a modern look
 import './globals.css';
@@ -8,6 +9,7 @@ import Footer from '@/components/layout/footer';
 import MobileCTA from '@/components/layout/mobile-cta';
 import PageTransition from '@/components/page-transition'; // Import the page transition component
 import ScrollToTopButton from '@/components/scroll-to-top-button'; // Import the scroll to top button
+import CursorFollower from '@/components/cursor-follower'; // Import the cursor follower
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -66,6 +68,7 @@ export default function RootLayout({
           <Footer />
           <MobileCTA />
           <ScrollToTopButton /> {/* Add the scroll to top button */}
+          <CursorFollower /> {/* Add the cursor follower */}
           <Toaster />
         </ThemeProvider>
       </body>

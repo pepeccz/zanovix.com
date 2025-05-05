@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -41,6 +42,7 @@ export default function MobileCTA() {
       )}
       aria-hidden={!isVisible}
     >
+       {/* This Button will inherit data-cursor-hover-target="true" */}
       <Button className="w-full" size="lg" asChild>
          {/* Replace with actual link or modal trigger */}
         <Link href="/consultoria">Agendar consultoría gratuita</Link>

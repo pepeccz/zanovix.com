@@ -1,3 +1,4 @@
+
 // Placeholder page for /formacion-consultoria
 
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ export default function FormacionConsultoriaPage() {
             <li>Ética y responsabilidad en IA.</li>
             <li>Gestión de proyectos de IA.</li>
           </ul>
+           {/* This Button will inherit data-cursor-hover-target="true" */}
           <Button variant="link" className="p-0 text-primary" asChild>
             <Link href="/consultoria">
               Solicitar información sobre formación <ArrowRight className="ml-2 h-4 w-4" />
@@ -47,6 +49,7 @@ export default function FormacionConsultoriaPage() {
             <li>Asesoramiento en la creación de equipos de IA internos.</li>
             <li>Auditoría y optimización de modelos existentes.</li>
           </ul>
+           {/* This Button will inherit data-cursor-hover-target="true" */}
            <Button variant="link" className="p-0 text-primary" asChild>
             <Link href="/consultoria">
               Agendar consultoría estratégica <ArrowRight className="ml-2 h-4 w-4" />
@@ -55,6 +58,7 @@ export default function FormacionConsultoriaPage() {
         </div>
       </div>
 
+      {/* This Button will inherit data-cursor-hover-target="true" */}
        <Button variant="outline" className="mt-12" asChild>
          <Link href="/">Volver al Inicio</Link>
        </Button>

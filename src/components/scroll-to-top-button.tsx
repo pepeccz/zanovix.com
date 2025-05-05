@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -32,6 +33,7 @@ export default function ScrollToTopButton() {
   };
 
   return (
+    // This Button will inherit data-cursor-hover-target="true"
     <Button
       variant="outline" // Use outline or adjust as preferred
       size="icon"

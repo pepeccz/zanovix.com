@@ -1,3 +1,4 @@
+
 'use client'; // Needed for group-hover interaction and onClick handler
 
 import Link from 'next/link';
@@ -38,7 +39,10 @@ export default function HeroSection() {
       <div className="container relative z-10 mx-auto px-4 text-center">
          {/* Adjusted className for size control */}
         <Logo className="mx-auto mb-6 h-16 w-auto max-w-[300px]" />
-        <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
+        <h1
+          className="mb-4 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
+          data-cursor-hover-target="true" // Target for cursor hover
+        >
           Impulsa el futuro de tu negocio con{' '}
           <span className="text-primary">inteligencia artificial</span>
         </h1>
@@ -46,11 +50,21 @@ export default function HeroSection() {
           En Zanovix AI, transformamos negocios mediante soluciones de IA a medida, consultoría experta y formación especializada para tus equipos. Preparamos tu empresa para liderar en la era digital.
         </p>
         <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-          <Button size="lg" asChild className="animate-pulse">
+          <Button
+            size="lg"
+            asChild
+            className="animate-pulse"
+            data-cursor-hover-target="true" // Target for cursor hover
+          >
             {/* Replace with actual link or modal trigger */}
             <Link href="/consultoria">Agendar consultoría gratuita</Link>
           </Button>
-          <Button size="lg" variant="outline" asChild>
+          <Button
+            size="lg"
+            variant="outline"
+            asChild
+            data-cursor-hover-target="true" // Target for cursor hover
+          >
             {/* Added onClick handler for smooth scrolling */}
             <Link href="#services" onClick={handleScroll}>
               Comenzar

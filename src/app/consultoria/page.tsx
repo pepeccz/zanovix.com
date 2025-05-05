@@ -1,3 +1,4 @@
+
 // Placeholder page for /consultoria
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ export default function ConsultoriaPage() {
         {/* Container for the embed, adjust height as needed */}
         <CalEmbed calLink="pepecabeza/consultoria-gratis" />
       </div>
+       {/* This Button will inherit data-cursor-hover-target="true" */}
        <Button variant="outline" className="mt-8" asChild>
          <Link href="/">Volver al Inicio</Link>
        </Button>

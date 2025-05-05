@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -20,6 +21,7 @@ export function ThemeSwitcher() {
   }
 
   return (
+     // This Button will inherit data-cursor-hover-target="true"
     <Button
       variant="ghost"
       size="icon"

@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,7 @@ export default function ServicesSection() {
               </p>
             </CardContent>
             <CardFooter className="p-6 pt-0">
+              {/* This Button will inherit data-cursor-hover-target="true" */}
               <Button variant="link" className="p-0 text-primary" asChild>
                 <Link href="/formacion-consultoria">
                   Saber más <ArrowRight className="ml-2 h-4 w-4" />
@@ -53,6 +55,7 @@ export default function ServicesSection() {
               </p>
             </CardContent>
             <CardFooter className="p-6 pt-0">
+               {/* This Button will inherit data-cursor-hover-target="true" */}
               <Button variant="link" className="p-0 text-primary" asChild>
                 <Link href="/desarrollo-soluciones">
                   Saber más <ArrowRight className="ml-2 h-4 w-4" />

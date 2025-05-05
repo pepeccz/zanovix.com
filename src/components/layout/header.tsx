@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -57,12 +58,13 @@ export default function Header() {
       aria-hidden={!isVisible} // Improve accessibility
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link href="/" aria-label="Zanovix AI Home" className="block h-8 w-auto">
+        <Link href="/" aria-label="Zanovix AI Home" className="block h-8 w-auto" data-cursor-hover-target="true">
           {/* Adjusted className for size control */}
           <Logo className="h-full w-auto" />
         </Link>
         <div className="flex items-center space-x-4">
           <ThemeSwitcher />
+          {/* This Button will inherit data-cursor-hover-target="true" */}
           <Button asChild className="hidden sm:inline-flex">
             {/* Replace with actual link or modal trigger */}
             <Link href="/consultoria">Agendar consultoría gratuita</Link>
