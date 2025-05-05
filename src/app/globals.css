@@ -72,11 +72,9 @@
 
 /* Glowing border animation for section labels */
 @keyframes glowing-border-animation {
-  0% { border-color: hsl(180 100% 85%); } /* Bright Cyan/Diamond */
-  25% { border-color: hsl(210 100% 90%); } /* Bright Silver/Platinum */
+  0% { border-color: hsl(50, 95%, 70%); }   /* Bright Gold */
   50% { border-color: hsl(164 46% 55%); }  /* Accent color */
-  75% { border-color: hsl(210 100% 90%); } /* Bright Silver/Platinum */
-  100% { border-color: hsl(180 100% 85%); } /* Bright Cyan/Diamond */
+  100% { border-color: hsl(50, 95%, 70%); }   /* Bright Gold */
 }
 
 .glowing-border {
