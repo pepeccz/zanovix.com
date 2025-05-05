@@ -14,7 +14,7 @@ export default function HeroSection() {
       <div className="container relative z-10 mx-auto px-4 text-center">
         <Logo className="mx-auto mb-6 h-16 w-auto text-primary" />
         <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-          Impulsa el futuro de tu negocio con <span className="text-primary">inteligencia artificial real</span>
+          Impulsa el futuro de tu <span className="text-primary animate-pulse">negocio</span> con <span className="text-primary">inteligencia artificial real</span>
         </h1>
         <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl">
           En Zanovix AI, transformamos negocios mediante soluciones de IA a medida, consultoría experta y formación especializada para tus equipos. Preparamos tu empresa para liderar en la era digital.
