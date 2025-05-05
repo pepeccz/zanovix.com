@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 // Replace with your actual domain
-const domain = 'https://www.zanovix.ai';
+const domain = 'https://www.zanovix.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Add more URLs as your site grows
