@@ -54,7 +54,7 @@ export default function CursorFollower() {
       className={cn(
         'fixed top-0 left-0 z-[-10] rounded-full pointer-events-none transition-transform duration-300 ease-out', // Lower z-index to be in background
         'w-16 h-16 -translate-x-1/2 -translate-y-1/2', // Centering offset, slightly larger base size
-        'bg-primary/30 blur-3xl', // Stronger background opacity and blur effect, remove backdrop-blur
+        'bg-primary/50 blur-2xl', // Increased opacity, slightly reduced blur
         isHoveringTarget ? 'scale-[2.5]' : 'scale-100' // Scale up on hover target
       )}
       style={{
