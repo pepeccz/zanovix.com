@@ -8,7 +8,7 @@ export default function AboutSection() {
           <div className="relative aspect-square overflow-hidden rounded-lg shadow-lg">
             {/* Use the actual image */}
             <Image
-              src="/pepe-cabeza-zanovix.jpg" // Updated image path
+              src="/perfil.webp" // Updated image path
               alt="Pepe Cabeza, fundador de Zanovix AI" // Updated alt text
               fill
               className="object-cover transition-transform duration-500 hover:scale-105"

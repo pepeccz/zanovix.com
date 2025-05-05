@@ -46,7 +46,7 @@ export function Logo({ className }: LogoProps) {
 
       {/* New PNG Logo - Conditionally apply invert filter for dark mode */}
       <Image
-        src="/zanovix_logo.png" // Path to the new PNG logo
+        src="/logo.png" // Path to the new PNG logo
         alt="Zanovix Logo"
         width={200} // Adjust width as needed
         height={38} // Adjust height based on aspect ratio
