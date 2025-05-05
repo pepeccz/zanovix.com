@@ -7,9 +7,11 @@ export default function ServicesSection() {
   return (
     <section id="services" className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          Nuestros Servicios de IA
-        </h2>
+        <div className="mb-12 text-center">
+           <h2 className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary">
+             Nuestros Servicios de IA
+           </h2>
+        </div>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <Card className="flex flex-col overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl dark:border-border/50">
             <CardHeader className="bg-muted/50 p-6">

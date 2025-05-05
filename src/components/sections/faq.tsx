@@ -32,9 +32,11 @@ export default function FaqSection() {
   return (
     <section id="faq" className="py-16 md:py-24 bg-muted/30 dark:bg-muted/10">
       <div className="container mx-auto px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          Preguntas Frecuentes
-        </h2>
+        <div className="mb-12 text-center">
+           <h2 className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary">
+             Preguntas Frecuentes
+           </h2>
+        </div>
         <Accordion type="single" collapsible className="mx-auto max-w-3xl">
           {faqItems.map((item, index) => (
             <AccordionItem key={index} value={`item-${index}`}>

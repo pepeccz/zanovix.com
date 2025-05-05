@@ -17,9 +17,9 @@ export default function AboutSection() {
             />
           </div>
           <div>
-            <h2 className="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              Sobre Nosotros
-            </h2>
+             <h2 className="mb-6 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary">
+               Sobre Nosotros
+             </h2>
             <p className="mb-6 text-lg text-muted-foreground">
              Soy [Tu Nombre], fundador de Zanovix AI. Mi pasión es desmitificar la inteligencia artificial y hacerla accesible y útil para empresas como la tuya. Con experiencia en [menciona tu campo principal, ej., desarrollo de software, análisis de datos] y un profundo conocimiento de las últimas tecnologías de IA, mi objetivo es ser tu socio estratégico en este viaje transformador.
             </p>

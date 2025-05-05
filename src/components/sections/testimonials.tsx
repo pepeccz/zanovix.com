@@ -31,9 +31,11 @@ export default function TestimonialsSection() {
   return (
     <section id="testimonials" className="py-16 md:py-24 bg-muted/30 dark:bg-muted/10 overflow-hidden">
       <div className="container mx-auto px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          Lo que dicen nuestros clientes
-        </h2>
+        <div className="mb-12 text-center">
+           <h2 className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary">
+             Lo que dicen nuestros clientes
+           </h2>
+        </div>
         {/* The `group` class enables pausing animation on hover */}
         <div className="relative w-full overflow-hidden group">
           {/* The `hover:pause` utility requires custom CSS or plugin, ensure it's defined */}
