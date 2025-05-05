@@ -43,7 +43,8 @@ export default function TestimonialsSection() {
             {duplicatedTestimonials.map((testimonial, index) => (
               <Card
                 key={`${testimonial.id}-${index}`}
-                className="w-80 flex-shrink-0 snap-center transition-transform duration-300 ease-in-out bg-card shadow-lg"
+                className="w-80 flex-shrink-0 snap-center transition-all duration-300 ease-in-out bg-card shadow-lg hover:shadow-2xl hover:border-primary hover:scale-105" // Added hover effects
+                data-cursor-hover-target="true" // Target for cursor effect if needed, though maybe redundant with card interaction
               >
                 <CardContent className="flex flex-col items-start p-6 pt-8">
                   <Avatar className="mb-4 h-16 w-16 border-2 border-primary">
@@ -62,8 +63,9 @@ export default function TestimonialsSection() {
             ))}
           </div>
            {/* Add fade effect at the edges - Increased width */}
-          <div className="absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-background to-transparent pointer-events-none"></div>
-          <div className="absolute inset-y-0 right-0 w-48 bg-gradient-to-l from-background to-transparent pointer-events-none"></div>
+           {/* Adjusted gradient colors for better fading */}
+          <div className="absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-muted/30 dark:from-muted/10 via-muted/30 dark:via-muted/10 to-transparent pointer-events-none z-10"></div>
+          <div className="absolute inset-y-0 right-0 w-48 bg-gradient-to-l from-muted/30 dark:from-muted/10 via-muted/30 dark:via-muted/10 to-transparent pointer-events-none z-10"></div>
         </div>
       </div>
       {/* Removed <style jsx> block as animations are now handled by globals.css and tailwind.config.js */}
