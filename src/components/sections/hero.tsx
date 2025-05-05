@@ -21,7 +21,8 @@ export default function HeroSection() {
             {/* Underline animation */}
             <span className="absolute bottom-0 left-0 h-1.5 w-full origin-left scale-x-0 transform bg-primary transition-transform duration-500 group-hover:scale-x-100 md:h-2"></span>
           </span>{' '}
-          con inteligencia artificial <span className="text-yellow-500">real</span>
+          con <span className="text-accent">inteligencia artificial</span>{' '}
+          <span className="uppercase text-yellow-500 brightness-110">REAL</span>
         </h1>
         <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl">
           En Zanovix AI, transformamos negocios mediante soluciones de IA a medida, consultoría experta y formación especializada para tus equipos. Preparamos tu empresa para liderar en la era digital.
