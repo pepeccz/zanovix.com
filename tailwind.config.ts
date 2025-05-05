@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+import { fontFamily } from "tailwindcss/defaultTheme";
+
 
 export default {
     darkMode: ["class"],
@@ -8,7 +10,17 @@ export default {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    container: { // Add container plugin configuration
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
   	extend: {
+      fontFamily: { // Add Inter font
+        sans: ["var(--font-inter)", ...fontFamily.sans],
+      },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
@@ -82,11 +94,18 @@ export default {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+        // Add scroll animation for testimonials
+        scroll: {
+           '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(calc(-100% - 16rem))' }, // Adjust based on item width + gap
+        },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+        // Use the scroll animation
+        scroll: 'scroll 60s linear infinite', // Adjust duration as needed
   		}
   	}
   },
