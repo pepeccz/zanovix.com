@@ -1,4 +1,4 @@
-'use client'; // Needed for group-hover interaction
+ 'use client'; // Needed for group-hover interaction
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -15,14 +15,8 @@ export default function HeroSection() {
       <div className="container relative z-10 mx-auto px-4 text-center">
         <Logo className="mx-auto mb-6 h-16 w-auto text-primary" />
         <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-          Impulsa el futuro de tu{' '}
-          <span className="relative inline-block">
-            <span className="relative z-10 text-primary">negocio</span>
-            {/* Underline animation */}
-            <span className="absolute bottom-0 left-0 h-1.5 w-full origin-left scale-x-0 transform bg-primary transition-transform duration-500 group-hover:scale-x-100 md:h-2"></span>
-          </span>{' '}
-          con <span className="text-accent">inteligencia artificial</span>{' '}
-          <span className="uppercase text-yellow-500 brightness-110">REAL</span>
+          Impulsa el futuro de tu negocio con{' '}
+          <span className="text-accent">inteligencia artificial</span> real
         </h1>
         <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl">
           En Zanovix AI, transformamos negocios mediante soluciones de IA a medida, consultoría experta y formación especializada para tus equipos. Preparamos tu empresa para liderar en la era digital.
