@@ -13,14 +13,45 @@ import CursorFollower from '@/components/cursor-follower'; // Import the cursor 
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
+const newKeywords = [
+  'agencia de inteligencia artificial en malaga',
+  'agencia de inteligencia artificial en mijas',
+  'agencia de inteligencia artificial en granada',
+  'agencia de inteligencia artificial en madrid',
+  'agencia de inteligencia artificial en barcelona',
+  'agencia de inteligencia artificial en santander',
+  'agencia de inteligencia artificial en marbella',
+  'agencia de inteligencia artificial en coin',
+  'agencia de inteligencia artificial en estepona',
+  'agencia de inteligencia artificial en cadiz',
+  'agencia de inteligencia artificial en sevilla',
+  'agencia de inteligencia artificial en murcia',
+  'formaciones personalizadas de inteligencia artificial para empresas',
+  'inteligencia artificial',
+  'AI',
+  'desarrollo AI',
+  'consultoría AI',
+  'formación AI',
+  'Zanovix AI',
+  'soluciones IA',
+  'transformación digital',
+  'IA para empresas',
+  'automatización con IA',
+  'chatbots IA',
+  'machine learning',
+  'deep learning',
+];
+
+const newDescription = 'Zanovix AI, tu agencia de inteligencia artificial en Málaga. Ofrecemos soluciones de IA a medida, consultoría experta y formaciones personalizadas de inteligencia artificial para empresas en Mijas, Granada, Marbella, Madrid, Barcelona y toda España. Potenciamos tu negocio con IA real y efectiva.';
+
 export const metadata: Metadata = {
-  title: 'Zanovix AI - Agencia de inteligencia artificial en Málaga',
-  description: 'Ofrecemos soluciones de desarrollo de IA, consultoría y formación para potenciar tu empresa con inteligencia artificial real y efectiva.',
-  keywords: ['inteligencia artificial', 'AI', 'desarrollo AI', 'consultoría AI', 'formación AI', 'Zanovix AI'],
+  title: 'Zanovix AI - Agencia de inteligencia artificial en Málaga | Soluciones y Formación',
+  description: newDescription,
+  keywords: newKeywords,
   robots: 'index, follow',
   openGraph: {
-    title: 'Zanovix AI - Agencia de inteligencia artificial en Málaga',
-    description: 'Soluciones y formaciones innovadoras de Inteligencia Artificial para empresas.',
+    title: 'Zanovix AI - Agencia de inteligencia artificial en Málaga | Soluciones y Formación',
+    description: newDescription,
     url: 'https://www.zanovix.ai', // Replace with actual domain
     siteName: 'Zanovix AI',
     // images: [ // Add actual image URL later
@@ -35,8 +66,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Zanovix AI - Agencia de inteligencia artificial en Málaga',
-    description: 'Soluciones y formaciones innovadoras de Inteligencia Artificial para empresas.',
+    title: 'Zanovix AI - Agencia de inteligencia artificial en Málaga | Soluciones y Formación',
+    description: newDescription,
     // images: ['https://www.zanovix.ai/twitter-image.png'], // Add actual image URL later
   },
   // Add sitemap link if generated separately
