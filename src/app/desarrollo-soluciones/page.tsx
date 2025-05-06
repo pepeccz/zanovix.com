@@ -43,7 +43,7 @@ export default function DesarrolloSolucionesPage() {
             <li><strong>Monitorización y Mantenimiento:</strong> Garantizamos el funcionamiento óptimo a largo plazo.</li>
           </ol>
           {/* This Button will inherit data-cursor-hover-target="true" */}
-           <Button variant="link" className="p-0 text-primary" asChild>
+           <Button variant="link" className="p-0 text-primary hidden sm:inline-flex" asChild>
             <Link href="/consultoria">
               Discutir tu proyecto de desarrollo <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -58,3 +58,4 @@ export default function DesarrolloSolucionesPage() {
     </div>
   );
 }
+

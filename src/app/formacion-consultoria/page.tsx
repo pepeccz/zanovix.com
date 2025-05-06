@@ -28,7 +28,7 @@ export default function FormacionConsultoriaPage() {
             <li>Gestión de proyectos de IA.</li>
           </ul>
            {/* This Button will inherit data-cursor-hover-target="true" */}
-          <Button variant="link" className="p-0 text-primary" asChild>
+          <Button variant="link" className="p-0 text-primary hidden sm:inline-flex" asChild>
             <Link href="/consultoria">
               Solicitar información sobre formación <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -50,7 +50,7 @@ export default function FormacionConsultoriaPage() {
             <li>Auditoría y optimización de modelos existentes.</li>
           </ul>
            {/* This Button will inherit data-cursor-hover-target="true" */}
-           <Button variant="link" className="p-0 text-primary" asChild>
+           <Button variant="link" className="p-0 text-primary hidden sm:inline-flex" asChild>
             <Link href="/consultoria">
               Agendar consultoría estratégica <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -65,3 +65,4 @@ export default function FormacionConsultoriaPage() {
     </div>
   );
 }
+

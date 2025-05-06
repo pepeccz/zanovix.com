@@ -32,7 +32,7 @@ export default function AboutSection() {
              Esa mentalidad me llevó a estudiar programación, y más tarde, a enamorarme de la inteligencia artificial. Desde entonces, he ayudado a negocios locales, emprendedores y equipos de trabajo a recuperar el activo más importante que tenemos: el tiempo.
             </p>
             {/* Add the button - it will inherit data-cursor-hover-target="true" */}
-            <Button asChild size="lg">
+            <Button asChild size="lg" className="hidden sm:inline-flex">
               <Link href="/consultoria">
                 Agendar consultoría gratis con Pepe Cabeza
               </Link>
@@ -43,4 +43,5 @@ export default function AboutSection() {
     </section>
   );
 }
+
 
