@@ -1,7 +1,9 @@
+
 "use client"; // Required because hover effects are client-side interactions
 
 import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'; // Removed AvatarImage import
+import Image from 'next/image'; // Import next/image
 
 interface Testimonial {
   id: number;
@@ -48,9 +50,19 @@ export default function TestimonialsSection() {
                 data-cursor-hover-target="true" // Target for cursor effect if needed, though maybe redundant with card interaction
               >
                 <CardContent className="flex flex-col items-start p-6 pt-8">
-                  <Avatar className="mb-4 h-16 w-16 border-2 border-primary">
-                    <AvatarImage src={testimonial.avatar} alt={testimonial.name} data-ai-hint="person portrait" />
-                    <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
+                  <Avatar className="relative mb-4 h-16 w-16 border-2 border-primary"> {/* Ensure Avatar is relative for Image fill */}
+                    {testimonial.avatar ? (
+                      <Image
+                        src={testimonial.avatar}
+                        alt={testimonial.name}
+                        fill // Use fill for responsive image within Avatar
+                        sizes="64px" // Provide a hint for the image size
+                        className="rounded-full object-cover" // Ensure image is rounded and covers avatar area
+                        data-ai-hint="person portrait"
+                      />
+                    ) : (
+                      <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
+                    )}
                   </Avatar>
                   <blockquote className="mb-4 text-foreground/90 italic">
                     "{testimonial.text}"
@@ -65,11 +77,12 @@ export default function TestimonialsSection() {
           </div>
            {/* Add fade effect at the edges - Increased width */}
            {/* Adjusted gradient colors for better fading */}
-          <div className="absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-muted/30 dark:from-muted/10 via-muted/30 dark:via-muted/10 to-transparent pointer-events-none z-10"></div>
-          <div className="absolute inset-y-0 right-0 w-48 bg-gradient-to-l from-muted/30 dark:from-muted/10 via-muted/30 dark:via-muted/10 to-transparent pointer-events-none z-10"></div>
+          <div className="absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-muted/30 via-muted/30 to-transparent pointer-events-none z-10 dark:from-muted/10 dark:via-muted/10"></div>
+          <div className="absolute inset-y-0 right-0 w-48 bg-gradient-to-l from-muted/30 via-muted/30 to-transparent pointer-events-none z-10 dark:from-muted/10 dark:via-muted/10"></div>
         </div>
       </div>
       {/* Removed <style jsx> block as animations are now handled by globals.css and tailwind.config.js */}
     </section>
   );
 }
+

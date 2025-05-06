@@ -15,7 +15,7 @@ export default function AboutSection() {
               alt="Pepe Cabeza, fundador de Zanovix AI" // Updated alt text
               fill
               className="object-cover transition-transform duration-500 hover:scale-105"
-              // Removed sizes prop, fill should handle responsiveness
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Added sizes prop
             />
           </div>
           <div>
@@ -43,3 +43,4 @@ export default function AboutSection() {
     </section>
   );
 }
+
