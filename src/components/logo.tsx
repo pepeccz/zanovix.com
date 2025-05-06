@@ -1,3 +1,4 @@
+
 'use client'; // Added 'use client' directive
 
 import Image from "next/image";
@@ -21,7 +22,7 @@ export function Logo({ className }: LogoProps) {
   }, []);
 
   // Determine theme only after mount
-  const isDarkMode = mounted && theme === "dark";
+  const activeTheme = mounted ? theme : "light"; // Default to light if not mounted or theme is system
 
   // Render placeholder or nothing until mounted to avoid mismatch
   if (!mounted) {
@@ -31,31 +32,29 @@ export function Logo({ className }: LogoProps) {
 
   return (
     <div className={cn("relative", className)} aria-label="Zanovix Logo">
-      {/* Original SVG Logo */}
-      {/* <Image
-          src="/logo.svg" // Keep the SVG as an option if needed later
-          alt="Zanovix Logo"
-          width={200}
-          height={38}
-          className={cn(
-            "transition-opacity duration-500 ease-in-out",
-            isDarkMode ? "invert" : "invert-0"
-          )}
-          priority
-        /> */}
-
-      {/* New PNG Logo - Conditionally apply invert filter for dark mode */}
       <Image
         src="/logo.png" // Path to the new PNG logo
         alt="Zanovix Logo"
         width={200} // Adjust width as needed
         height={38} // Adjust height based on aspect ratio
         className={cn(
-          "transition-filter duration-300 ease-in-out", // Use transition-filter
-          isDarkMode ? "invert" : "" // Apply invert filter only in dark mode
+          "transition-filter duration-300 ease-in-out",
+           // For dark mode:
+           // invert(1) makes black to white and white to black.
+           // The original color #40a688 (a shade of green/teal) would become a shade of magenta.
+           // hue-rotate(180deg) on top of invert(1) will rotate the hue of the inverted color.
+           // This means black (inverted to white) will remain white (hue rotation doesn't affect pure white/black).
+           // The magenta (inverted #40a688) will have its hue rotated by 180 degrees,
+           // bringing it back towards the original green/teal family, but lighter.
+          activeTheme === "dark" ? "dark-mode-logo-filter" : ""
         )}
         priority // Keep priority if it's above the fold
       />
+      <style jsx global>{`
+        .dark-mode-logo-filter {
+          filter: invert(1) hue-rotate(180deg);
+        }
+      `}</style>
     </div>
   );
 }
