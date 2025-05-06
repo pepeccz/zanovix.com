@@ -5,12 +5,16 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation'; // Import usePathname
 
 export default function MobileCTA() {
   const [isVisibleBasedOnScrollDirection, setIsVisibleBasedOnScrollDirection] = useState(true); // For scroll up/down
   const [hasScrolledPastHero, setHasScrolledPastHero] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [heroSectionHeight, setHeroSectionHeight] = useState(0);
+
+  const pathname = usePathname(); // Get current pathname
+  const excludedPaths = ['/formacion-consultoria', '/desarrollo-soluciones'];
 
   useEffect(() => {
     const heroElement = document.getElementById('hero-section');
@@ -20,6 +24,13 @@ export default function MobileCTA() {
   }, []);
 
   useEffect(() => {
+    // If on an excluded path, don't run scroll logic for this component
+    if (excludedPaths.includes(pathname)) {
+      setIsVisibleBasedOnScrollDirection(false);
+      setHasScrolledPastHero(false);
+      return;
+    }
+
     const controlNavbar = () => {
       if (typeof window !== 'undefined') {
         const currentScrollY = window.scrollY;
@@ -54,7 +65,12 @@ export default function MobileCTA() {
         window.removeEventListener('scroll', controlNavbar);
       };
     }
-  }, [lastScrollY, heroSectionHeight, hasScrolledPastHero]); // Add dependencies
+  }, [lastScrollY, heroSectionHeight, hasScrolledPastHero, pathname, excludedPaths]); // Add dependencies
+
+  // Do not render if on an excluded path
+  if (excludedPaths.includes(pathname)) {
+    return null;
+  }
 
   const showMobileCTA = hasScrolledPastHero && isVisibleBasedOnScrollDirection;
 
@@ -74,4 +90,3 @@ export default function MobileCTA() {
     </div>
   );
 }
-
