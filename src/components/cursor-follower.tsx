@@ -8,7 +8,7 @@ const CURSOR_HOVER_TARGET_SELECTOR = '[data-cursor-hover-target="true"]';
 
 export default function CursorFollower() {
   const followerRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: -100, y: -100 }); // Start off-screen
+  const [position, setPosition] = useState({ x: -200, y: -200 }); // Start further off-screen
   const [isHoveringTarget, setIsHoveringTarget] = useState(false);
   const [isMounted, setIsMounted] = useState(false); // To prevent SSR issues
 
@@ -44,7 +44,7 @@ export default function CursorFollower() {
   }, []);
 
   // Hide on touch devices or until mounted
-  if (!isMounted || 'ontouchstart' in window) {
+  if (!isMounted || (typeof window !== 'undefined' && 'ontouchstart' in window)) {
     return null;
   }
 
@@ -53,8 +53,8 @@ export default function CursorFollower() {
       ref={followerRef}
       className={cn(
         'fixed top-0 left-0 z-[-10] rounded-full pointer-events-none transition-transform duration-300 ease-out', // Lower z-index to be in background
-        'w-16 h-16 -translate-x-1/2 -translate-y-1/2', // Centering offset, slightly larger base size
-        'bg-primary/50 blur-2xl', // Increased opacity, slightly reduced blur
+        'w-24 h-24 -translate-x-1/2 -translate-y-1/2', // Increased base size
+        'bg-primary/60 blur-xl', // Increased opacity, reduced blur
         isHoveringTarget ? 'scale-[2.5]' : 'scale-100' // Scale up on hover target
       )}
       style={{
