@@ -1,4 +1,3 @@
-
 "use client"; // Mark as client component for framer-motion
 
 import Link from 'next/link';
@@ -25,7 +24,7 @@ export default function ServicesSection() {
           className="mb-12 text-center"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ amount: 0.3 }} // Removed once: true
           variants={sectionTitleVariants}
         >
            <h2 className="glowing-border inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary hover:[animation-play-state:paused]">
@@ -36,7 +35,7 @@ export default function ServicesSection() {
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={{ amount: 0.2 }} // Removed once: true
             variants={cardVariants}
             transition={{ delay: 0.2 }} // Stagger first card
           >
@@ -73,7 +72,7 @@ export default function ServicesSection() {
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={{ amount: 0.2 }} // Removed once: true
             variants={cardVariants}
             transition={{ delay: 0.4 }} // Stagger second card
           >

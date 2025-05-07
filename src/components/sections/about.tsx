@@ -1,4 +1,3 @@
-
 "use client"; // Mark as client component for framer-motion
 
 import Image from 'next/image';
@@ -45,7 +44,7 @@ export default function AboutSection() {
             className="md:hidden mb-8"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
+            viewport={{ amount: 0.3 }} // Removed once: true
             variants={sectionTitleVariants}
           >
             <h2 className="glowing-border inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary hover:[animation-play-state:paused]">
@@ -58,7 +57,7 @@ export default function AboutSection() {
             className="relative aspect-square overflow-hidden rounded-lg shadow-lg order-1"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.25 }}
+            viewport={{ amount: 0.25 }} // Removed once: true
             variants={imageVariants}
           >
             <Image
@@ -75,7 +74,7 @@ export default function AboutSection() {
             className="order-2 mt-8 md:mt-0"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.15 }}
+            viewport={{ amount: 0.15 }} // Removed once: true
             variants={textContentVariants}
           >
             {/* Title - hidden on mobile, visible on md and up */}

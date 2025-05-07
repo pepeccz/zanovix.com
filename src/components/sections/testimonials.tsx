@@ -1,4 +1,3 @@
-
 "use client"; // Required because hover effects are client-side interactions
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -104,7 +103,6 @@ export default function TestimonialsSection() {
   };
   
   useEffect(() => {
-    const currentSliderRef = sliderRef.current;
     // Attach mouseup to window to handle cases where mouse is released outside the slider
     window.addEventListener('mouseup', handleMouseLeaveOrUp);
     return () => {
@@ -123,7 +121,7 @@ export default function TestimonialsSection() {
           className="mb-12 text-center"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ amount: 0.3 }} // Removed once: true
           variants={sectionTitleVariants}
         >
            <h2 className="glowing-border inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary hover:[animation-play-state:paused]">
@@ -134,11 +132,11 @@ export default function TestimonialsSection() {
           className="relative w-full overflow-hidden group py-4 cursor-grab"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ amount: 0.1 }} // Removed once: true
           variants={carouselContainerVariants}
           onMouseDown={handleMouseDown}
-          onMouseLeave={handleMouseLeaveOrUp} // Use combined handler
-          onMouseUp={handleMouseLeaveOrUp}   // Use combined handler
+          onMouseLeave={handleMouseLeaveOrUp} 
+          onMouseUp={handleMouseLeaveOrUp}   
           onMouseMove={handleMouseMove}
           ref={sliderRef}
         >

@@ -1,4 +1,3 @@
-
 "use client"; // Mark as client component for framer-motion
 
 import {
@@ -93,7 +92,7 @@ export default function FaqSection() {
           className="mb-12 text-center"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ amount: 0.3 }} // Removed once: true
           variants={sectionTitleVariants}
         >
            <h2 className="glowing-border inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary hover:[animation-play-state:paused]">
@@ -103,7 +102,7 @@ export default function FaqSection() {
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }} // Adjust amount based on when you want animation to start
+          viewport={{ amount: 0.1 }} // Removed once: true
           variants={accordionContainerVariants}
         >
           <Accordion type="single" collapsible className="mx-auto max-w-3xl">
