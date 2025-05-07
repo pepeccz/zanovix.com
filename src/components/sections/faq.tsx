@@ -1,9 +1,13 @@
+
+"use client"; // Mark as client component for framer-motion
+
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { motion } from 'framer-motion';
 
 const faqItems = [
   {
@@ -59,31 +63,67 @@ const faqItems = [
   },
 ];
 
+const sectionTitleVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut", delay: 0.1 } },
+};
+
+const accordionContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1, // Stagger the animation of each AccordionItem
+      delayChildren: 0.2,
+      ease: "easeOut"
+    },
+  },
+};
+
+const accordionItemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+};
 
 export default function FaqSection() {
   return (
     <section id="faq" className="py-16 md:py-24 bg-muted/30 dark:bg-muted/10">
       <div className="container mx-auto px-4">
-        <div className="mb-12 text-center">
+        <motion.div 
+          className="mb-12 text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={sectionTitleVariants}
+        >
            <h2 className="glowing-border inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary hover:[animation-play-state:paused]">
              Preguntas Frecuentes
            </h2>
-        </div>
-        <Accordion type="single" collapsible className="mx-auto max-w-3xl">
-          {faqItems.map((item, index) => (
-            <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger
-                className="text-left text-lg font-medium hover:no-underline"
-                data-cursor-hover-target="true" // Add target attribute here
-              >
-                {item.question}
-              </AccordionTrigger>
-              <AccordionContent className="text-base text-muted-foreground">
-                {item.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        </motion.div>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }} // Adjust amount based on when you want animation to start
+          variants={accordionContainerVariants}
+        >
+          <Accordion type="single" collapsible className="mx-auto max-w-3xl">
+            {faqItems.map((item, index) => (
+              <motion.div key={index} variants={accordionItemVariants}>
+                <AccordionItem value={`item-${index}`}>
+                  <AccordionTrigger
+                    className="text-left text-lg font-medium hover:no-underline"
+                    data-cursor-hover-target="true"
+                  >
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-base text-muted-foreground">
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              </motion.div>
+            ))}
+          </Accordion>
+        </motion.div>
       </div>
     </section>
   );
