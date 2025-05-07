@@ -38,13 +38,13 @@ export default function AboutSection() {
     <section id="about" className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4">
         {/* Main grid for layout */}
-        <div className="grid grid-cols-1 items-center gap-x-12 md:grid-cols-2">
+        <div className="grid grid-cols-1 items-center gap-x-12 md:grid-cols-5">
           {/* Title - visible on mobile, hidden on md and up (desktop will show it in the text column) */}
           <motion.div 
             className="md:hidden mb-8"
             initial="hidden"
             whileInView="visible"
-            viewport={{ amount: 0.3 }} // Removed once: true
+            viewport={{ amount: 0.3, once: false }} 
             variants={sectionTitleVariants}
           >
             <h2 className="glowing-border inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary hover:[animation-play-state:paused]">
@@ -54,10 +54,10 @@ export default function AboutSection() {
 
           {/* Image Column - Order 1 on mobile, Order 1 on md and up */}
           <motion.div 
-            className="relative aspect-square overflow-hidden rounded-lg shadow-lg order-1"
+            className="relative aspect-square overflow-hidden rounded-lg shadow-lg order-1 md:col-span-2"
             initial="hidden"
             whileInView="visible"
-            viewport={{ amount: 0.25 }} // Removed once: true
+            viewport={{ amount: 0.25, once: false }} 
             variants={imageVariants}
           >
             <Image
@@ -65,16 +65,17 @@ export default function AboutSection() {
               alt="Pepe Cabeza, fundador de Zanovix AI"
               fill
               className="object-cover transition-transform duration-500 hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 40vw, 30vw"
+              data-ai-hint="person programming"
             />
           </motion.div>
 
           {/* Text Content Column - Order 2 on mobile, Order 2 on md and up */}
           <motion.div 
-            className="order-2 mt-8 md:mt-0"
+            className="order-2 mt-8 md:mt-0 md:col-span-3"
             initial="hidden"
             whileInView="visible"
-            viewport={{ amount: 0.15 }} // Removed once: true
+            viewport={{ amount: 0.15, once: false }} 
             variants={textContentVariants}
           >
             {/* Title - hidden on mobile, visible on md and up */}
