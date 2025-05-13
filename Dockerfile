@@ -8,14 +8,14 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 
 # Instalar dependencias
-RUN npm ci
+RUN npm install --production=false
 
 # Copiar el resto del código fuente
 COPY . .
 
 # Establecer variables de entorno para la construcción
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 
 # Construir la aplicación Next.js
 RUN npm run build
@@ -27,8 +27,8 @@ FROM node:18-slim AS runner
 WORKDIR /app
 
 # Establecer variables de entorno para producción
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Crear un usuario no root para ejecutar la aplicación
 RUN addgroup --system --gid 1001 nodejs && \
@@ -49,8 +49,8 @@ USER nextjs
 EXPOSE 3000
 
 # Establecer la variable de host para que Next.js escuche en todas las interfaces
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 # Comando para ejecutar la aplicación
 CMD ["node", "server.js"]
