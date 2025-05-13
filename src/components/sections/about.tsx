@@ -169,7 +169,7 @@ export default function AboutSection() {
                 by="word"
                 className="text-lg text-muted-foreground"
               >
-                Soy Pepe Cabeza, fundador de Zanovix, y desde siempre he tenido una extraña obsesión: automatizar TODO lo que no me aportaba nada.
+                Soy Pepe Cabeza, fundador de Zanovix, y siempre he tenido una obsesión clara: automatizar todo aquello que no aporta valor real.
               </TextAnimate>
             </motion.div>
 
@@ -180,7 +180,7 @@ export default function AboutSection() {
                 delay={0.1}
                 className="text-lg text-muted-foreground"
               >
-                Todo empezó en el instituto. Mientras muchos hacían sus deberes a mano, yo prefería crear pequeños sistemas para que los hicieran por mí. No por flojo (bueno, un poco sí 😅), sino porque me fascinaba la idea de que una máquina pudiera liberarte tiempo para lo realmente importante.
+                Todo empezó en el instituto. Mientras otros hacían los deberes a mano, yo creaba sistemas para que se hicieran solos. No por pereza (bueno, un poco sí 😅), sino porque me fascinaba cómo la tecnología podía liberar tiempo para lo importante.
               </TextAnimate>
             </motion.div>
 
@@ -191,7 +191,7 @@ export default function AboutSection() {
                 delay={0.2}
                 className="text-lg text-muted-foreground"
               >
-                Esa mentalidad me llevó a estudiar programación, y más tarde, a enamorarme de la inteligencia artificial. Desde entonces, he ayudado a negocios locales, emprendedores y equipos de trabajo a recuperar el activo más importante que tenemos: el tiempo.
+                Esa visión me llevó a estudiar programación y, más adelante, a especializarme en inteligencia artificial. Hoy ayudo a negocios, emprendedores y equipos a recuperar su recurso más valioso: el tiempo.
               </TextAnimate>
             </motion.div>
 
