@@ -1,6 +1,8 @@
 "use client"; // Mark as client component for framer-motion
 
 import Image from 'next/image';
+// Importar la imagen directamente
+import perfilImage from '../../../public/perfil.webp';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
@@ -123,7 +125,7 @@ export default function AboutSection() {
             <MagicCard className="h-full w-full">
               <div className="relative w-full h-full overflow-hidden rounded-lg">
                 <Image
-                  src="/perfil.webp"
+                  src={perfilImage}
                   alt="Pepe Cabeza, fundador de Zanovix AI"
                   fill
                   className="object-cover transition-transform duration-500 hover:scale-105"
