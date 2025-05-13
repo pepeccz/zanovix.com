@@ -12,7 +12,6 @@ export default {
     hoverOnlyWhenSupported: true, // Only trigger hover styles when the user's primary input mechanism can hover
     respectDefaultRingColorOpacity: true, // Respect the opacity of the defaultRingColor
     disableColorOpacityUtilitiesByDefault: true, // Disable color opacity utilities by default
-    purgeLayersByDefault: true, // Enable purging of unused layers by default
   },
   safelist: [
     // Critical classes that should never be purged
