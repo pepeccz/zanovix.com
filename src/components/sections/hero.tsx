@@ -133,11 +133,11 @@ export default function HeroSection() {
             shimmerColor="rgba(62, 167, 137, 0.3)"
             shimmerDuration="2s"
             shimmerSize="80%"
-            className="group dark:text-white text-black relative"
+            className="group dark:text-white text-black"
           >
             <NavigationLink href="#services" onClick={handleScroll} className="flex items-center justify-center">
               <span>Comenzar</span>
-              <ArrowDown className="absolute h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-2" />
+              <ArrowDown className="h-5 w-5 ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </NavigationLink>
           </ShimmerButton>
         </motion.div>
