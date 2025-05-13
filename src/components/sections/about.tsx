@@ -120,20 +120,13 @@ export default function AboutSection() {
               rotateY,
             }}
           >
-            <MagicCard className="h-full w-full border-4 border-red-500">
-              <div className="relative w-full h-full overflow-hidden rounded-lg border-4 border-blue-500">
-                {/* Añadir un div de respaldo para ver si el contenedor está renderizándose */}
-                <div className="absolute inset-0 bg-yellow-200 flex items-center justify-center">
-                  <span className="text-black font-bold">Área de imagen</span>
-                </div>
-                <Image
+            <MagicCard className="h-full w-full">
+              <div className="w-full h-full overflow-hidden rounded-lg">
+                {/* Usar una imagen estática con dimensiones fijas en lugar de fill */}
+                <img
                   src="/perfil.webp"
                   alt="Pepe Cabeza, fundador de Zanovix AI"
-                  fill
-                  className="object-cover transition-transform duration-500 hover:scale-105 z-10 relative"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 40vw, 30vw"
-                  data-ai-hint="person programming"
-                  priority // Añadir priority para evitar problemas de hidratación con imágenes
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                 />
               </div>
             </MagicCard>
