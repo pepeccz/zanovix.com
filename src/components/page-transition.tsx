@@ -60,7 +60,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({
   return (
     <AnimatePresence
       mode="wait" // Wait for the exiting component to finish animating before mounting the new one
-      initial={false} // Don't run animations on initial load
+      initial={true} // Enable animations on initial load
       onExitComplete={() => {
         // Use smooth scroll behavior instead of instant jump
         window.scrollTo({

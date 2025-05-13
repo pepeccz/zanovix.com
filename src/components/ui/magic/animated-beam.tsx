@@ -264,13 +264,13 @@ export function AnimatedBeam({
       setRandomBeams(generateRandomBeams(rect.width, rect.height, optimizedNumBeams));
     }
   }, [
-    isMounted, 
-    containerRef, 
-    fromRef, 
-    toRef, 
-    updatePositions, 
-    dimensions.width, 
-    generateRandomBeams, 
+    isMounted,
+    containerRef,
+    fromRef,
+    toRef,
+    updatePositions,
+    dimensions.width,
+    generateRandomBeams,
     optimizedNumBeams
   ]);
 
@@ -298,11 +298,11 @@ export function AnimatedBeam({
   // Cuarto useEffect - Manejo de cambios en las dimensiones
   useEffect(() => {
     if (!isMounted || !containerDivRef.current) return;
-  
+
     // Solo actualizar cuando las dimensiones cambian significativamente
     const handleDimensionChange = () => {
       if (!containerDivRef.current) return;
-      
+
       const rect = containerDivRef.current.getBoundingClientRect();
       if (
         Math.abs(rect.width - dimensions.width) > 10 ||
@@ -314,14 +314,14 @@ export function AnimatedBeam({
         });
       }
     };
-  
+
     // Usar ResizeObserver si está disponible
     if (typeof ResizeObserver !== 'undefined') {
       const observer = new ResizeObserver(handleDimensionChange);
       observer.observe(containerDivRef.current);
       return () => observer.disconnect();
     }
-  
+
     // Fallback a window resize
     window.addEventListener('resize', handleDimensionChange);
     return () => window.removeEventListener('resize', handleDimensionChange);
@@ -330,15 +330,18 @@ export function AnimatedBeam({
   // Quinto useEffect - Actualización de beams cuando cambian las dimensiones
   useEffect(() => {
     if (!isMounted || dimensions.width === 0 || dimensions.height === 0) return;
-  
+
     // Solo regenerar beams cuando las dimensiones cambian
     setRandomBeams(generateRandomBeams(dimensions.width, dimensions.height, optimizedNumBeams));
   }, [isMounted, generateRandomBeams, optimizedNumBeams]);
 
-  // Don't render if not mounted or reduced motion is preferred
-  if (!isMounted || shouldDisable) {
+  // Don't render if reduced motion is preferred
+  if (shouldDisable) {
     return null;
   }
+
+  // For SSR, render the component with initial opacity 0
+  // It will animate in on client-side hydration
 
   return (
     <div ref={containerDivRef} className={cn('absolute inset-0 pointer-events-none', className)}>

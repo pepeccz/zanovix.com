@@ -209,14 +209,25 @@ export function TextAnimate({
     }
   }, [animation, delay, duration, optimizedStaggerChildren, shouldDisableAnimation]);
 
-  // For SSR or when animations are disabled
-  if (!isMounted) {
-    return <span className={className}>{children}</span>;
-  }
-
   // If reduced motion is preferred and we should disable animations, render without animation
   if (shouldDisableAnimation) {
     return <span className={cn('inline-block', className)}>{children}</span>;
+  }
+
+  // For SSR, still render the animation markup but it will be activated on client-side
+  if (!isMounted) {
+    return (
+      <motion.span
+        className={cn('inline-block', className)}
+        initial="hidden"
+        animate="visible"
+        viewport={{ once, amount }}
+      >
+        <motion.span className="inline-block">
+          {children}
+        </motion.span>
+      </motion.span>
+    );
   }
 
   // Limit the number of animated elements for better performance
