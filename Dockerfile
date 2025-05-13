@@ -1,5 +1,5 @@
-# Usar una sola etapa para simplificar
-FROM node:18-slim
+# Etapa de construcción
+FROM node:18-slim AS builder
 
 # Establecer el directorio de trabajo
 WORKDIR /app
@@ -22,8 +22,6 @@ COPY . .
 
 # Establecer variables de entorno
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
 
 # Instalar explícitamente autoprefixer y otras dependencias que puedan faltar
 RUN npm install --save-dev autoprefixer postcss tailwindcss
@@ -31,11 +29,24 @@ RUN npm install --save-dev autoprefixer postcss tailwindcss
 # Construir la aplicación
 RUN npm run build
 
-# Establecer NODE_ENV a producción después de la construcción
+# Etapa de producción
+FROM node:18-slim AS runner
+
+WORKDIR /app
+
+# Establecer variables de entorno
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# Copiar los archivos necesarios desde la etapa de construcción
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
 # Exponer el puerto que Next.js utiliza
 EXPOSE 3000
 
 # Comando para ejecutar la aplicación
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

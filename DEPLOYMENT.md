@@ -9,6 +9,14 @@ Este documento proporciona instrucciones detalladas para desplegar la aplicació
 - Permisos para ejecutar comandos Docker
 - Opcionalmente: un dominio configurado para apuntar al servidor
 
+## Nota Importante sobre la Configuración
+
+Esta aplicación utiliza la configuración `output: 'standalone'` de Next.js, lo que significa que:
+
+1. La aplicación se ejecuta con `node server.js` en lugar de `next start`
+2. El Dockerfile está configurado para copiar los archivos necesarios desde la carpeta `.next/standalone`
+3. No es necesario tener todas las dependencias de desarrollo en la imagen de producción
+
 ## Opciones de Despliegue
 
 ### Opción 1: Despliegue en Servidor Propio
