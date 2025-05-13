@@ -180,13 +180,13 @@ export function MagicCard({
         className
       )}
       style={{
-        background: border,
+        background: border.toString(),
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <div className="h-full w-full rounded-[10px] bg-white p-4 dark:bg-neutral-950">
-        <div className="absolute inset-0 rounded-xl opacity-0 transition duration-300 group-hover:opacity-100" style={{ background }} />
+        <div className="absolute inset-0 rounded-xl opacity-0 transition duration-300 group-hover:opacity-100" style={{ background: background.toString() }} />
         <div className="relative z-10">{children}</div>
       </div>
     </motion.div>
