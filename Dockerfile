@@ -1,38 +1,56 @@
-# Use an official Node.js runtime as the base image
+# Etapa de construcción
 FROM node:18-slim AS builder
 
-# Set the working directory in the container
+# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+# Copiar archivos de configuración de dependencias
+COPY package.json package-lock.json* ./
 
-# Install dependencies
-RUN npm install
+# Instalar dependencias
+RUN npm ci
 
-# Copy the rest of the application code
+# Copiar el resto del código fuente
 COPY . .
 
-# Build the Next.js application
-RUN npm run build
-
-# Use a smaller image for the final runtime
-FROM node:18-slim
-
-# Set the working directory
-WORKDIR /app
-
-# Copy only the necessary files from the builder stage
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/public ./public
-
-# Set the environment variable for production
+# Establecer variables de entorno para la construcción
+ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
 
-# Expose the port that Next.js runs on
+# Construir la aplicación Next.js
+RUN npm run build
+
+# Etapa de producción
+FROM node:18-slim AS runner
+
+# Establecer el directorio de trabajo
+WORKDIR /app
+
+# Establecer variables de entorno para producción
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+# Crear un usuario no root para ejecutar la aplicación
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Copiar archivos necesarios desde la etapa de construcción
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+
+# Copiar el directorio .next de manera especial para preservar permisos
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Cambiar al usuario no root
+USER nextjs
+
+# Exponer el puerto que Next.js utiliza
 EXPOSE 3000
 
-# Command to run the application
-CMD ["npm", "start"]
+# Establecer la variable de host para que Next.js escuche en todas las interfaces
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+# Comando para ejecutar la aplicación
+CMD ["node", "server.js"]

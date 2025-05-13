@@ -9,7 +9,8 @@ import Footer from '@/components/layout/footer';
 import MobileCTA from '@/components/layout/mobile-cta';
 import PageTransition from '@/components/page-transition'; // Import the page transition component
 import ScrollToTopButton from '@/components/scroll-to-top-button'; // Import the scroll to top button
-import CursorFollower from '@/components/cursor-follower'; // Import the cursor follower
+import ScrollProgressBar from '@/components/scroll-progress-bar'; // Import the scroll progress bar
+import { LazyLoadedCursorFollower } from '@/components/client-components'; // Import from client components
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -79,30 +80,35 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="es" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased flex flex-col min-h-screen`}> {/* Added flex classes */}
+    <html lang="es" className={inter.variable} suppressHydrationWarning>
+      <body className="min-h-screen bg-background font-sans antialiased" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          // disableTransitionOnChange // Removed to allow framer-motion to handle transitions
+          defaultTheme="dark" // Establecer el tema oscuro como predeterminado
+          enableSystem={false} // Mantener deshabilitado el tema del sistema para evitar problemas de hidratación
+          disableTransitionOnChange
         >
-          <Header />
-           {/* Wrap the main content area with PageTransition */}
-          <main className="flex-grow flex flex-col"> {/* Added flex flex-col */}
-            <PageTransition>{children}</PageTransition>
-          </main>
-          <Footer />
-          <MobileCTA />
-          <ScrollToTopButton /> {/* Add the scroll to top button */}
-          <CursorFollower /> {/* Add the cursor follower */}
+          <div id="page-content" className="relative flex min-h-screen flex-col">
+            <Header />
+            <PageTransition>
+              <main className="flex-1">
+                {children}
+              </main>
+            </PageTransition>
+            <Footer />
+            <MobileCTA />
+            <ScrollToTopButton />
+            <ScrollProgressBar />
+            <LazyLoadedCursorFollower />
+          </div>
           <Toaster />
         </ThemeProvider>
       </body>
     </html>
   );
 }
+

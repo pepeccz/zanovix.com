@@ -1,5 +1,6 @@
 "use client"; // Mark as client component for framer-motion
 
+import { useRef } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -7,6 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { motion } from 'framer-motion';
+import { TextAnimate, RetroGrid } from '@/components/ui/magic';
 
 const faqItems = [
   {
@@ -85,38 +87,83 @@ const accordionItemVariants = {
 };
 
 export default function FaqSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
   return (
-    <section id="faq" className="py-16 md:py-24 bg-muted/30 dark:bg-muted/10">
-      <div className="container mx-auto px-4">
-        <motion.div 
+    <section
+      ref={sectionRef}
+      id="faq"
+      className="relative py-16 md:py-24 bg-muted/30 dark:bg-muted/10 overflow-hidden"
+    >
+      {/* Subtle background grid */}
+      <RetroGrid
+        className="opacity-10"
+        angle={45}
+        cellSize={80}
+        lightLineColor="rgba(62, 167, 137, 0.2)"
+        darkLineColor="rgba(62, 167, 137, 0.2)"
+        animate={false}
+      />
+
+      <div className="container relative z-10 mx-auto px-4">
+        <motion.div
           className="mb-12 text-center"
           initial="hidden"
           whileInView="visible"
-          viewport={{ amount: 0.3 }} // Removed once: true
+          viewport={{ amount: 0.3 }}
           variants={sectionTitleVariants}
         >
-           <h2 className="glowing-border inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary hover:[animation-play-state:paused]">
-             Preguntas Frecuentes
-           </h2>
+          <TextAnimate
+            animation="blurInUp"
+            by="word"
+            className="glowing-border inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary hover:[animation-play-state:paused]"
+          >
+            Preguntas Frecuentes
+          </TextAnimate>
         </motion.div>
+
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ amount: 0.1 }} // Removed once: true
+          viewport={{ amount: 0.1 }}
           variants={accordionContainerVariants}
+          className="relative"
         >
-          <Accordion type="single" collapsible className="mx-auto max-w-3xl">
+          {/* Add a subtle glow behind the accordion */}
+          <div className="absolute inset-0 bg-primary/5 rounded-xl blur-xl -z-10 transform scale-105" />
+
+          <Accordion
+            type="single"
+            collapsible
+            className="mx-auto max-w-3xl backdrop-blur-sm rounded-lg overflow-hidden border border-primary/10 shadow-lg"
+          >
             {faqItems.map((item, index) => (
               <motion.div key={index} variants={accordionItemVariants}>
-                <AccordionItem value={`item-${index}`}>
+                <AccordionItem
+                  value={`item-${index}`}
+                  className="border-b border-primary/10 last:border-0"
+                >
                   <AccordionTrigger
-                    className="text-left text-lg font-medium hover:no-underline"
+                    className="text-left text-lg font-medium hover:no-underline px-6 py-4 hover:bg-primary/5 transition-colors duration-200"
                     data-cursor-hover-target="true"
                   >
-                    {item.question}
+                    <TextAnimate
+                      animation="fadeIn"
+                      by="word"
+                      once={true}
+                      delay={0.1 * index}
+                    >
+                      {item.question}
+                    </TextAnimate>
                   </AccordionTrigger>
-                  <AccordionContent className="text-base text-muted-foreground">
-                    {item.answer}
+                  <AccordionContent className="text-base text-muted-foreground px-6 py-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {item.answer}
+                    </motion.div>
                   </AccordionContent>
                 </AccordionItem>
               </motion.div>

@@ -31,41 +31,59 @@ export default function MobileCTA() {
       return;
     }
 
+    // Initial check
+    if (typeof window !== 'undefined') {
+      const currentScrollY = window.scrollY;
+      const isPastHero = heroSectionHeight > 0 && currentScrollY > heroSectionHeight * 0.8;
+      setHasScrolledPastHero(isPastHero);
+      setIsVisibleBasedOnScrollDirection(isPastHero);
+      setLastScrollY(currentScrollY);
+    }
+  }, [pathname, excludedPaths, heroSectionHeight]);
+
+  // Separate useEffect for scroll event listener to avoid dependency cycles
+  useEffect(() => {
+    // If on an excluded path, don't add scroll listener
+    if (excludedPaths.includes(pathname)) {
+      return;
+    }
+
     const controlNavbar = () => {
       if (typeof window !== 'undefined') {
         const currentScrollY = window.scrollY;
 
         // Determine if scrolled past hero
-        if (heroSectionHeight > 0 && currentScrollY > heroSectionHeight * 0.8) { // Adjust threshold as needed
-          setHasScrolledPastHero(true);
-        } else {
-          setHasScrolledPastHero(false);
-        }
+        const isPastHero = heroSectionHeight > 0 && currentScrollY > heroSectionHeight * 0.8;
 
         // Show/hide based on scroll direction, but only if past hero
-        if (hasScrolledPastHero) {
-          if (currentScrollY > lastScrollY && currentScrollY > (heroSectionHeight * 0.8 + 50)) { // Hide after scrolling down a bit more
-            setIsVisibleBasedOnScrollDirection(false);
+        let shouldBeVisible = isVisibleBasedOnScrollDirection;
+
+        if (isPastHero) {
+          if (currentScrollY > lastScrollY && currentScrollY > (heroSectionHeight * 0.8 + 50)) {
+            shouldBeVisible = false;
           } else {
-            setIsVisibleBasedOnScrollDirection(true);
+            shouldBeVisible = true;
           }
         } else {
-          setIsVisibleBasedOnScrollDirection(false); // Always hidden if not past hero
+          shouldBeVisible = false; // Always hidden if not past hero
         }
+
+        // Update states
+        setHasScrolledPastHero(isPastHero);
+        setIsVisibleBasedOnScrollDirection(shouldBeVisible);
         setLastScrollY(currentScrollY);
       }
     };
 
     if (typeof window !== 'undefined') {
       window.addEventListener('scroll', controlNavbar);
-      controlNavbar(); // Initial check
 
       // Cleanup function
       return () => {
         window.removeEventListener('scroll', controlNavbar);
       };
     }
-  }, [lastScrollY, heroSectionHeight, hasScrolledPastHero, pathname, excludedPaths]); // Add dependencies
+  }, [pathname, excludedPaths, heroSectionHeight, lastScrollY]);
 
   // Do not render if on an excluded path
   if (excludedPaths.includes(pathname)) {
