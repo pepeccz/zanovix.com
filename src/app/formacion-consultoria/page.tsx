@@ -35,7 +35,13 @@ const staggerContainerVariants = {
   },
 };
 
-const ServiceCard = ({ icon: Icon, title, children }) => (
+interface ServiceCardProps {
+  icon: React.ElementType;
+  title: string;
+  children: React.ReactNode;
+}
+
+const ServiceCard = ({ icon: Icon, title, children }: ServiceCardProps) => (
   <motion.div variants={fadeInUpVariants}>
     <MagicCard className="h-full">
       <CardHeader className="bg-muted/30 p-6 relative overflow-hidden">
