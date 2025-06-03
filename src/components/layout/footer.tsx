@@ -13,6 +13,8 @@ export default function Footer() {
         </Link>
         <p className="text-sm text-muted-foreground">
           &copy; {currentYear} Zanovix AI. Todos los derechos reservados.
+          <span className="mx-2">|</span>
+          <Link href="/politica-privacidad" className="underline hover:text-primary transition-colors">Política de Privacidad</Link>
         </p>
       </div>
     </footer>
