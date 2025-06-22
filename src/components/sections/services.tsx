@@ -1,8 +1,10 @@
 "use client"; // Mark as client component for framer-motion
 
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 import { TextAnimate } from '@/components/ui/magic/text-animate';
 import { AnimatedBeam } from '@/components/ui/magic/animated-beam';
+import { Phone, ArrowRight } from 'lucide-react';
 
 const sectionTitleVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -22,7 +24,7 @@ const contentVariants = {
   },
 };
 
-const warningVariants = {
+const highlightVariants = {
   hidden: { opacity: 0, scale: 0.95 },
   visible: { 
     opacity: 1, 
@@ -35,7 +37,43 @@ const warningVariants = {
   },
 };
 
+const warningVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { 
+      duration: 0.5, 
+      ease: "easeOut",
+      delay: 0.8
+    } 
+  },
+};
+
+const buttonVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { 
+      duration: 0.5, 
+      ease: "easeOut",
+      delay: 1.0
+    } 
+  },
+};
+
 export default function ServicesSection() {
+  const handleContactClick = () => {
+    const contactSection = document.getElementById('contact-form');
+    if (contactSection) {
+      contactSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <section id="services" className="py-16 md:py-24 bg-background relative overflow-hidden">
       {/* Background decorative elements */}
@@ -72,43 +110,66 @@ export default function ServicesSection() {
               >
                 Ofrecemos todas las soluciones que engloba el mundo de la Inteligencia Artificial para empresas que quieren escalar.
               </TextAnimate>
-              
-              <TextAnimate
-                animation="fadeIn"
-                by="word"
-                delay={0.2}
-                className="block"
-              >
-                Somos expertos en IA aplicada. Si tu negocio tiene un cuello de botella o pierde mucho tiempo en otros flujos de trabajo, podemos automatizarlo.
-              </TextAnimate>
             </motion.div>
 
+            {/* Cuadro verde destacado */}
             <motion.div
-              variants={warningVariants}
+              variants={highlightVariants}
               className="relative"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-orange-500/10 to-red-500/10 rounded-xl blur-xl"></div>
-              <div className="relative bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20 border border-red-200 dark:border-red-800 rounded-xl p-8">
-                <div className="text-lg md:text-xl font-semibold text-red-800 dark:text-red-200 leading-relaxed">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 via-primary/10 to-green-500/10 rounded-xl blur-xl"></div>
+              <div className="relative bg-gradient-to-r from-green-50 to-primary/5 dark:from-green-950/20 dark:to-primary/10 border border-green-200 dark:border-green-800 rounded-xl p-8">
+                <div className="text-lg md:text-xl font-semibold text-green-800 dark:text-green-200 leading-relaxed">
                   <TextAnimate
                     animation="blurInUp"
                     by="word"
                     delay={0.1}
-                    className="block mb-4"
+                    className="block"
                   >
-                    Pero si tu empresa aún no sabe lo que es un agente inteligente de inteligencia artificial, <span className="font-bold text-red-900 dark:text-red-100">NO NOS LLAMES.</span>
-                  </TextAnimate>
-                  
-                  <TextAnimate
-                    animation="blurInUp"
-                    by="word"
-                    delay={0.3}
-                    className="block text-red-700 dark:text-red-300"
-                  >
-                    Todavía no estás listo para trabajar con nosotros.
+                    Somos expertos en IA aplicada. Si tu negocio tiene un cuello de botella o pierde mucho tiempo en otros flujos de trabajo, podemos automatizarlo.
                   </TextAnimate>
                 </div>
               </div>
+            </motion.div>
+
+            {/* Texto de advertencia sin cuadro */}
+            <motion.div
+              variants={warningVariants}
+              className="text-lg md:text-xl text-foreground leading-relaxed"
+            >
+              <TextAnimate
+                animation="fadeIn"
+                by="word"
+                delay={0.1}
+                className="block mb-4"
+              >
+                Pero si tu empresa aún no sabe lo que es un agente inteligente de inteligencia artificial, <span className="font-bold text-red-600 dark:text-red-400">NO NOS LLAMES.</span>
+              </TextAnimate>
+              
+              <TextAnimate
+                animation="fadeIn"
+                by="word"
+                delay={0.3}
+                className="block text-muted-foreground"
+              >
+                Todavía no estás listo para trabajar con nosotros.
+              </TextAnimate>
+            </motion.div>
+
+            {/* Botón de contactar */}
+            <motion.div
+              variants={buttonVariants}
+              className="flex justify-center pt-8"
+            >
+              <Button 
+                size="lg" 
+                className="group px-8 py-4 text-lg font-semibold"
+                onClick={handleContactClick}
+              >
+                <Phone className="h-5 w-5 mr-2" />
+                <span>Contactar</span>
+                <ArrowRight className="h-4 w-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+              </Button>
             </motion.div>
           </div>
         </motion.div>
