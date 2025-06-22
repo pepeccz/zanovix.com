@@ -13,7 +13,7 @@ export default function Footer() {
         </Link>
         <div className="flex flex-col items-center md:items-end space-y-2">
           <p className="text-sm text-muted-foreground text-center md:text-right">
-            &copy; {currentYear} Zanovix AI. Todos los derechos reservados.
+            &copy; {currentYear} Zanovix. Todos los derechos reservados.
           </p>
           <Link 
             href="/politica-privacidad" 
