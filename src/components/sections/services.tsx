@@ -2,9 +2,24 @@
 
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { MagicCard } from '@/components/ui/magic-card';
 import { TextAnimate } from '@/components/ui/magic/text-animate';
 import { AnimatedBeam } from '@/components/ui/magic/animated-beam';
-import { Phone, ArrowRight } from 'lucide-react';
+import { 
+  Phone, 
+  ArrowRight, 
+  Settings, 
+  BarChart3, 
+  MessageSquare, 
+  Lightbulb, 
+  Wrench, 
+  Shield, 
+  Code, 
+  Users, 
+  ShoppingCart, 
+  Truck, 
+  Bot 
+} from 'lucide-react';
 
 const sectionTitleVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -50,6 +65,26 @@ const warningVariants = {
   },
 };
 
+const cardsContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 1.0,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
 const buttonVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { 
@@ -58,10 +93,103 @@ const buttonVariants = {
     transition: { 
       duration: 0.5, 
       ease: "easeOut",
-      delay: 1.0
+      delay: 1.5
     } 
   },
 };
+
+interface ServiceCardProps {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  emoji: string;
+}
+
+const ServiceCard = ({ icon: Icon, title, description, emoji }: ServiceCardProps) => (
+  <motion.div variants={cardVariants}>
+    <MagicCard className="h-full">
+      <div className="p-6 flex flex-col h-full">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-2xl">{emoji}</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <Icon className="h-5 w-5" />
+          </div>
+        </div>
+        <h3 className="text-lg font-semibold mb-3 text-foreground">{title}</h3>
+        <p className="text-muted-foreground text-sm leading-relaxed flex-grow">{description}</p>
+      </div>
+    </MagicCard>
+  </motion.div>
+);
+
+const services = [
+  {
+    emoji: "⚙️",
+    icon: Settings,
+    title: "Automatización de procesos y servicios",
+    description: "La IA permite automatizar tareas repetitivas como gestión de inventarios, facturación, atención al cliente básica, conciliación contable o generación de informes, reduciendo tiempos y errores."
+  },
+  {
+    emoji: "📊",
+    icon: BarChart3,
+    title: "Análisis de datos y toma de decisiones",
+    description: "Para tratar y extraer insights de grandes volúmenes de datos (estructurados o no), identificando patrones, tendencias de mercado o riesgos, y soportando decisiones estratégicas."
+  },
+  {
+    emoji: "💬",
+    icon: MessageSquare,
+    title: "Atención al cliente / Soporte",
+    description: "Chatbots y asistentes virtuales (chat/texto/voz) ofrecen respuestas inmediatas, gestión de incidencias y escalado de casos complejos a agentes humanos."
+  },
+  {
+    emoji: "💡",
+    icon: Lightbulb,
+    title: "Recomendaciones y personalización",
+    description: "Motores de recomendación para e-commerce, contenido, publicidad, ofertas personalizadas según gustos y comportamiento del usuario."
+  },
+  {
+    emoji: "🔧",
+    icon: Wrench,
+    title: "Mantenimiento y detección predictiva de fallos",
+    description: "En industrias con maquinaria o infraestructura, la IA predice fallos en equipos antes de que ocurran, optimizando costes y tiempo de actividad."
+  },
+  {
+    emoji: "🛡️",
+    icon: Shield,
+    title: "Detección de fraudes y anomalías",
+    description: "Muy usada en finanzas, banca, auditoría, para analizar patrones transaccionales, detectar fraudes, errores y salvaguardar sistemas financieros."
+  },
+  {
+    emoji: "⚙️",
+    icon: Code,
+    title: "Generación de código y operaciones TI (AIOps)",
+    description: "La IA generativa acelera la programación, moderniza código legacy, automatiza despliegues y ajusta optimizaciones en la nube."
+  },
+  {
+    emoji: "🤝",
+    icon: Users,
+    title: "Recursos Humanos y reclutamiento",
+    description: "Clasificación de currículos, screening de candidatos, entrevistas vía bots, anuncios de empleo segmentados, evitando sesgos operativos."
+  },
+  {
+    emoji: "🛒",
+    icon: ShoppingCart,
+    title: "Publicidad y precios dinámicos",
+    description: "Ajuste de precios en tiempo real según demanda y competencia, y optimización de campañas publicitarias online con IA para maximizar retorno."
+  },
+  {
+    emoji: "🏭",
+    icon: Truck,
+    title: "Logística y distribución",
+    description: "Optimización de la cadena de suministro: planificación, inventario, recogida automática con drones y robótica en almacenes."
+  },
+  {
+    emoji: "🔄",
+    icon: Bot,
+    title: "Agentes autónomos (\"agentic AI\")",
+    description: "IA que actúa de forma autónoma para completar tareas complejas, con supervisión humana, aún emergente y estratégico en sectores como finanzas, retail o salud."
+  }
+];
 
 export default function ServicesSection() {
   const handleContactClick = () => {
@@ -155,23 +283,57 @@ export default function ServicesSection() {
                 Todavía no estás listo para trabajar con nosotros.
               </TextAnimate>
             </motion.div>
-
-            {/* Botón de contactar */}
-            <motion.div
-              variants={buttonVariants}
-              className="flex justify-center pt-8"
-            >
-              <Button 
-                size="lg" 
-                className="group px-8 py-4 text-lg font-semibold"
-                onClick={handleContactClick}
-              >
-                <Phone className="h-5 w-5 mr-2" />
-                <span>Contactar</span>
-                <ArrowRight className="h-4 w-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
-            </motion.div>
           </div>
+        </motion.div>
+
+        {/* Services Cards Section */}
+        <motion.div
+          className="mt-16"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ amount: 0.1 }}
+          variants={cardsContainerVariants}
+        >
+          <motion.div
+            variants={cardVariants}
+            className="text-center mb-12"
+          >
+            <h3 className="text-2xl md:text-3xl font-bold mb-4">Servicios Destacados</h3>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              Descubre las principales áreas donde la Inteligencia Artificial puede transformar tu negocio
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((service, index) => (
+              <ServiceCard
+                key={index}
+                emoji={service.emoji}
+                icon={service.icon}
+                title={service.title}
+                description={service.description}
+              />
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Botón de contactar */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ amount: 0.3 }}
+          variants={buttonVariants}
+          className="flex justify-center pt-16"
+        >
+          <Button 
+            size="lg" 
+            className="group px-8 py-4 text-lg font-semibold"
+            onClick={handleContactClick}
+          >
+            <Phone className="h-5 w-5 mr-2" />
+            <span>Contactar</span>
+            <ArrowRight className="h-4 w-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+          </Button>
         </motion.div>
       </div>
     </section>
