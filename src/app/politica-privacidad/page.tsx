@@ -522,7 +522,7 @@ export default function PoliticaPrivacidadPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span>+34 XXX XXX XXX</span>
+                        <span>+34 684 76 56 96</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground" />
