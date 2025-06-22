@@ -183,7 +183,6 @@ export default function FaqSection() {
             className="text-lg text-muted-foreground mb-6"
             variants={sectionTitleVariants}
           >
-            ¿Tienes más preguntas? Estamos aquí para ayudarte
           </motion.p>
           
           <motion.div
