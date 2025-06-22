@@ -18,8 +18,11 @@ import {
   Users, 
   ShoppingCart, 
   Truck, 
-  Bot 
+  Bot,
+  ChevronDown,
+  Star
 } from 'lucide-react';
+import { useState } from 'react';
 
 const sectionTitleVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -103,26 +106,43 @@ interface ServiceCardProps {
   title: string;
   description: string;
   emoji: string;
+  isFeatured?: boolean;
 }
 
-const ServiceCard = ({ icon: Icon, title, description, emoji }: ServiceCardProps) => (
+const ServiceCard = ({ icon: Icon, title, description, emoji, isFeatured = false }: ServiceCardProps) => (
   <motion.div variants={cardVariants}>
     <MagicCard className="h-full">
-      <div className="p-6 flex flex-col h-full">
+      <div className="p-6 flex flex-col h-full relative">
+        {isFeatured && (
+          <div className="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full p-2 shadow-lg">
+            <Star className="h-4 w-4 fill-current" />
+          </div>
+        )}
         <div className="flex items-center gap-3 mb-4">
           <span className="text-2xl">{emoji}</span>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <div className={`flex h-10 w-10 items-center justify-center rounded-full ${isFeatured ? 'bg-primary text-primary-foreground' : 'bg-primary/10 text-primary'}`}>
             <Icon className="h-5 w-5" />
           </div>
         </div>
-        <h3 className="text-lg font-semibold mb-3 text-foreground">{title}</h3>
+        <h3 className={`text-lg font-semibold mb-3 ${isFeatured ? 'text-primary' : 'text-foreground'}`}>
+          {title}
+          {isFeatured && <span className="text-xs ml-2 bg-primary/10 text-primary px-2 py-1 rounded-full">MÁS DEMANDADO</span>}
+        </h3>
         <p className="text-muted-foreground text-sm leading-relaxed flex-grow">{description}</p>
       </div>
     </MagicCard>
   </motion.div>
 );
 
+// Reorganizar servicios con "Atención al cliente" primero
 const services = [
+  {
+    emoji: "💬",
+    icon: MessageSquare,
+    title: "Atención al cliente / Soporte",
+    description: "Chatbots y asistentes virtuales (chat/texto/voz) ofrecen respuestas inmediatas, gestión de incidencias y escalado de casos complejos a agentes humanos.",
+    isFeatured: true
+  },
   {
     emoji: "⚙️",
     icon: Settings,
@@ -134,12 +154,6 @@ const services = [
     icon: BarChart3,
     title: "Análisis de datos y toma de decisiones",
     description: "Para tratar y extraer insights de grandes volúmenes de datos (estructurados o no), identificando patrones, tendencias de mercado o riesgos, y soportando decisiones estratégicas."
-  },
-  {
-    emoji: "💬",
-    icon: MessageSquare,
-    title: "Atención al cliente / Soporte",
-    description: "Chatbots y asistentes virtuales (chat/texto/voz) ofrecen respuestas inmediatas, gestión de incidencias y escalado de casos complejos a agentes humanos."
   },
   {
     emoji: "💡",
@@ -192,6 +206,9 @@ const services = [
 ];
 
 export default function ServicesSection() {
+  const [visibleServices, setVisibleServices] = useState(3);
+  const [isExpanding, setIsExpanding] = useState(false);
+
   const handleContactClick = () => {
     const contactSection = document.getElementById('contact-form');
     if (contactSection) {
@@ -200,6 +217,22 @@ export default function ServicesSection() {
         block: 'start'
       });
     }
+  };
+
+  const handleShowMore = () => {
+    setIsExpanding(true);
+    setTimeout(() => {
+      setVisibleServices(prev => Math.min(prev + 3, services.length));
+      setIsExpanding(false);
+    }, 300);
+  };
+
+  const handleShowLess = () => {
+    setIsExpanding(true);
+    setTimeout(() => {
+      setVisibleServices(3);
+      setIsExpanding(false);
+    }, 300);
   };
 
   return (
@@ -265,14 +298,17 @@ export default function ServicesSection() {
               variants={warningVariants}
               className="text-lg md:text-xl text-foreground leading-relaxed"
             >
-              <TextAnimate
-                animation="fadeIn"
-                by="word"
-                delay={0.1}
-                className="block mb-4"
-              >
-                Pero si tu empresa aún no sabe lo que es un agente inteligente de inteligencia artificial, <span className="font-bold text-red-600 dark:text-red-400">NO NOS LLAMES.</span>
-              </TextAnimate>
+              <div className="mb-4">
+                <TextAnimate
+                  animation="fadeIn"
+                  by="word"
+                  delay={0.1}
+                  className="inline"
+                >
+                  Pero si tu empresa aún no sabe lo que es un agente inteligente de inteligencia artificial,{" "}
+                </TextAnimate>
+                <span className="font-bold text-red-600 dark:text-red-400">NO NOS LLAMES.</span>
+              </div>
               
               <TextAnimate
                 animation="fadeIn"
@@ -305,16 +341,67 @@ export default function ServicesSection() {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, index) => (
+            {services.slice(0, visibleServices).map((service, index) => (
               <ServiceCard
                 key={index}
                 emoji={service.emoji}
                 icon={service.icon}
                 title={service.title}
                 description={service.description}
+                isFeatured={service.isFeatured}
               />
             ))}
           </div>
+
+          {/* Botón Ver más / Ver menos */}
+          {services.length > 3 && (
+            <motion.div
+              className="flex justify-center mt-8"
+              variants={cardVariants}
+            >
+              {visibleServices < services.length ? (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleShowMore}
+                  disabled={isExpanding}
+                  className="group"
+                >
+                  {isExpanding ? (
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                      <span>Cargando...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <span>Ver más servicios</span>
+                      <ChevronDown className="h-4 w-4 ml-2 transition-transform duration-300 group-hover:translate-y-1" />
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleShowLess}
+                  disabled={isExpanding}
+                  className="group"
+                >
+                  {isExpanding ? (
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                      <span>Cargando...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <span>Ver menos</span>
+                      <ChevronDown className="h-4 w-4 ml-2 transition-transform duration-300 group-hover:-translate-y-1 rotate-180" />
+                    </>
+                  )}
+                </Button>
+              )}
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Botón de contactar */}
