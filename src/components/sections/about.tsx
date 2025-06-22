@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { MagicCard } from '@/components/ui/magic-card';
 import { TextAnimate } from '@/components/ui/magic/text-animate';
 import { Calendar, Clock, Sparkles, Target, TrendingDown, Zap } from 'lucide-react';
@@ -53,29 +53,6 @@ const pointVariants = {
 };
 
 export default function AboutSection() {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const rotateX = useTransform(y, [-100, 100], [5, -5]);
-  const rotateY = useTransform(x, [-100, 100], [-5, 5]);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const centerX = rect.left + width / 2;
-    const centerY = rect.top + height / 2;
-    const mouseX = e.clientX - centerX;
-    const mouseY = e.clientY - centerY;
-
-    x.set(mouseX);
-    y.set(mouseY);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
   const handleContactClick = () => {
     const contactSection = document.getElementById('contact-form');
     if (contactSection) {
@@ -127,21 +104,14 @@ export default function AboutSection() {
             whileInView="visible"
             viewport={{ amount: 0.25, once: false }}
             variants={imageVariants}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            style={{
-              perspective: 1000,
-              rotateX,
-              rotateY,
-            }}
           >
             <MagicCard className="h-full w-full">
               <div className="w-full h-full overflow-hidden rounded-lg">
-                {/* Usar una imagen estática con dimensiones fijas en lugar de fill */}
+                {/* Imagen centrada y recortada sin animaciones de hover */}
                 <img
-                  src="/perfil.webp"
+                  src="/yo.webp"
                   alt="Pepe Cabeza, fundador de Zanovix AI"
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-50"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             </MagicCard>
