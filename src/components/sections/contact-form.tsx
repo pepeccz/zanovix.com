@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent } from '@/components/ui/card';
 import { TextAnimate } from '@/components/ui/magic/text-animate';
 import { AnimatedBeam } from '@/components/ui/magic/animated-beam';
-import { Send, CheckCircle2, AlertCircle, Loader2, Shield, User, Clock } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, Loader2, Shield, User, Clock, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const containerVariants = {
@@ -37,6 +37,9 @@ interface FormData {
   nombre: string;
   empresa: string;
   email: string;
+  telefono: string;
+  preferenciaContacto: string;
+  otroContacto: string;
   presupuesto: string;
   idea: string;
 }
@@ -45,6 +48,9 @@ interface FormErrors {
   nombre?: string;
   empresa?: string;
   email?: string;
+  telefono?: string;
+  preferenciaContacto?: string;
+  otroContacto?: string;
   presupuesto?: string;
   idea?: string;
 }
@@ -56,11 +62,20 @@ const presupuestoOptions = [
   { value: "10000+", label: "+10.000€" },
 ];
 
+const contactoOptions = [
+  { value: "whatsapp", label: "WhatsApp" },
+  { value: "email", label: "Email" },
+  { value: "otro", label: "Otro (Especificar)" },
+];
+
 export default function ContactFormSection() {
   const [formData, setFormData] = useState<FormData>({
     nombre: '',
     empresa: '',
     email: '',
+    telefono: '',
+    preferenciaContacto: '',
+    otroContacto: '',
     presupuesto: '',
     idea: '',
   });
@@ -69,6 +84,12 @@ export default function ContactFormSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
+
+  const validatePhone = (phone: string): boolean => {
+    // Validación básica para números de teléfono (permite diferentes formatos)
+    const phoneRegex = /^[\+]?[0-9\s\-\(\)]{9,15}$/;
+    return phoneRegex.test(phone.replace(/\s/g, ''));
+  };
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -87,6 +108,21 @@ export default function ContactFormSection() {
       newErrors.email = 'El email no es válido';
     }
 
+    if (!formData.telefono.trim()) {
+      newErrors.telefono = 'El número de teléfono es obligatorio';
+    } else if (!validatePhone(formData.telefono)) {
+      newErrors.telefono = 'El número de teléfono no es válido';
+    }
+
+    // Si hay teléfono, validar preferencia de contacto
+    if (formData.telefono.trim()) {
+      if (!formData.preferenciaContacto) {
+        newErrors.preferenciaContacto = 'Selecciona tu preferencia de contacto';
+      } else if (formData.preferenciaContacto === 'otro' && !formData.otroContacto.trim()) {
+        newErrors.otroContacto = 'Especifica el método de contacto';
+      }
+    }
+
     if (!formData.presupuesto) {
       newErrors.presupuesto = 'Selecciona un rango de presupuesto';
     }
@@ -103,6 +139,12 @@ export default function ContactFormSection() {
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Limpiar campos relacionados cuando cambia la preferencia de contacto
+    if (field === 'preferenciaContacto' && value !== 'otro') {
+      setFormData(prev => ({ ...prev, otroContacto: '' }));
+    }
+    
     // Limpiar error del campo cuando el usuario empiece a escribir
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -136,6 +178,10 @@ export default function ContactFormSection() {
     setIsSubmitting(true);
 
     try {
+      const contactoFinal = formData.preferenciaContacto === 'otro' 
+        ? formData.otroContacto 
+        : formData.preferenciaContacto;
+
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
@@ -145,6 +191,8 @@ export default function ContactFormSection() {
           nombre: formData.nombre,
           empresa: formData.empresa,
           email: formData.email,
+          telefono: formData.telefono,
+          preferenciaContacto: contactoFinal,
           presupuesto: formData.presupuesto,
           idea: formData.idea,
           timestamp: new Date().toISOString(),
@@ -169,6 +217,9 @@ export default function ContactFormSection() {
           nombre: '',
           empresa: '',
           email: '',
+          telefono: '',
+          preferenciaContacto: '',
+          otroContacto: '',
           presupuesto: '',
           idea: '',
         });
@@ -340,31 +391,114 @@ export default function ContactFormSection() {
                       )}
                     </div>
 
-                    {/* Presupuesto */}
+                    {/* Teléfono */}
                     <div className="space-y-2">
-                      <Label htmlFor="presupuesto">Presupuesto *</Label>
-                      <Select
-                        value={formData.presupuesto}
-                        onValueChange={(value) => handleInputChange('presupuesto', value)}
-                      >
-                        <SelectTrigger className={errors.presupuesto ? 'border-destructive' : ''}>
-                          <SelectValue placeholder="Selecciona un rango" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {presupuestoOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {errors.presupuesto && (
+                      <Label htmlFor="telefono">Número de teléfono *</Label>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="telefono"
+                          type="tel"
+                          placeholder="+34 600 000 000"
+                          value={formData.telefono}
+                          onChange={(e) => handleInputChange('telefono', e.target.value)}
+                          className={`pl-10 ${errors.telefono ? 'border-destructive' : ''}`}
+                        />
+                      </div>
+                      {errors.telefono && (
                         <p className="text-sm text-destructive flex items-center gap-1">
                           <AlertCircle className="h-4 w-4" />
-                          {errors.presupuesto}
+                          {errors.telefono}
                         </p>
                       )}
                     </div>
+                  </div>
+
+                  {/* Preferencia de contacto - Solo aparece si hay teléfono */}
+                  {formData.telefono.trim() && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-4"
+                    >
+                      <div className="space-y-2">
+                        <Label htmlFor="preferenciaContacto">¿Por dónde prefieres que te contactemos? *</Label>
+                        <Select
+                          value={formData.preferenciaContacto}
+                          onValueChange={(value) => handleInputChange('preferenciaContacto', value)}
+                        >
+                          <SelectTrigger className={errors.preferenciaContacto ? 'border-destructive' : ''}>
+                            <SelectValue placeholder="Selecciona tu preferencia" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {contactoOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {errors.preferenciaContacto && (
+                          <p className="text-sm text-destructive flex items-center gap-1">
+                            <AlertCircle className="h-4 w-4" />
+                            {errors.preferenciaContacto}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Campo adicional para "Otro" */}
+                      {formData.preferenciaContacto === 'otro' && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          transition={{ duration: 0.3 }}
+                          className="space-y-2"
+                        >
+                          <Label htmlFor="otroContacto">Especifica el método de contacto *</Label>
+                          <Input
+                            id="otroContacto"
+                            type="text"
+                            placeholder="Ej: Telegram, LinkedIn, etc."
+                            value={formData.otroContacto}
+                            onChange={(e) => handleInputChange('otroContacto', e.target.value)}
+                            className={errors.otroContacto ? 'border-destructive' : ''}
+                          />
+                          {errors.otroContacto && (
+                            <p className="text-sm text-destructive flex items-center gap-1">
+                              <AlertCircle className="h-4 w-4" />
+                              {errors.otroContacto}
+                            </p>
+                          )}
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  )}
+
+                  {/* Presupuesto */}
+                  <div className="space-y-2">
+                    <Label htmlFor="presupuesto">Presupuesto *</Label>
+                    <Select
+                      value={formData.presupuesto}
+                      onValueChange={(value) => handleInputChange('presupuesto', value)}
+                    >
+                      <SelectTrigger className={errors.presupuesto ? 'border-destructive' : ''}>
+                        <SelectValue placeholder="Selecciona un rango" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {presupuestoOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.presupuesto && (
+                      <p className="text-sm text-destructive flex items-center gap-1">
+                        <AlertCircle className="h-4 w-4" />
+                        {errors.presupuesto}
+                      </p>
+                    )}
                   </div>
 
                   {/* Idea */}
