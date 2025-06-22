@@ -141,7 +141,7 @@ export default function AboutSection() {
                 <img
                   src="/yo.webp"
                   alt="Pepe Cabeza, fundador de Zanovix AI"
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-50"
                 />
               </div>
             </MagicCard>
