@@ -11,6 +11,11 @@ RUN apt-get update && apt-get install -y \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
+# Declarar el argumento de construcción para la URL del webhook
+ARG NEXT_PUBLIC_CONTACT_FORM_WEBHOOK_URL
+# Establecer como variable de entorno para que Next.js pueda acceder durante el build
+ENV NEXT_PUBLIC_CONTACT_FORM_WEBHOOK_URL=$NEXT_PUBLIC_CONTACT_FORM_WEBHOOK_URL
+
 # Copiar archivos de configuración de dependencias primero
 COPY package.json package-lock.json* ./
 
