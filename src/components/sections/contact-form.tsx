@@ -37,6 +37,7 @@ interface FormData {
   nombre: string;
   empresa: string;
   email: string;
+  prefijoTelefono: string;
   telefono: string;
   preferenciaContacto: string;
   otroContacto: string;
@@ -68,11 +69,28 @@ const contactoOptions = [
   { value: "otro", label: "Otro (Especificar)" },
 ];
 
+const countryPrefixes = [
+  { value: "34", label: "🇪🇸 +34 (España)", flag: "🇪🇸" },
+  { value: "33", label: "🇫🇷 +33 (Francia)", flag: "🇫🇷" },
+  { value: "49", label: "🇩🇪 +49 (Alemania)", flag: "🇩🇪" },
+  { value: "39", label: "🇮🇹 +39 (Italia)", flag: "🇮🇹" },
+  { value: "351", label: "🇵🇹 +351 (Portugal)", flag: "🇵🇹" },
+  { value: "44", label: "🇬🇧 +44 (Reino Unido)", flag: "🇬🇧" },
+  { value: "1", label: "🇺🇸 +1 (Estados Unidos)", flag: "🇺🇸" },
+  { value: "52", label: "🇲🇽 +52 (México)", flag: "🇲🇽" },
+  { value: "54", label: "🇦🇷 +54 (Argentina)", flag: "🇦🇷" },
+  { value: "55", label: "🇧🇷 +55 (Brasil)", flag: "🇧🇷" },
+  { value: "56", label: "🇨🇱 +56 (Chile)", flag: "🇨🇱" },
+  { value: "57", label: "🇨🇴 +57 (Colombia)", flag: "🇨🇴" },
+  { value: "51", label: "🇵🇪 +51 (Perú)", flag: "🇵🇪" },
+];
+
 export default function ContactFormSection() {
   const [formData, setFormData] = useState<FormData>({
     nombre: '',
     empresa: '',
     email: '',
+    prefijoTelefono: '34', // España por defecto
     telefono: '',
     preferenciaContacto: '',
     otroContacto: '',
@@ -86,9 +104,16 @@ export default function ContactFormSection() {
   const { toast } = useToast();
 
   const validatePhone = (phone: string): boolean => {
-    // Validación básica para números de teléfono (permite diferentes formatos)
-    const phoneRegex = /^[\+]?[0-9\s\-\(\)]{9,15}$/;
+    // Validación básica para números de teléfono (solo números, espacios y guiones)
+    const phoneRegex = /^[0-9\s\-]{9,15}$/;
     return phoneRegex.test(phone.replace(/\s/g, ''));
+  };
+
+  const formatPhoneForAPI = (prefix: string, phone: string): string => {
+    // Limpiar el teléfono de espacios y guiones
+    const cleanPhone = phone.replace(/[\s\-]/g, '');
+    // Combinar prefijo + teléfono
+    return prefix + cleanPhone;
   };
 
   const validateForm = (): boolean => {
@@ -182,6 +207,9 @@ export default function ContactFormSection() {
         ? formData.otroContacto 
         : formData.preferenciaContacto;
 
+      // Formatear el teléfono completo para la API
+      const telefonoCompleto = formatPhoneForAPI(formData.prefijoTelefono, formData.telefono);
+
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
@@ -191,7 +219,7 @@ export default function ContactFormSection() {
           nombre: formData.nombre,
           empresa: formData.empresa,
           email: formData.email,
-          telefono: formData.telefono,
+          telefono: telefonoCompleto, // Enviar teléfono completo con prefijo
           preferenciaContacto: contactoFinal,
           presupuesto: formData.presupuesto,
           idea: formData.idea,
@@ -217,6 +245,7 @@ export default function ContactFormSection() {
           nombre: '',
           empresa: '',
           email: '',
+          prefijoTelefono: '34', // Resetear a España
           telefono: '',
           preferenciaContacto: '',
           otroContacto: '',
@@ -391,19 +420,42 @@ export default function ContactFormSection() {
                       )}
                     </div>
 
-                    {/* Teléfono */}
+                    {/* Teléfono con selector de país */}
                     <div className="space-y-2">
                       <Label htmlFor="telefono">Número de teléfono *</Label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="telefono"
-                          type="tel"
-                          placeholder="+34 600 000 000"
-                          value={formData.telefono}
-                          onChange={(e) => handleInputChange('telefono', e.target.value)}
-                          className={`pl-10 ${errors.telefono ? 'border-destructive' : ''}`}
-                        />
+                      <div className="flex gap-2">
+                        {/* Selector de prefijo */}
+                        <Select
+                          value={formData.prefijoTelefono}
+                          onValueChange={(value) => handleInputChange('prefijoTelefono', value)}
+                        >
+                          <SelectTrigger className="w-[140px]">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {countryPrefixes.map((country) => (
+                              <SelectItem key={country.value} value={country.value}>
+                                <span className="flex items-center gap-2">
+                                  <span>{country.flag}</span>
+                                  <span>+{country.value}</span>
+                                </span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        {/* Campo de teléfono */}
+                        <div className="relative flex-1">
+                          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            id="telefono"
+                            type="tel"
+                            placeholder="684 76 56 96"
+                            value={formData.telefono}
+                            onChange={(e) => handleInputChange('telefono', e.target.value)}
+                            className={`pl-10 ${errors.telefono ? 'border-destructive' : ''}`}
+                          />
+                        </div>
                       </div>
                       {errors.telefono && (
                         <p className="text-sm text-destructive flex items-center gap-1">
