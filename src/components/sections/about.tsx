@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { MagicCard } from '@/components/ui/magic-card';
 import { TextAnimate } from '@/components/ui/magic/text-animate';
-import { Calendar, Clock, Sparkles, Target, TrendingDown, Zap } from 'lucide-react';
+import { Calendar, Clock, Sparkles, Target, TrendingDown, Zap, Users } from 'lucide-react';
 
 const sectionTitleVariants = {
   hidden: { opacity: 0, y: -20 },
@@ -107,11 +107,11 @@ export default function AboutSection() {
           >
             <MagicCard className="h-full w-full">
               <div className="w-full h-full overflow-hidden rounded-lg">
-                {/* Imagen centrada y recortada sin animaciones de hover */}
+                {/* Imagen centrada y recortada sin animaciones de hover, posicionada más abajo */}
                 <img
                   src="/yo.webp"
                   alt="Pepe Cabeza, fundador de Zanovix AI"
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-cover object-[center_20%]"
                 />
               </div>
             </MagicCard>
@@ -154,11 +154,11 @@ export default function AboutSection() {
                 by="word"
                 className="text-xl font-semibold text-foreground mb-6"
               >
-                Si eres CEO / CTO / CIO / DIRECTOR IT, solo te decimos 3 cosas:
+                Si eres CEO / CTO / CIO / DIRECTOR IT, solo te decimos 4 cosas:
               </TextAnimate>
             </motion.div>
 
-            {/* Tres puntos principales con iconos */}
+            {/* Cuatro puntos principales con iconos */}
             <motion.div variants={paragraphVariants} className="space-y-6 mb-8">
               <motion.div 
                 variants={pointVariants}
@@ -203,13 +203,32 @@ export default function AboutSection() {
                 className="flex items-start gap-4 p-4 rounded-lg bg-gradient-to-r from-primary/5 to-transparent border-l-4 border-primary"
               >
                 <div className="flex-shrink-0 mt-1">
-                  <Zap className="h-6 w-6 text-primary" />
+                  <Users className="h-6 w-6 text-primary" />
                 </div>
                 <div>
                   <TextAnimate
                     animation="fadeIn"
                     by="word"
                     delay={0.3}
+                    className="text-lg font-semibold text-foreground"
+                  >
+                    Trabajamos con los mejores desarrolladores.
+                  </TextAnimate>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                variants={pointVariants}
+                className="flex items-start gap-4 p-4 rounded-lg bg-gradient-to-r from-primary/5 to-transparent border-l-4 border-primary"
+              >
+                <div className="flex-shrink-0 mt-1">
+                  <Zap className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <TextAnimate
+                    animation="fadeIn"
+                    by="word"
+                    delay={0.4}
                     className="text-lg font-semibold text-foreground"
                   >
                     Somos eficientes en nuestros procesos de venta.
