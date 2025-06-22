@@ -109,30 +109,6 @@ export default function ContactFormSection() {
     }
   };
 
-  const sendToWebhook = async (url: string, data: FormData) => {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        nombre: data.nombre,
-        empresa: data.empresa,
-        email: data.email,
-        presupuesto: data.presupuesto,
-        idea: data.idea,
-        timestamp: new Date().toISOString(),
-        source: 'website-contact-form'
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error en webhook ${url}: ${response.status}`);
-    }
-
-    return response;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -145,14 +121,40 @@ export default function ContactFormSection() {
       return;
     }
 
+    const webhookUrl = process.env.NEXT_PUBLIC_CONTACT_FORM_WEBHOOK_URL;
+    
+    if (!webhookUrl) {
+      console.error('Webhook URL not configured');
+      toast({
+        title: "Error de configuración",
+        description: "La URL del webhook no está configurada. Contacta al administrador.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // Enviar a ambos webhooks en paralelo
-      await Promise.all([
-        sendToWebhook('https://n8n.zanovix.com/webhook/form-contacto-web', formData),
-        sendToWebhook('https://n8n.zanovix.com/webhook-test/form-contacto-web', formData)
-      ]);
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre: formData.nombre,
+          empresa: formData.empresa,
+          email: formData.email,
+          presupuesto: formData.presupuesto,
+          idea: formData.idea,
+          timestamp: new Date().toISOString(),
+          source: 'website-contact-form'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error en webhook: ${response.status}`);
+      }
 
       setIsSubmitted(true);
       toast({
