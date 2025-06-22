@@ -110,7 +110,7 @@ export default function FaqSection() {
             className="mt-6 text-3xl font-bold tracking-tight"
             variants={sectionTitleVariants}
           >
-            Resolvemos tus dudas sobre IA
+            Resolvemos tus dudas
           </motion.h3>
           
           <motion.p
