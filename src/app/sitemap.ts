@@ -4,14 +4,14 @@ import { MetadataRoute } from 'next';
 const domain = 'https://www.zanovix.ai'; // Updated domain
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Add more URLs as your site grows
-  const routes = ['/', '/formacion-consultoria', '/desarrollo-soluciones', '/consultoria'];
-  const lastModified = new Date(); // Or fetch dynamically if pages change often
+  // Solo incluir la página principal
+  const routes = ['/'];
+  const lastModified = new Date();
 
   return routes.map((route) => ({
     url: `${domain}${route}`,
     lastModified,
-    changeFrequency: 'monthly', // Adjust as needed ('always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never')
-    priority: route === '/' ? 1 : 0.8, // Give homepage higher priority
+    changeFrequency: 'monthly' as const,
+    priority: 1, // Página principal con máxima prioridad
   }));
 }
