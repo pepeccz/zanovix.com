@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Shield, Eye, Cookie, UserCheck, Mail, Phone, MapPin, Calendar } from 'lucide-react';
+import { Shield, Eye, Cookie, UserCheck, Mail, Phone, MapPin, Calendar, Home, ArrowLeft } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Política de Privacidad - Zanovix AI',
@@ -13,6 +15,17 @@ export default function PoliticaPrivacidadPage() {
   return (
     <div className="min-h-screen bg-background py-16 md:py-24">
       <div className="container mx-auto px-4 max-w-4xl">
+        {/* Botón de volver al inicio */}
+        <div className="mb-8">
+          <Button asChild variant="outline" size="lg" className="group">
+            <Link href="/" className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
+              <Home className="h-4 w-4" />
+              <span>Volver al Inicio</span>
+            </Link>
+          </Button>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-6">
@@ -549,6 +562,17 @@ export default function PoliticaPrivacidadPage() {
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Botón adicional para volver al inicio al final de la página */}
+        <div className="mt-12 text-center">
+          <Button asChild size="lg" className="group">
+            <Link href="/" className="flex items-center gap-2">
+              <Home className="h-5 w-5" />
+              <span>Volver a la Página Principal</span>
+              <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1 rotate-180" />
+            </Link>
+          </Button>
         </div>
 
         {/* Footer de la página */}
