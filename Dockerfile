@@ -23,9 +23,6 @@ COPY . .
 # Establecer variables de entorno
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Instalar explícitamente autoprefixer y otras dependencias que puedan faltar
-RUN npm install --save-dev autoprefixer postcss tailwindcss
-
 # Construir la aplicación
 RUN npm run build
 
