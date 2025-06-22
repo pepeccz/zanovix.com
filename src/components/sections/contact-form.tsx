@@ -7,10 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { TextAnimate } from '@/components/ui/magic/text-animate';
 import { AnimatedBeam } from '@/components/ui/magic/animated-beam';
-import { Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, Loader2, Shield, User, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const containerVariants = {
@@ -259,9 +259,25 @@ export default function ContactFormSection() {
           {/* Form */}
           <motion.div variants={itemVariants}>
             <Card className="shadow-lg border-primary/10">
-              <CardHeader className="bg-muted/30">
-                <CardTitle className="text-2xl text-center">Formulario de Contacto</CardTitle>
-              </CardHeader>
+              {/* Modern Header with Icons */}
+              <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 px-8 py-6 border-b border-primary/10">
+                <h3 className="text-2xl font-bold text-center mb-4">Formulario de Contacto</h3>
+                <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-primary" />
+                    <span>Sin compromiso</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-primary" />
+                    <span>Personalizada</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-primary" />
+                    <span>100% confidencial</span>
+                  </div>
+                </div>
+              </div>
+
               <CardContent className="p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
