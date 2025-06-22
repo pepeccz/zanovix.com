@@ -99,19 +99,23 @@ export default function AboutSection() {
 
           {/* Image Column - Order 1 on mobile, Order 1 on md and up */}
           <motion.div
-            className="relative aspect-square overflow-hidden order-1 md:col-span-2"
+            className="relative order-1 md:col-span-2"
             initial="hidden"
             whileInView="visible"
             viewport={{ amount: 0.25, once: false }}
             variants={imageVariants}
           >
             <MagicCard className="h-full w-full">
-              <div className="w-full h-full overflow-hidden rounded-lg">
-                {/* Imagen centrada mostrando más del cuerpo, sin animaciones de hover */}
+              <div className="w-full h-[500px] md:h-[600px] overflow-hidden rounded-lg relative">
+                {/* Imagen optimizada con mejor encuadre y centrado */}
                 <img
                   src="/yo.webp"
                   alt="Pepe Cabeza, fundador de Zanovix AI"
-                  className="w-full h-full object-cover object-[center_35%]"
+                  className="w-full h-full object-cover object-[center_25%] scale-110"
+                  style={{
+                    objectPosition: 'center 25%',
+                    transform: 'scale(1.1) translateY(-5%)'
+                  }}
                 />
               </div>
             </MagicCard>
