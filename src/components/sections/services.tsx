@@ -1,6 +1,6 @@
 "use client"; // Mark as client component for framer-motion
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { MagicCard } from '@/components/ui/magic-card';
 import { TextAnimate } from '@/components/ui/magic/text-animate';
@@ -74,18 +74,36 @@ const cardsContainerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.1,
-      delayChildren: 1.0,
+      delayChildren: 0.2,
     },
   },
 };
 
+// Variantes optimizadas para las tarjetas individuales
 const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { 
+    opacity: 0, 
+    y: 20,
+    scale: 0.95
+  },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut" },
+    scale: 1,
+    transition: { 
+      duration: 0.4, 
+      ease: "easeOut"
+    },
   },
+  exit: {
+    opacity: 0,
+    y: -20,
+    scale: 0.95,
+    transition: { 
+      duration: 0.3, 
+      ease: "easeIn"
+    },
+  }
 };
 
 const buttonVariants = {
@@ -96,7 +114,7 @@ const buttonVariants = {
     transition: { 
       duration: 0.5, 
       ease: "easeOut",
-      delay: 1.5
+      delay: 0.3
     } 
   },
 };
@@ -107,10 +125,19 @@ interface ServiceCardProps {
   description: string;
   emoji: string;
   isFeatured?: boolean;
+  index: number;
 }
 
-const ServiceCard = ({ icon: Icon, title, description, emoji, isFeatured = false }: ServiceCardProps) => (
-  <motion.div variants={cardVariants}>
+const ServiceCard = ({ icon: Icon, title, description, emoji, isFeatured = false, index }: ServiceCardProps) => (
+  <motion.div 
+    variants={cardVariants}
+    initial="hidden"
+    animate="visible"
+    exit="exit"
+    layout
+    layoutId={`service-card-${index}`}
+    transition={{ layout: { duration: 0.3 } }}
+  >
     <MagicCard className="h-full">
       <div className="p-6 flex flex-col h-full relative">
         {isFeatured && (
@@ -221,10 +248,11 @@ export default function ServicesSection() {
 
   const handleShowMore = () => {
     setIsExpanding(true);
+    // Reducir el delay para una transición más rápida
     setTimeout(() => {
       setVisibleServices(prev => Math.min(prev + 3, services.length));
       setIsExpanding(false);
-    }, 300);
+    }, 150);
   };
 
   const handleShowLess = () => {
@@ -232,7 +260,7 @@ export default function ServicesSection() {
     setTimeout(() => {
       setVisibleServices(3);
       setIsExpanding(false);
-    }, 300);
+    }, 150);
   };
 
   return (
@@ -340,24 +368,33 @@ export default function ServicesSection() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.slice(0, visibleServices).map((service, index) => (
-              <ServiceCard
-                key={index}
-                emoji={service.emoji}
-                icon={service.icon}
-                title={service.title}
-                description={service.description}
-                isFeatured={service.isFeatured}
-              />
-            ))}
-          </div>
+          {/* Grid con AnimatePresence para transiciones suaves */}
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            layout
+          >
+            <AnimatePresence mode="popLayout">
+              {services.slice(0, visibleServices).map((service, index) => (
+                <ServiceCard
+                  key={`service-${index}`}
+                  emoji={service.emoji}
+                  icon={service.icon}
+                  title={service.title}
+                  description={service.description}
+                  isFeatured={service.isFeatured}
+                  index={index}
+                />
+              ))}
+            </AnimatePresence>
+          </motion.div>
 
           {/* Botón Ver más / Ver menos */}
           {services.length > 3 && (
             <motion.div
               className="flex justify-center mt-8"
-              variants={cardVariants}
+              initial="hidden"
+              animate="visible"
+              variants={buttonVariants}
             >
               {visibleServices < services.length ? (
                 <Button
