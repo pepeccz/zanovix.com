@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { MagicCard } from '@/components/ui/magic-card';
 import { TextAnimate } from '@/components/ui/magic/text-animate';
-import { Calendar, Clock, Sparkles } from 'lucide-react';
+import { Calendar, Clock, Sparkles, Target, TrendingDown, Zap } from 'lucide-react';
 
 const sectionTitleVariants = {
   hidden: { opacity: 0, y: -20 },
@@ -45,6 +45,11 @@ const floatingIconVariants = {
       ease: "easeInOut"
     }
   }
+};
+
+const pointVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
 export default function AboutSection() {
@@ -104,7 +109,7 @@ export default function AboutSection() {
               Sobre Nosotros
             </h2>
             <h3 className="mt-4 text-3xl font-bold tracking-tight flex items-center justify-center gap-2">
-              Nuestra Historia
+              Nuestra Propuesta
               <motion.div
                 variants={floatingIconVariants}
                 initial="initial"
@@ -162,7 +167,7 @@ export default function AboutSection() {
                 className="mt-4 text-3xl font-bold tracking-tight flex items-center gap-2"
                 variants={paragraphVariants}
               >
-                Nuestra Historia
+                Nuestra Propuesta
                 <motion.div
                   variants={floatingIconVariants}
                   initial="initial"
@@ -173,36 +178,74 @@ export default function AboutSection() {
               </motion.h3>
             </div>
 
-            <motion.div variants={paragraphVariants} className="mb-6">
-              <TextAnimate
-                animation="fadeIn"
-                by="word"
-                className="text-lg text-muted-foreground"
-              >
-                Soy Pepe Cabeza, fundador de Zanovix, y siempre he tenido una obsesión clara: automatizar todo aquello que no aporta valor real.
-              </TextAnimate>
-            </motion.div>
-
-            <motion.div variants={paragraphVariants} className="mb-4">
-              <TextAnimate
-                animation="fadeIn"
-                by="word"
-                delay={0.1}
-                className="text-lg text-muted-foreground"
-              >
-                Todo empezó en el instituto. Mientras otros hacían los deberes a mano, yo creaba sistemas para que se hicieran solos. No por pereza (bueno, un poco sí 😅), sino porque me fascinaba cómo la tecnología podía liberar tiempo para lo importante.
-              </TextAnimate>
-            </motion.div>
-
             <motion.div variants={paragraphVariants} className="mb-8">
               <TextAnimate
                 animation="fadeIn"
                 by="word"
-                delay={0.2}
-                className="text-lg text-muted-foreground"
+                className="text-xl font-semibold text-foreground mb-6"
               >
-                Esa visión me llevó a estudiar programación y, más adelante, a especializarme en inteligencia artificial. Hoy ayudo a negocios, emprendedores y equipos a recuperar su recurso más valioso: el tiempo.
+                Si eres CEO / CTO / CIO / DIRECTOR IT, solo te decimos 3 cosas:
               </TextAnimate>
+            </motion.div>
+
+            {/* Tres puntos principales con iconos */}
+            <motion.div variants={paragraphVariants} className="space-y-6 mb-8">
+              <motion.div 
+                variants={pointVariants}
+                className="flex items-start gap-4 p-4 rounded-lg bg-gradient-to-r from-primary/5 to-transparent border-l-4 border-primary"
+              >
+                <div className="flex-shrink-0 mt-1">
+                  <Target className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <TextAnimate
+                    animation="fadeIn"
+                    by="word"
+                    delay={0.1}
+                    className="text-lg font-semibold text-foreground"
+                  >
+                    Aportamos más valor que el resto.
+                  </TextAnimate>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                variants={pointVariants}
+                className="flex items-start gap-4 p-4 rounded-lg bg-gradient-to-r from-primary/5 to-transparent border-l-4 border-primary"
+              >
+                <div className="flex-shrink-0 mt-1">
+                  <TrendingDown className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <TextAnimate
+                    animation="fadeIn"
+                    by="word"
+                    delay={0.2}
+                    className="text-lg font-semibold text-foreground"
+                  >
+                    Peleamos por tener la rotación más baja.
+                  </TextAnimate>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                variants={pointVariants}
+                className="flex items-start gap-4 p-4 rounded-lg bg-gradient-to-r from-primary/5 to-transparent border-l-4 border-primary"
+              >
+                <div className="flex-shrink-0 mt-1">
+                  <Zap className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <TextAnimate
+                    animation="fadeIn"
+                    by="word"
+                    delay={0.3}
+                    className="text-lg font-semibold text-foreground"
+                  >
+                    Somos eficientes en nuestros procesos de venta.
+                  </TextAnimate>
+                </div>
+              </motion.div>
             </motion.div>
 
             <motion.div variants={paragraphVariants} className="flex flex-col sm:flex-row gap-4">
