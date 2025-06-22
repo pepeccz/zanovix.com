@@ -3,8 +3,6 @@ import { Inter } from 'next/font/google'; // Using Inter font for a modern look
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
 import MobileCTA from '@/components/layout/mobile-cta';
 import PageTransition from '@/components/page-transition'; // Import the page transition component
 import ScrollToTopButton from '@/components/scroll-to-top-button'; // Import the scroll to top button
@@ -93,13 +91,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div id="page-content" className="relative flex min-h-screen flex-col">
-            <Header />
             <PageTransition>
               <main className="flex-1">
                 {children}
               </main>
             </PageTransition>
-            <Footer />
             <MobileCTA />
             <StaticThemeButton />
             <ScrollToTopButton />
