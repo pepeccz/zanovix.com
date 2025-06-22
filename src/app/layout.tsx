@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google'; // Using Inter font for a modern look
 import './globals.css';
@@ -10,6 +9,7 @@ import MobileCTA from '@/components/layout/mobile-cta';
 import PageTransition from '@/components/page-transition'; // Import the page transition component
 import ScrollToTopButton from '@/components/scroll-to-top-button'; // Import the scroll to top button
 import ScrollProgressBar from '@/components/scroll-progress-bar'; // Import the scroll progress bar
+import StaticContactButton from '@/components/static-contact-button'; // Import the static contact button
 import { LazyLoadedCursorFollower } from '@/components/client-components'; // Import from client components
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -101,6 +101,7 @@ export default function RootLayout({
             </PageTransition>
             <Footer />
             <MobileCTA />
+            <StaticContactButton />
             <ScrollToTopButton />
             <ScrollProgressBar />
             <LazyLoadedCursorFollower />
@@ -111,4 +112,3 @@ export default function RootLayout({
     </html>
   );
 }
-
