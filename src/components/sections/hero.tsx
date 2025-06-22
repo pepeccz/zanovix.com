@@ -3,7 +3,6 @@
 import { useRef, useEffect, useState } from 'react';
 import { NavigationLink } from '@/components/ui/navigation-link';
 import { Logo } from '@/components/logo';
-import { ArrowDown } from 'lucide-react';
 import type React from 'react'; // Import React type for event handling
 import { motion } from 'framer-motion';
 import { TextAnimate, ShimmerButton, RetroGrid, AnimatedBeam } from '@/components/ui/magic';
@@ -86,7 +85,7 @@ export default function HeroSection() {
             disableOnMobile={false} // Explicitly enable on mobile
             amount={0.1} // Make it trigger earlier
           >
-            Impulsa el futuro de tu negocio con
+            La agencia y consultora que está revolucionando tu sector con la
           </TextAnimate>
           {' '}
           <TextAnimate
@@ -98,7 +97,7 @@ export default function HeroSection() {
             disableOnMobile={false} // Explicitly enable on mobile
             amount={0.1} // Make it trigger earlier
           >
-            inteligencia artificial
+            Inteligencia Artificial
           </TextAnimate>
         </motion.h1>
 
@@ -108,14 +107,14 @@ export default function HeroSection() {
           transition={{ duration: 0.6, delay: 1.5, ease: "easeOut" }}
           className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl"
         >
-          En Zanovix AI, transformamos negocios mediante soluciones de IA a medida, consultoría experta y formación especializada para tus equipos. Preparamos tu empresa para liderar en la era digital.
+          Transformamos tu negocio con IA a medida: ventas, atención, productividad.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.8, ease: "easeOut" }}
-          className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4"
+          className="flex justify-center"
         >
           <ShimmerButton
             size="lg"
@@ -123,21 +122,7 @@ export default function HeroSection() {
             shimmerDuration="2s"
             shimmerSize="80%"
           >
-            <NavigationLink href="#contact-form">Contactar ahora</NavigationLink>
-          </ShimmerButton>
-
-          <ShimmerButton
-            size="lg"
-            variant="outline"
-            shimmerColor="rgba(62, 167, 137, 0.3)"
-            shimmerDuration="2s"
-            shimmerSize="80%"
-            className="group dark:text-white text-black"
-          >
-            <NavigationLink href="#services" onClick={handleScroll} className="flex items-center justify-center">
-              <span>Comenzar</span>
-              <ArrowDown className="h-5 w-5 ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </NavigationLink>
+            <NavigationLink href="#services" onClick={handleScroll}>COMENZAR</NavigationLink>
           </ShimmerButton>
         </motion.div>
       </div>
