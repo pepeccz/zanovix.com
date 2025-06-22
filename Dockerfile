@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 # Declarar el argumento de construcción para la URL del webhook
 ARG NEXT_PUBLIC_CONTACT_FORM_WEBHOOK_URL
 # Establecer como variable de entorno para que Next.js pueda acceder durante el build
-ENV NEXT_PUBLIC_CONTACT_FORM_WEBHOOK_URL=$NEXT_PUBLIC_CONTACT_FORM_WEBHOOK_URL
+ENV NEXT_PUBLIC_CONTACT_FORM_WEBHOOK_URL=https://n8n.zanovix.com/webhook/form-contacto-web
 
 # Copiar archivos de configuración de dependencias primero
 COPY package.json package-lock.json* ./
