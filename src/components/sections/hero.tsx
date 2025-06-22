@@ -121,6 +121,7 @@ export default function HeroSection() {
             shimmerColor="rgba(255, 255, 255, 0.4)"
             shimmerDuration="2s"
             shimmerSize="80%"
+            className="px-12 py-4 text-lg font-semibold"
           >
             <NavigationLink href="#services" onClick={handleScroll}>COMENZAR</NavigationLink>
           </ShimmerButton>

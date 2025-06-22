@@ -1,11 +1,7 @@
 "use client"; // Mark as client component for framer-motion
 
-import Link from 'next/link';
-import { CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Users, Code, ArrowRight, Sparkles } from 'lucide-react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { MagicCard } from '@/components/ui/magic-card';
+import { motion } from 'framer-motion';
+import { TextAnimate } from '@/components/ui/magic/text-animate';
 import { AnimatedBeam } from '@/components/ui/magic/animated-beam';
 
 const sectionTitleVariants = {
@@ -13,146 +9,109 @@ const sectionTitleVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut", delay: 0.1 } },
 };
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 50, scale: 0.95 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
+const contentVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { 
+      duration: 0.6, 
+      ease: "easeOut",
+      delay: 0.3
+    } 
+  },
 };
 
-const ServiceCard = ({
-  href,
-  icon: Icon,
-  title,
-  description,
-  content,
-  delay
-}: {
-  href: string;
-  icon: React.ElementType;
-  title: string;
-  description: string;
-  content: string;
-  delay: number;
-}) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const rotateX = useTransform(y, [-100, 100], [10, -10]);
-  const rotateY = useTransform(x, [-100, 100], [-10, 10]);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const centerX = rect.left + width / 2;
-    const centerY = rect.top + height / 2;
-    const mouseX = e.clientX - centerX;
-    const mouseY = e.clientY - centerY;
-
-    x.set(mouseX);
-    y.set(mouseY);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const contactSection = document.getElementById('contact-form');
-    if (contactSection) {
-      contactSection.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  };
-
-  return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ amount: 0.2 }}
-      variants={cardVariants}
-      transition={{ delay }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        perspective: 1000,
-        rotateX,
-        rotateY,
-      }}
-    >
-      <div onClick={handleClick} className="cursor-pointer">
-        <MagicCard
-          className="h-full"
-          gradientFrom="#3ea789"
-          gradientTo="#3ea789"
-          gradientOpacity={0.5}
-        >
-          <div className="flex flex-col h-full">
-            <CardHeader className="bg-muted/30 p-6 relative overflow-hidden">
-              <AnimatedBeam className="absolute inset-0 opacity-30" numBeams={5} />
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground relative z-10">
-                <Icon className="h-6 w-6" />
-              </div>
-              <CardTitle className="text-2xl font-semibold relative z-10">{title}</CardTitle>
-              <CardDescription className="mt-2 text-muted-foreground relative z-10">
-                {description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex-grow p-6">
-              <p className="text-foreground/90">
-                {content}
-              </p>
-            </CardContent>
-            <CardFooter className="p-6 pt-0 mt-auto">
-              <Button variant="link" className="p-0 text-primary group">
-                Contactar ahora
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
-            </CardFooter>
-          </div>
-        </MagicCard>
-      </div>
-    </motion.div>
-  );
+const warningVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { 
+    opacity: 1, 
+    scale: 1, 
+    transition: { 
+      duration: 0.5, 
+      ease: "easeOut",
+      delay: 0.6
+    } 
+  },
 };
 
 export default function ServicesSection() {
   return (
     <section id="services" className="py-16 md:py-24 bg-background relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/10 to-background">
+        <AnimatedBeam className="opacity-20" numBeams={8} gradientStartColor="rgba(62, 167, 137, 0.3)" gradientStopColor="rgba(62, 167, 137, 0.1)" />
+      </div>
+
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-64 h-64 rounded-full bg-primary/5 blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-primary/5 blur-3xl"></div>
+      </div>
+
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
-          className="mb-12 text-center"
+          className="max-w-4xl mx-auto text-center"
           initial="hidden"
           whileInView="visible"
           viewport={{ amount: 0.3 }}
           variants={sectionTitleVariants}
         >
           <h2 className="glowing-border inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-wider text-primary hover:[animation-play-state:paused]">
-            Nuestros Servicios de IA
+            Nuestros Servicios
           </h2>
-          <h3 className="mt-4 text-3xl font-bold tracking-tight">Soluciones de IA para tu negocio</h3>
-        </motion.div>
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          <ServiceCard
-            href="#contact-form"
-            icon={Users}
-            title="Formación y Consultoría IA"
-            description="Capacitamos a tus equipos y te asesoramos para que integres la IA con éxito."
-            content="Potencia las habilidades de tu personal con nuestros programas de formación personalizados. Te guiamos en la definición de estrategias de IA y en la implementación de las herramientas adecuadas para tus necesidades específicas, asegurando una adopción efectiva y sostenible."
-            delay={0.2}
-          />
+          
+          <div className="mt-8 space-y-8">
+            <motion.div
+              variants={contentVariants}
+              className="text-lg md:text-xl text-foreground leading-relaxed"
+            >
+              <TextAnimate
+                animation="fadeIn"
+                by="word"
+                className="block mb-6"
+              >
+                Ofrecemos todas las soluciones que engloba el mundo de la Inteligencia Artificial para empresas que quieren escalar.
+              </TextAnimate>
+              
+              <TextAnimate
+                animation="fadeIn"
+                by="word"
+                delay={0.2}
+                className="block"
+              >
+                Somos expertos en IA aplicada. Si tu negocio tiene un cuello de botella o pierde mucho tiempo en otros flujos de trabajo, podemos automatizarlo.
+              </TextAnimate>
+            </motion.div>
 
-          <ServiceCard
-            href="#contact-form"
-            icon={Code}
-            title="Desarrollo de Soluciones IA"
-            description="Creamos soluciones de inteligencia artificial a medida para tu negocio."
-            content="Desde chatbots inteligentes y sistemas de recomendación hasta análisis predictivo y automatización de procesos. Desarrollamos e implementamos soluciones de IA robustas y escalables que generan un impacto real en tu eficiencia y resultados."
-            delay={0.4}
-          />
-        </div>
+            <motion.div
+              variants={warningVariants}
+              className="relative"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-orange-500/10 to-red-500/10 rounded-xl blur-xl"></div>
+              <div className="relative bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20 border border-red-200 dark:border-red-800 rounded-xl p-8">
+                <div className="text-lg md:text-xl font-semibold text-red-800 dark:text-red-200 leading-relaxed">
+                  <TextAnimate
+                    animation="blurInUp"
+                    by="word"
+                    delay={0.1}
+                    className="block mb-4"
+                  >
+                    Pero si tu empresa aún no sabe lo que es un agente inteligente de inteligencia artificial, <span className="font-bold text-red-900 dark:text-red-100">NO NOS LLAMES.</span>
+                  </TextAnimate>
+                  
+                  <TextAnimate
+                    animation="blurInUp"
+                    by="word"
+                    delay={0.3}
+                    className="block text-red-700 dark:text-red-300"
+                  >
+                    Todavía no estás listo para trabajar con nosotros.
+                  </TextAnimate>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
