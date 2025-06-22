@@ -335,7 +335,7 @@ export default function ServicesSection() {
                 >
                   Pero si tu empresa aún no sabe lo que es un agente inteligente de inteligencia artificial,{" "}
                 </TextAnimate>
-                <span className="font-bold text-red-600 dark:text-red-400">NO NOS LLAMES.</span>
+                <span className="font-bold text-red-600 dark:text-red-400">NO NOS LLAMES</span>
               </div>
               
               <TextAnimate
