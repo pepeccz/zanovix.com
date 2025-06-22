@@ -1,4 +1,3 @@
-
 'use client'; // Needed for group-hover interaction and onClick handler
 
 import { useRef, useEffect, useState } from 'react';
@@ -124,7 +123,7 @@ export default function HeroSection() {
             shimmerDuration="2s"
             shimmerSize="80%"
           >
-            <NavigationLink href="/consultoria">Agendar consultoría gratuita</NavigationLink>
+            <NavigationLink href="#contact-form">Contactar ahora</NavigationLink>
           </ShimmerButton>
 
           <ShimmerButton
@@ -159,12 +158,3 @@ export default function HeroSection() {
     </section>
   );
 }
-
-
-
-
-
-
-
-
-

@@ -268,7 +268,7 @@ export default function ContactFormSection() {
 
   if (isSubmitted) {
     return (
-      <section className="py-16 md:py-24 relative overflow-hidden">
+      <section id="contact-form" className="py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/20 to-background">
           <AnimatedBeam className="opacity-30" numBeams={15} gradientStartColor="rgba(62, 167, 137, 0.5)" gradientStopColor="rgba(62, 167, 137, 0.1)" />
         </div>
@@ -294,7 +294,7 @@ export default function ContactFormSection() {
   }
 
   return (
-    <section className="py-16 md:py-24 relative overflow-hidden">
+    <section id="contact-form" className="py-16 md:py-24 relative overflow-hidden">
       {/* Background with animated beam effect */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/20 to-background">
         <AnimatedBeam className="opacity-30" numBeams={15} gradientStartColor="rgba(62, 167, 137, 0.5)" gradientStopColor="rgba(62, 167, 137, 0.1)" />

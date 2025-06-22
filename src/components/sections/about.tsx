@@ -71,6 +71,16 @@ export default function AboutSection() {
     y.set(0);
   };
 
+  const handleContactClick = () => {
+    const contactSection = document.getElementById('contact-form');
+    if (contactSection) {
+      contactSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <section id="about" className="py-16 md:py-24 bg-background relative overflow-hidden">
       {/* Background decorative elements */}
@@ -196,12 +206,12 @@ export default function AboutSection() {
             </motion.div>
 
             <motion.div variants={paragraphVariants} className="flex flex-col sm:flex-row gap-4">
-              <Button asChild size="lg" className="group">
-                <Link href="/consultoria" className="flex items-center gap-2">
+              <Button asChild size="lg" className="group" onClick={handleContactClick}>
+                <div className="flex items-center gap-2 cursor-pointer">
                   <Calendar className="h-5 w-5" />
-                  <span>Agendar consultoría gratis</span>
+                  <span>Contactar ahora</span>
                   <Clock className="h-4 w-4 ml-1 transition-transform duration-300 group-hover:rotate-12" />
-                </Link>
+                </div>
               </Button>
             </motion.div>
           </motion.div>

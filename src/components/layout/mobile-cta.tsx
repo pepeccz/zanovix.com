@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -92,6 +91,16 @@ export default function MobileCTA() {
 
   const showMobileCTA = hasScrolledPastHero && isVisibleBasedOnScrollDirection;
 
+  const handleContactClick = () => {
+    const contactSection = document.getElementById('contact-form');
+    if (contactSection) {
+      contactSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -101,9 +110,8 @@ export default function MobileCTA() {
       aria-hidden={!showMobileCTA}
     >
        {/* This Button will inherit data-cursor-hover-target="true" */}
-      <Button className="w-full" size="lg" asChild>
-         {/* Replace with actual link or modal trigger */}
-        <Link href="/consultoria">Agendar consultoría gratuita</Link>
+      <Button className="w-full" size="lg" onClick={handleContactClick}>
+        Contactar ahora
       </Button>
     </div>
   );

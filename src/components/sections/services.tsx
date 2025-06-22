@@ -56,6 +56,17 @@ const ServiceCard = ({
     y.set(0);
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const contactSection = document.getElementById('contact-form');
+    if (contactSection) {
+      contactSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <motion.div
       initial="hidden"
@@ -71,9 +82,9 @@ const ServiceCard = ({
         rotateY,
       }}
     >
-      <Link href={href} passHref>
+      <div onClick={handleClick} className="cursor-pointer">
         <MagicCard
-          className="h-full cursor-pointer"
+          className="h-full"
           gradientFrom="#3ea789"
           gradientTo="#3ea789"
           gradientOpacity={0.5}
@@ -96,13 +107,13 @@ const ServiceCard = ({
             </CardContent>
             <CardFooter className="p-6 pt-0 mt-auto">
               <Button variant="link" className="p-0 text-primary group">
-                Saber más
+                Contactar ahora
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Button>
             </CardFooter>
           </div>
         </MagicCard>
-      </Link>
+      </div>
     </motion.div>
   );
 };
@@ -125,7 +136,7 @@ export default function ServicesSection() {
         </motion.div>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <ServiceCard
-            href="/formacion-consultoria"
+            href="#contact-form"
             icon={Users}
             title="Formación y Consultoría IA"
             description="Capacitamos a tus equipos y te asesoramos para que integres la IA con éxito."
@@ -134,7 +145,7 @@ export default function ServicesSection() {
           />
 
           <ServiceCard
-            href="/desarrollo-soluciones"
+            href="#contact-form"
             icon={Code}
             title="Desarrollo de Soluciones IA"
             description="Creamos soluciones de inteligencia artificial a medida para tu negocio."
