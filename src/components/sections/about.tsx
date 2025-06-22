@@ -107,11 +107,11 @@ export default function AboutSection() {
           >
             <MagicCard className="h-full w-full">
               <div className="w-full h-full overflow-hidden rounded-lg">
-                {/* Imagen centrada y recortada sin animaciones de hover, posicionada más abajo */}
+                {/* Imagen centrada mostrando más del cuerpo, sin animaciones de hover */}
                 <img
                   src="/yo.webp"
                   alt="Pepe Cabeza, fundador de Zanovix AI"
-                  className="w-full h-full object-cover object-[center_20%]"
+                  className="w-full h-full object-cover object-[center_35%]"
                 />
               </div>
             </MagicCard>
