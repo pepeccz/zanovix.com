@@ -8,6 +8,7 @@ import PageTransition from '@/components/page-transition'; // Import the page tr
 import ScrollToTopButton from '@/components/scroll-to-top-button'; // Import the scroll to top button
 import ScrollProgressBar from '@/components/scroll-progress-bar'; // Import the scroll progress bar
 import StaticThemeButton from '@/components/static-theme-button'; // Import the static theme button
+import Footer from '@/components/layout/footer'; // Import the footer component
 import { LazyLoadedCursorFollower } from '@/components/client-components'; // Import from client components
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -96,6 +97,7 @@ export default function RootLayout({
                 {children}
               </main>
             </PageTransition>
+            <Footer />
             <MobileCTA />
             <StaticThemeButton />
             <ScrollToTopButton />
