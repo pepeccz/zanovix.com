@@ -48,11 +48,11 @@ export default function PoliticaPrivacidadPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <span className="font-medium">Razón Social:</span>
-                      <span>Zanovix AI S.L.</span>
+                      <span>Pepe Cabeza Cruz</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium">CIF:</span>
-                      <span>B-XXXXXXXX</span>
+                      <span>77429548W</span>
                     </div>
                     <div className="flex items-start gap-2">
                       <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground" />
@@ -65,8 +65,8 @@ export default function PoliticaPrivacidadPage() {
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center gap-2">
                       <Mail className="h-4 w-4 text-muted-foreground" />
-                      <a href="mailto:privacidad@zanovix.ai" className="text-primary hover:underline">
-                        privacidad@zanovix.ai
+                      <a href="mailto:privacidad@zanovix.com" className="text-primary hover:underline">
+                        privacidad@zanovix.com
                       </a>
                     </div>
                     <div className="flex items-center gap-2">
@@ -372,7 +372,7 @@ export default function PoliticaPrivacidadPage() {
                     Para ejercer cualquiera de estos derechos, puede contactarnos a través de:
                   </p>
                   <ul className="list-disc list-inside space-y-1 text-sm ml-4">
-                    <li>Email: <a href="mailto:privacidad@zanovix.ai" className="text-primary hover:underline">privacidad@zanovix.ai</a></li>
+                    <li>Email: <a href="mailto:privacidad@zanovix.com" className="text-primary hover:underline">privacidad@zanovix.com</a></li>
                     <li>Formulario de contacto en nuestro sitio web</li>
                     <li>Correo postal a nuestra dirección</li>
                   </ul>
@@ -518,8 +518,8 @@ export default function PoliticaPrivacidadPage() {
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center gap-2">
                         <Mail className="h-4 w-4 text-muted-foreground" />
-                        <a href="mailto:privacidad@zanovix.ai" className="text-primary hover:underline">
-                          privacidad@zanovix.ai
+                        <a href="mailto:privacidad@zanovix.com" className="text-primary hover:underline">
+                          privacidad@zanovix.com
                         </a>
                       </div>
                       <div className="flex items-center gap-2">
