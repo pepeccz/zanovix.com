@@ -12,55 +12,40 @@ import { TextAnimate, RetroGrid } from '@/components/ui/magic';
 
 const faqItems = [
   {
-    question: "¿Qué es un agente de inteligencia artificial?",
-    answer: "Un agente de IA es un sistema autónomo que percibe su entorno a través de sensores y actúa sobre ese entorno a través de actuadores para lograr objetivos específicos. Puede aprender, razonar y tomar decisiones."
+    question: "¿Qué procesos de mi empresa se pueden automatizar con IA?",
+    answer: "Cualquier tarea repetitiva o basada en reglas: atención al cliente, gestión de agendas, seguimiento de presupuestos, clasificación de correos, generación de informes, recomendación de productos, etc."
   },
   {
-    question: "¿Cómo funcionan los agentes de IA en el entorno empresarial?",
-    answer: "Automatizan tareas repetitivas, analizan grandes volúmenes de datos para extraer insights, interactúan con clientes (chatbots), optimizan procesos logísticos, apoyan la toma de decisiones y personalizan experiencias, mejorando la eficiencia y la competitividad."
+    question: "¿Cómo sabéis qué tipo de IA aplicar a mi caso?",
+    answer: "Primero analizamos tus procesos clave. Luego proponemos la solución más eficiente: IA generativa, sistemas RAG, chatbots, flujos con n8n, o una combinación de herramientas."
   },
   {
-    question: "¿Qué tipos de tareas pueden realizar los agentes de IA?",
-    answer: "Pueden realizar una amplia gama de tareas, como atención al cliente 24/7, análisis predictivo de ventas, procesamiento y clasificación de documentos, monitorización de sistemas, optimización de rutas, traducción automática, generación de contenido y mucho más."
+    question: "¿Cuánto tiempo tarda en implementarse un sistema?",
+    answer: "Depende de la complejidad. Algunos agentes están operativos en 3 días; soluciones más avanzadas pueden tardar de 2 a 4 semanas."
   },
   {
-    question: "¿Qué es Retrieval Augmented Generation (RAG)?",
-    answer: "RAG es una técnica que mejora la capacidad de los modelos de lenguaje grandes (LLMs) combinándolos con un sistema de recuperación de información. Antes de generar una respuesta, el sistema busca y recupera datos relevantes de una base de conocimiento externa (como tus documentos), proporcionando contexto al LLM para generar respuestas más precisas y actualizadas."
+    question: "¿La IA sustituirá a mi equipo humano?",
+    answer: "No. Lo libera de tareas repetitivas para que se enfoque en lo estratégico. La IA amplifica, no reemplaza."
   },
   {
-    question: "¿Qué ventajas ofrece RAG frente a otros sistemas de búsqueda?",
-    answer: "RAG proporciona respuestas más precisas, contextualizadas y basadas en información específica y actualizada de tu base de conocimiento. Reduce las 'alucinaciones' (respuestas inventadas) del LLM y permite citar las fuentes de la información."
+    question: "¿Qué nivel técnico necesito para usar estos sistemas?",
+    answer: "Ninguno. Entregamos todo listo para usar. Solo necesitas saber qué quieres mejorar."
   },
   {
-    question: "¿Cómo asegura RAG que la información proporcionada es relevante?",
-    answer: "El componente de 'recuperación' (Retrieval) busca en la base de conocimiento documentos o fragmentos de texto que sean semánticamente similares a la pregunta del usuario. Solo esta información relevante se pasa al modelo generativo, asegurando que la respuesta se base en el contexto adecuado."
+    question: "¿La IA puede integrarse con mis herramientas actuales?",
+    answer: "Sí. Trabajamos con CRMs, ERPs, Notion, Google Workspace, WhatsApp Business, entre otros. Adaptamos la IA a tu stack."
   },
   {
-    question: "¿Qué tipo de documentos pueden integrarse en el sistema RAG?",
-    answer: "Se pueden integrar diversos formatos, como PDFs, documentos de Word (.docx), archivos de texto (.txt), páginas web, entradas de bases de datos, artículos de bases de conocimiento, transcripciones, etc. El sistema necesita indexar estos documentos previamente."
+    question: "¿Cómo se entrena la IA con mis datos?",
+    answer: "Creamos un sistema RAG (Retrieve-Augmented Generation) que indexa y protege tu información. La IA solo accede a lo que tú autorices."
   },
   {
-    question: "¿Es seguro utilizar RAG para consultas sensibles?",
-    answer: "La seguridad depende de la implementación y de los controles de acceso de la base de conocimiento subyacente. Si se implementa correctamente, respetando la privacidad y los permisos de acceso a los datos, RAG puede ser seguro para consultas sensibles."
+    question: "¿Es seguro usar estos sistemas?",
+    answer: "Sí. Cumplimos con buenas prácticas de seguridad y privacidad. Tus datos no se exponen ni se usan para entrenamientos externos."
   },
   {
-    question: "¿Qué es la automatización impulsada por IA?",
-    answer: "Es el uso de tecnologías de inteligencia artificial para automatizar procesos y tareas empresariales que normalmente requerirían intervención humana, especialmente aquellas que involucran toma de decisiones, reconocimiento de patrones o procesamiento de lenguaje natural."
-  },
-  {
-    question: "¿Cómo puede ayudar la automatización en un negocio?",
-    answer: "La automatización puede gestionar tareas como el procesamiento de datos, generación de informes, atención al cliente básica, envío de correos personalizados, clasificación de documentos y mucho más, liberando tiempo para que los empleados se concentren en actividades estratégicas y de mayor valor añadido."
-  },
-  {
-    question: "¿Cuáles son los casos de uso comunes de los agentes de IA?",
-    answer: (
-      <ul className="list-disc list-inside space-y-1">
-        <li><strong>Atención al cliente:</strong> Responden preguntas frecuentes, guían a los usuarios, gestionan tickets de soporte iniciales.</li>
-        <li><strong>Análisis de datos:</strong> Identifican tendencias, generan informes y visualizaciones, predicen resultados.</li>
-        <li><strong>Gestión documental:</strong> Buscan información específica en grandes volúmenes de documentos, clasifican y resumen textos.</li>
-        <li><strong>Automatización de Marketing:</strong> Personalizan campañas, segmentan audiencias, optimizan pujas publicitarias.</li>
-      </ul>
-    )
+    question: "¿Cómo sabré si estoy obteniendo resultados?",
+    answer: "Medimos ahorro de tiempo, aumento de eficiencia y retorno económico en cada fase. Si no mejora tu negocio, no lo implementamos."
   },
 ];
 
@@ -120,6 +105,20 @@ export default function FaqSection() {
           >
             Preguntas Frecuentes
           </TextAnimate>
+          
+          <motion.h3
+            className="mt-6 text-3xl font-bold tracking-tight"
+            variants={sectionTitleVariants}
+          >
+            Resolvemos tus dudas sobre IA
+          </motion.h3>
+          
+          <motion.p
+            className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto"
+            variants={sectionTitleVariants}
+          >
+            Las respuestas a las preguntas más comunes sobre implementación de Inteligencia Artificial en empresas
+          </motion.p>
         </motion.div>
 
         <motion.div
@@ -135,7 +134,7 @@ export default function FaqSection() {
           <Accordion
             type="single"
             collapsible
-            className="mx-auto max-w-3xl backdrop-blur-sm rounded-lg overflow-hidden border border-primary/10 shadow-lg"
+            className="mx-auto max-w-4xl backdrop-blur-sm rounded-lg overflow-hidden border border-primary/10 shadow-lg"
           >
             {faqItems.map((item, index) => (
               <motion.div key={index} variants={accordionItemVariants}>
@@ -144,14 +143,14 @@ export default function FaqSection() {
                   className="border-b border-primary/10 last:border-0"
                 >
                   <AccordionTrigger
-                    className="text-left text-lg font-medium hover:no-underline px-6 py-4 hover:bg-primary/5 transition-colors duration-200"
+                    className="text-left text-lg font-medium hover:no-underline px-6 py-5 hover:bg-primary/5 transition-colors duration-200"
                     data-cursor-hover-target="true"
                   >
                     <TextAnimate
                       animation="fadeIn"
                       by="word"
                       once={true}
-                      delay={0.1 * index}
+                      delay={0.05 * index}
                     >
                       {item.question}
                     </TextAnimate>
@@ -161,6 +160,7 @@ export default function FaqSection() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
+                      className="leading-relaxed"
                     >
                       {item.answer}
                     </motion.div>
@@ -169,6 +169,44 @@ export default function FaqSection() {
               </motion.div>
             ))}
           </Accordion>
+        </motion.div>
+
+        {/* Call to action after FAQ */}
+        <motion.div
+          className="mt-12 text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ amount: 0.3 }}
+          variants={sectionTitleVariants}
+        >
+          <motion.p
+            className="text-lg text-muted-foreground mb-6"
+            variants={sectionTitleVariants}
+          >
+            ¿Tienes más preguntas? Estamos aquí para ayudarte
+          </motion.p>
+          
+          <motion.div
+            variants={sectionTitleVariants}
+          >
+            <button
+              onClick={() => {
+                const contactSection = document.getElementById('contact-form');
+                if (contactSection) {
+                  contactSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                  });
+                }
+              }}
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+            >
+              <span>Contactar con nosotros</span>
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </motion.div>
         </motion.div>
       </div>
     </section>
