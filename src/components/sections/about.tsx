@@ -139,7 +139,7 @@ export default function AboutSection() {
               <div className="w-full h-full overflow-hidden rounded-lg">
                 {/* Usar una imagen estática con dimensiones fijas en lugar de fill */}
                 <img
-                  src="/perfil.webp"
+                  src="/yo.webp"
                   alt="Pepe Cabeza, fundador de Zanovix AI"
                   className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                 />
