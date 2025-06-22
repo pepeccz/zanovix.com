@@ -373,8 +373,6 @@ export default function PoliticaPrivacidadPage() {
                   </p>
                   <ul className="list-disc list-inside space-y-1 text-sm ml-4">
                     <li>Email: <a href="mailto:privacidad@zanovix.com" className="text-primary hover:underline">privacidad@zanovix.com</a></li>
-                    <li>Formulario de contacto en nuestro sitio web</li>
-                    <li>Correo postal a nuestra dirección</li>
                   </ul>
                   <p className="text-xs text-muted-foreground mt-2">
                     <strong>Plazo de respuesta:</strong> Máximo 1 mes desde la recepción de su solicitud.
