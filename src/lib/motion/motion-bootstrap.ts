@@ -1,21 +1,22 @@
 /**
  * motion-bootstrap.ts — orquestador global del sistema de motion
  *
- * Este módulo se importa como <script> en Base.astro.
- * Ejecuta el boot del motion system con dos capas defensivas:
+ * Importado como <script> en Base.astro. Boot del motion system con dos
+ * capas defensivas:
  *
  *   1. JS: no inicializa nada si prefers-reduced-motion: reduce.
  *   2. CSS (motion.css): colapsa animaciones a 0.01ms como safety net.
  *
- * Sin <ClientRouter />: cada navegación es full reload, el bootstrap
- * corre exactamente una vez por página sin event listeners adicionales.
- * Si en el futuro se añade ClientRouter, añadir re-init en 'astro:page-load'.
+ * v1: sin <ClientRouter />. Cada navegación es full reload, el bootstrap
+ * corre una vez por página. El listener `astro:page-load` queda registrado
+ * de todas formas — si en el futuro se introduce ClientRouter sin tocar
+ * este archivo, Lenis y GSAP se reciclan limpios entre transiciones.
  *
  * ADR-001: Lenis singleton en script global, no en React island.
- * ADR-002: Sin ClientRouter en v1.
+ * ADR-002: Sin ClientRouter en v1 (Lenis gana sobre View Transitions).
  */
 
-import { initLenis } from './lenis'
+import { initLenis, destroyLenis } from './lenis'
 import { registerGsap, resetGsap } from './gsap'
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -30,13 +31,21 @@ if (reduce) {
   registerGsap()
 }
 
-// Re-init en astro:page-load (futura navegación SPA si se introduce ClientRouter)
-// Por ahora sin-op en v1 (cada page es full reload). Documentado para PR futuro.
+/**
+ * Re-init en astro:page-load.
+ *
+ * En v1 (sin ClientRouter) esto NUNCA se dispara — cada navegación es full
+ * reload del documento. Queda registrado de forma defensiva: si más adelante
+ * se introduce `<ClientRouter />` para View Transitions cross-page, Lenis +
+ * GSAP se reciclan limpios y el motion sigue funcionando sin tocar este file.
+ *
+ * Sin destroyLenis(): la siguiente initLenis() devolvería la misma instancia
+ * por el guard `if (instance) return instance`. Por eso destruimos primero.
+ */
 document.addEventListener('astro:page-load', () => {
-  if (!reduce) {
-    // En full reload esto no se dispara — pero si se añade ClientRouter:
-    // destroyLenis() + resetGsap() + initLenis() + registerGsap()
-    resetGsap()
-    registerGsap()
-  }
+  if (reduce) return
+  destroyLenis()
+  resetGsap()
+  initLenis()
+  registerGsap()
 })

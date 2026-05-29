@@ -179,23 +179,31 @@ export function revealStagger(
     return new IntersectionObserver(() => {})
   }
 
+  // Pre-asignar índice estable por elemento.
+  // Fix bug latente: si IO disparaba en batches separados, el `idx` del
+  // forEach se reseteaba a 0 cada batch y el stagger colapsaba. Ahora cada
+  // elemento mantiene su posición original en la lista observada.
+  const list = Array.from(elements)
+  const indexOf = new WeakMap<Element, number>()
+  list.forEach((el, i) => indexOf.set(el, i))
+
   const observer = new IntersectionObserver(
     (entries) => {
-      entries.forEach((entry, idx) => {
-        if (entry.isIntersecting) {
-          const el = entry.target as HTMLElement
-          const delay = idx * stagger
-          setTimeout(() => {
-            el.classList.add(className)
-          }, delay)
-          observer.unobserve(el)
-        }
-      })
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        const el = entry.target as HTMLElement
+        const idx = indexOf.get(el) ?? 0
+        const delay = idx * stagger
+        setTimeout(() => {
+          el.classList.add(className)
+        }, delay)
+        observer.unobserve(el)
+      }
     },
     { threshold, rootMargin }
   )
 
-  Array.from(elements).forEach((el) => observer.observe(el))
+  for (const el of list) observer.observe(el)
 
   return observer
 }
