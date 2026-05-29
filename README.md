@@ -1,25 +1,42 @@
-# Zanovix AI - Sitio Web
+# zanovix.com
 
-Este es el repositorio para el sitio web de Zanovix AI, la agencia de inteligencia artificial con sede en Málaga. 
+Sitio web institucional de Zanovix — IA aplicada a empresas.
 
-## Sobre Zanovix AI
+> **Estado:** v2, en construcción. Stack: Astro 5 + Node adapter + Docker.
+> El v0 anterior (Next.js 15 + Shadcn) vive en la branch `archive/v0-shadcn-landing`.
 
-Zanovix AI es una agencia especializada en el desarrollo de soluciones de inteligencia artificial. Ofrecemos servicios de consultoría, desarrollo de soluciones a medida y formación en el campo de la IA. Nos encontramos en Málaga y trabajamos para llevar las últimas tecnologías de IA a nuestros clientes.
+## Para qué sirve
 
-## Tecnologías Utilizadas
+Punto de entrada público de Zanovix. Comunica posicionamiento, manifiesto, casos
+y bitácora. No vende servicios directamente — los servicios viven en páginas
+internas o se acuerdan en conversación tras el primer contacto.
 
-Este proyecto está construido utilizando las siguientes tecnologías:
+## Estructura de fases (SDD)
 
-*   **Next.js:** Un framework de React para el desarrollo web de alto rendimiento.
-*   **TypeScript:** Un superset de JavaScript que añade tipado estático.
-*   **Tailwind CSS:** Un framework de CSS utility-first para un diseño rápido y flexible.
-*   **Radix UI:** Una librería de componentes de interfaz de usuario sin estilo, accesibles y de alta calidad.
-*   **Shadcn UI:** Una librería de componentes de interfaz de usuario construida sobre Radix UI, con estilos predefinidos y personalizables.
-* **Cal.com** A tool for creating calendar embed components
-* **AI SDK** A tool for creating a custom AI assistant
+1. **DISEÑO** — sistema de marca + motion + hero (en curso)
+2. **FUNCIONALIDAD** — formulario contacto, blog/bitácora, navegación
+3. **CONTENIDO** — migración de copy desde `~/zanovix-os/`
+4. **SEO / GEO / SEM** — schema, sitemap, OG, llms.txt, landings de ads
 
+## Comandos
 
-## Empezando
+```bash
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # ./dist/
+npm run preview  # serve dist/
+```
 
-Para empezar a explorar el código, echa un vistazo a `src/app/page.tsx`.
+## Carpetas reservadas
 
+- `src/` — código fuente Astro
+- `public/` — assets estáticos
+- `legacy/` — Docker setup del v0 (referencia para adaptar al adapter Node)
+- `.astro/` — generado, no commitear
+
+## Documentación viva
+
+- Brand canon: `~/zanovix-os/10-branding/DESIGN.md`
+- Tesis estratégica: `~/zanovix-os/02-strategy/tesis-v0-wip.md`
+- Manifiesto: `~/zanovix-os/01-vision/manifiesto.md`
+- Catálogo de servicios (no público): `~/zanovix-os/03-services/`
