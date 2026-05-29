@@ -20,10 +20,25 @@ import { gsap } from './gsap'
 // ─── splitChars ──────────────────────────────────────────────────────────────
 
 /**
- * Divide el contenido de texto de un elemento en spans individuales por carácter.
- * Accesible: el padre recibe aria-label con el texto original; los spans son aria-hidden.
+ * Divide el contenido de un elemento en spans individuales por carácter,
+ * preservando `<br>` y agrupando los chars en `.word` con `white-space: nowrap`
+ * para que el word-wrap del browser ocurra en los espacios y NUNCA dentro de
+ * una palabra.
  *
- * @returns Array de spans creados (para uso en gsap.from/to).
+ * Accesible: el padre recibe aria-label con el texto original (line breaks →
+ * espacios); los chars son aria-hidden.
+ *
+ * Estructura resultante:
+ *   <h1 aria-label="...">
+ *     <span class="word">     <-- inline-block + nowrap, agrupa chars
+ *       <span class="char">S</span><span class="char">i</span>…
+ *     </span>
+ *     " "                      <-- text node, permite wrap natural
+ *     <br>                     <-- preservado del HTML original
+ *     <span class="word">…</span>
+ *   </h1>
+ *
+ * @returns Array de spans `.char` creados (para uso en gsap.from/to).
  */
 export function splitChars(el: HTMLElement): HTMLSpanElement[] {
   // Reduced-motion guard: no alterar el DOM
@@ -31,24 +46,60 @@ export function splitChars(el: HTMLElement): HTMLSpanElement[] {
     return []
   }
 
-  const original = el.textContent ?? ''
-  el.setAttribute('aria-label', original)
+  // aria-label preserva el texto original colapsando whitespace y br a un espacio
+  if (!el.hasAttribute('aria-label')) {
+    el.setAttribute(
+      'aria-label',
+      (el.textContent ?? '').replace(/\s+/g, ' ').trim(),
+    )
+  }
+
+  // Snapshot de los childNodes originales antes de vaciar
+  const originalNodes = Array.from(el.childNodes)
   el.textContent = ''
 
   const spans: HTMLSpanElement[] = []
 
-  for (const ch of [...original]) {
-    if (ch === ' ') {
-      // Espacio como texto plano — mantiene text wrapping nativo
-      el.appendChild(document.createTextNode(' '))
-    } else {
-      const span = document.createElement('span')
-      span.className = 'char'
-      span.setAttribute('aria-hidden', 'true')
-      span.style.display = 'inline-block' // necesario para transform: translateY
-      span.textContent = ch
-      el.appendChild(span)
-      spans.push(span)
+  for (const node of originalNodes) {
+    if (node.nodeName === 'BR') {
+      el.appendChild(document.createElement('br'))
+      continue
+    }
+    if (node.nodeType !== Node.TEXT_NODE) {
+      // Elementos inline ajenos (ej. <em>) — se clonan como están
+      el.appendChild(node.cloneNode(true))
+      continue
+    }
+
+    const text = node.textContent ?? ''
+    // Split preservando los grupos de whitespace como partes separadas
+    const parts = text.split(/(\s+)/)
+
+    for (const part of parts) {
+      if (part === '') continue
+      if (/^\s+$/.test(part)) {
+        // Whitespace puro → text node, único punto de wrap permitido
+        el.appendChild(document.createTextNode(part))
+        continue
+      }
+
+      // Palabra: contenedor inline-block + nowrap atrapa los chars como unidad
+      const wordSpan = document.createElement('span')
+      wordSpan.className = 'word'
+      wordSpan.style.display = 'inline-block'
+      wordSpan.style.whiteSpace = 'nowrap'
+
+      for (const ch of [...part]) {
+        const charSpan = document.createElement('span')
+        charSpan.className = 'char'
+        charSpan.setAttribute('aria-hidden', 'true')
+        charSpan.style.display = 'inline-block' // necesario para transform: translateY
+        charSpan.textContent = ch
+        wordSpan.appendChild(charSpan)
+        spans.push(charSpan)
+      }
+
+      el.appendChild(wordSpan)
     }
   }
 
