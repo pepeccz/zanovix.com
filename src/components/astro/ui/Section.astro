@@ -1,0 +1,19 @@
+---
+interface Props {
+  padY?: 'sm' | 'md' | 'lg'
+  class?: string
+  id?: string
+}
+
+const { padY = 'md', class: className = '', id } = Astro.props
+
+const paddingMap = {
+  sm: 'py-[calc(var(--spacing-section-y)*0.5)]',
+  md: 'py-[var(--spacing-section-y)]',
+  lg: 'py-[calc(var(--spacing-section-y)*1.5)]',
+}
+---
+
+<section id={id} class:list={[paddingMap[padY], className]}>
+  <slot />
+</section>
