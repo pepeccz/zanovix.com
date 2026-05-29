@@ -1,0 +1,108 @@
+/**
+ * motion.css — keyframes + clases reveal + guards reduced-motion
+ *
+ * Patrón: JS dispara la clase, CSS ejecuta la transición.
+ * Separación de responsabilidades: trigger en JS, animation en CSS.
+ *
+ * Clases:
+ *   .reveal           — estado oculto inicial
+ *   .reveal.is-revealed — estado final visible
+ *
+ * Grain overlay: body::before con noise SVG inline
+ * Reduced-motion: capa global que detiene TODO (duración 0.01ms)
+ */
+
+/* ── Reveal: estado inicial ──────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  /* Transition definida aquí; JS solo añade/quita clase */
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Emphasis: drawn underline teal ─────────────────────────────── */
+/**
+ * Uso: <Emphasis>texto</Emphasis>
+ * Anima background-size de 0% a 100% al entrar viewport.
+ * Teal canal bajo, sobre paper. Sin italic. Sin bold.
+ */
+.emphasis-text {
+  position: relative;
+  color: inherit;
+  background-image: linear-gradient(
+    to right,
+    var(--color-teal) 0%,
+    var(--color-teal) 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 0% 1.5px;
+  background-position: left bottom 0.1em;
+  padding-bottom: 0.05em;
+  transition: background-size 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.emphasis-text.is-drawn {
+  background-size: 100% 1.5px;
+}
+
+/* ── Grain overlay: textura sutil sobre paper ───────────────────── */
+/**
+ * Aplicado en Base.astro via body::before.
+ * SVG noise como data URI — sin petición de red adicional.
+ * Opacity muy baja (0.04) para no distraer del contenido.
+ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+/* ── Reduced-motion: capa autoritativa (override global) ────────── */
+/**
+ * Dos capas:
+ *   1. CSS (aquí): colapsa toda animación/transición a 0.01ms.
+ *   2. JS (motion-bootstrap.ts): no inicializa Lenis/GSAP.
+ * La capa CSS es autoritativa — funciona aunque JS falle.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Reveal: estado final directo, sin transición */
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* Emphasis: subrayado visible directo */
+  .emphasis-text {
+    background-size: 100% 1.5px !important;
+    transition: none !important;
+  }
+
+  /* Grain overlay: desactivar — reduce distracción en a11y */
+  body::before {
+    display: none;
+  }
+}

@@ -1,0 +1,73 @@
+---
+/**
+ * Base.astro — HTML shell completo
+ *
+ * Responsabilidades:
+ *   - Estructura HTML semántica: <!doctype> > <html lang="es"> > <head> > <body>
+ *   - Fuentes self-hosted vía @fontsource (no CDN)
+ *   - Import global.css (tokens Tailwind 4) + motion.css (keyframes + grain + RM)
+ *   - Grain overlay: CSS via motion.css body::before (dot-noise inline SVG, opacity 0.04)
+ *   - Script de motion-bootstrap: Lenis + GSAP init con reduced-motion guard
+ *   - prefers-reduced-motion: respetado por CSS (motion.css) y JS (motion-bootstrap.ts)
+ *
+ * REQ-LS-1: HTML shell completo con lang=es, meta charset, viewport, color-scheme.
+ * REQ-MS-1: Lenis singleton inicializado aquí.
+ * REQ-MS-2: GSAP + ScrollTrigger registrado aquí.
+ * ADR-001: Lenis singleton en script global, no en React island.
+ * ADR-002: Sin <ClientRouter /> en v1.
+ */
+
+import '../styles/global.css'
+import '../styles/motion.css'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const {
+  title = 'Zanovix — IA aplicada a empresas',
+  description = 'Soluciones de inteligencia artificial para empresas. Resultados medibles, implementación ética.',
+} = Astro.props
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <!--
+      Fuentes importadas en global.css vía @fontsource (self-hosted, no CDN).
+      @fontsource-variable/newsreader — Newsreader Variable
+      @fontsource-variable/inter     — Inter Variable
+      @fontsource/jetbrains-mono     — JetBrains Mono 400/500
+    -->
+  </head>
+
+  <body class="bg-[var(--color-paper)] text-[var(--color-ink)] font-[var(--font-sans)]">
+    <!--
+      Grain overlay: definido en motion.css como body::before.
+      SVG noise inline, opacity 0.04, pointer-events: none, fixed inset-0 z-999.
+      Da textura paper al fondo y evita que #F4F1EA parezca un doc de Word.
+      Se desactiva automáticamente con prefers-reduced-motion.
+    -->
+
+    <slot />
+  </body>
+</html>
+
+<!--
+  Script de motion: Lenis singleton + GSAP register + reduced-motion guard.
+  Bundleado por Astro como módulo ES — se ejecuta una vez por página.
+  No se usa <ClientRouter />, así que no se necesita re-init manual.
+-->
+<script>
+  import '/src/lib/motion/motion-bootstrap.ts'
+</script>
