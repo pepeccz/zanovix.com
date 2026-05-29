@@ -34,6 +34,57 @@ npm run preview  # serve dist/
 - `legacy/` — Docker setup del v0 (referencia para adaptar al adapter Node)
 - `.astro/` — generado, no commitear
 
+## Run with Docker
+
+### Desarrollo local (smoke test)
+
+```bash
+# Construir la imagen
+docker build -t zanovix-com:local .
+
+# Levantar el contenedor
+docker run --rm -d -p 3000:3000 --name znx-local zanovix-com:local
+
+# Verificar
+curl http://localhost:3000/   # debe responder 200 con HTML
+
+# Parar
+docker stop znx-local
+```
+
+### Con docker compose
+
+```bash
+docker compose up --build     # construye y levanta
+docker compose down           # para y elimina el contenedor
+```
+
+El servicio queda en `http://localhost:3000`.
+
+### Producción
+
+La imagen se construye con la misma `Dockerfile` multistage:
+
+1. Stage `builder` — instala deps + ejecuta `npm run build`
+2. Stage `runner` — imagen final: solo `dist/` + prod deps, usuario no-root (`astro` uid 1001)
+
+Variables de entorno requeridas en el host de producción:
+
+```
+NODE_ENV=production
+HOST=0.0.0.0
+PORT=3000
+```
+
+El servidor Astro Node standalone arranca con:
+```bash
+node ./dist/server/entry.mjs
+```
+
+No requiere nginx ni proxy adicional para servir el sitio.
+
+---
+
 ## Documentación viva
 
 - Brand canon: `~/zanovix-os/10-branding/DESIGN.md`
