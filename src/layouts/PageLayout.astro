@@ -31,14 +31,7 @@ const {
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
 
-    <!-- Fuentes self-hosted (no Google Fonts CDN) — PR #2 las moverá a Base.astro -->
-    <link
-      rel="preload"
-      href="/fonts/newsreader-variable.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
+    <!-- Fuentes importadas en global.css vía @fontsource (self-hosted, no CDN) -->
   </head>
 
   <body class="bg-[var(--color-paper)] text-[var(--color-ink)] font-[var(--font-sans)]">
