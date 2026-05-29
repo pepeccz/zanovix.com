@@ -12,10 +12,7 @@
  */
 
 import PageLayout from '../layouts/PageLayout.astro'
-import Container from '../components/astro/ui/Container.astro'
-import Section from '../components/astro/ui/Section.astro'
-import Eyebrow from '../components/astro/ui/Eyebrow.astro'
-import Hairline from '../components/astro/ui/Hairline.astro'
+import HeroAbstract from '../components/astro/sections/HeroAbstract.astro'
 import DemoSection from '../components/astro/sections/DemoSection.astro'
 ---
 
@@ -23,29 +20,8 @@ import DemoSection from '../components/astro/sections/DemoSection.astro'
   title="Zanovix — IA aplicada a empresas"
   description="Soluciones de inteligencia artificial para empresas. Resultados medibles, implementación ética."
 >
-  <!-- ── Hero placeholder — PR #3 añadirá HeroAbstract + HeroChoreography ── -->
-  <Section padY="lg">
-    <Container narrow>
-      <Eyebrow>IA aplicada a empresas</Eyebrow>
-
-      <h1
-        style="font-size: var(--text-h1); font-family: var(--font-serif); font-weight: 500; line-height: 1.1; margin-top: 1.5rem; margin-bottom: 1.5rem;"
-      >
-        Sistemas que trabajan.<br />
-        Resultados que se miden.
-      </h1>
-
-      <p
-        style="font-size: var(--text-lede); font-family: var(--font-sans); font-weight: 400; color: var(--ink-soft); max-width: 48ch; line-height: 1.6; margin-bottom: 2.5rem;"
-      >
-        Implantamos soluciones de inteligencia artificial en empresas reales.
-        Sin hype, sin promesas vacías — solo sistemas que funcionan y ahorro
-        documentado desde el primer trimestre.
-      </p>
-
-      <Hairline />
-    </Container>
-  </Section>
+  <!-- ── Hero: SVG red de nodos + coreografía GSAP 1.5s ── -->
+  <HeroAbstract />
 
   <!-- ── Below the fold: DemoSection valida Reveal + Emphasis en vivo ── -->
   <DemoSection />
