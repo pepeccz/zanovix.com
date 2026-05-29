@@ -1,0 +1,125 @@
+---
+/**
+ * DemoSection.astro — sección below-the-fold editorial
+ *
+ * Valida el sistema de motion en producción:
+ *   - Reveal: entrada staggered con IntersectionObserver al entrar viewport.
+ *   - Emphasis: drawn underline teal animado on-scroll.
+ *
+ * Copy anti-hype, cercano, joven — tres principios operativos de Zanovix.
+ * Sin italic, sin bold > 500, solo paper/ink/teal.
+ *
+ * REQ-MS-6: Reveal island client:visible.
+ * brand canon: cero terra, cero italic énfasis, cero weight 700+.
+ */
+
+import Section from '../ui/Section.astro'
+import Container from '../ui/Container.astro'
+import Eyebrow from '../ui/Eyebrow.astro'
+import Hairline from '../ui/Hairline.astro'
+import Emphasis from '../ui/Emphasis.astro'
+import Reveal from '../../react/ui/Reveal'
+---
+
+<Section padY="lg">
+  <Container narrow>
+    <!-- Eyebrow + heading revelan con stagger -->
+    <Reveal client:visible delay={0}>
+      <Eyebrow>Cómo trabajamos</Eyebrow>
+    </Reveal>
+
+    <Reveal client:visible delay={80}>
+      <h2
+        style="font-size: var(--text-h2); font-family: var(--font-serif); font-weight: 500; line-height: 1.15; margin-top: 1rem; margin-bottom: 2rem;"
+      >
+        Sin promesas genéricas.<br />
+        Con <Emphasis>metodología documentada</Emphasis>.
+      </h2>
+    </Reveal>
+
+    <Hairline />
+
+    <!-- Tres principios operativos -->
+    <div
+      style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: var(--spacing-stack); margin-top: 2.5rem;"
+    >
+      <!-- Principio 1 -->
+      <Reveal client:visible delay={0}>
+        <article>
+          <p
+            style="font-family: var(--font-mono); font-size: var(--text-eyebrow); color: var(--color-teal); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem;"
+          >
+            01
+          </p>
+          <h3
+            style="font-size: var(--text-h3); font-family: var(--font-serif); font-weight: 500; line-height: 1.2; margin-bottom: 0.75rem;"
+          >
+            Diagnóstico antes de código
+          </h3>
+          <p
+            style="font-size: var(--text-body); font-family: var(--font-sans); font-weight: 400; color: var(--ink-soft); line-height: 1.6;"
+          >
+            Mapeamos los procesos que <Emphasis delay={200}>cuestan más tiempo</Emphasis> antes
+            de escribir una sola línea. La IA viene después, no antes.
+          </p>
+        </article>
+      </Reveal>
+
+      <!-- Principio 2 -->
+      <Reveal client:visible delay={120}>
+        <article>
+          <p
+            style="font-family: var(--font-mono); font-size: var(--text-eyebrow); color: var(--color-teal); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem;"
+          >
+            02
+          </p>
+          <h3
+            style="font-size: var(--text-h3); font-family: var(--font-serif); font-weight: 500; line-height: 1.2; margin-bottom: 0.75rem;"
+          >
+            Métricas desde el día uno
+          </h3>
+          <p
+            style="font-size: var(--text-body); font-family: var(--font-sans); font-weight: 400; color: var(--ink-soft); line-height: 1.6;"
+          >
+            Cada implantación tiene una línea base y un objetivo medible.
+            Si no lo podemos <Emphasis delay={320}>cuantificar</Emphasis>, no lo proponemos.
+          </p>
+        </article>
+      </Reveal>
+
+      <!-- Principio 3 -->
+      <Reveal client:visible delay={240}>
+        <article>
+          <p
+            style="font-family: var(--font-mono); font-size: var(--text-eyebrow); color: var(--color-teal); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem;"
+          >
+            03
+          </p>
+          <h3
+            style="font-size: var(--text-h3); font-family: var(--font-serif); font-weight: 500; line-height: 1.2; margin-bottom: 0.75rem;"
+          >
+            Tu equipo lo mantiene
+          </h3>
+          <p
+            style="font-size: var(--text-body); font-family: var(--font-sans); font-weight: 400; color: var(--ink-soft); line-height: 1.6;"
+          >
+            Entregamos sistemas que tu equipo puede operar sin nosotros.
+            Sin <Emphasis delay={440}>dependencia permanente</Emphasis> del consultor.
+          </p>
+        </article>
+      </Reveal>
+    </div>
+
+    <Hairline style="margin-top: 2.5rem;" />
+
+    <!-- Cierre editorial -->
+    <Reveal client:visible delay={0}>
+      <p
+        style="font-size: var(--text-lede); font-family: var(--font-sans); font-weight: 400; color: var(--ink-mute); line-height: 1.6; margin-top: 2rem; max-width: 52ch;"
+      >
+        La IA aplicada a empresas no es un producto que se compra.
+        Es un <Emphasis>proceso que se construye</Emphasis> con criterio, ritmo y datos reales.
+      </p>
+    </Reveal>
+  </Container>
+</Section>
