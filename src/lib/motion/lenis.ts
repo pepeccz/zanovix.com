@@ -37,7 +37,7 @@ export function initLenis(): Lenis | null {
     duration: 1.1,
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
-    smoothTouch: false, // touch nativo gana en mobile
+    syncTouch: false, // touch nativo gana en mobile (lenis 1.x: syncTouch)
   })
 
   // RAF loop

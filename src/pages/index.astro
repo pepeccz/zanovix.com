@@ -1,16 +1,29 @@
 ---
+/**
+ * index.astro — home page
+ *
+ * Estructura:
+ *   PageLayout (→ Base.astro)
+ *     ├─ Hero placeholder (PR #3: HeroAbstract + HeroChoreography)
+ *     └─ DemoSection (below-the-fold: Reveal + Emphasis en producción)
+ *
+ * Base.astro gestiona: HTML shell, fonts, global.css, motion.css,
+ * Lenis init, GSAP register, grain overlay, reduced-motion guards.
+ */
+
 import PageLayout from '../layouts/PageLayout.astro'
 import Container from '../components/astro/ui/Container.astro'
 import Section from '../components/astro/ui/Section.astro'
 import Eyebrow from '../components/astro/ui/Eyebrow.astro'
 import Hairline from '../components/astro/ui/Hairline.astro'
+import DemoSection from '../components/astro/sections/DemoSection.astro'
 ---
 
 <PageLayout
   title="Zanovix — IA aplicada a empresas"
   description="Soluciones de inteligencia artificial para empresas. Resultados medibles, implementación ética."
 >
-  <!-- ── Hero placeholder antes de PR #3 HeroAbstract ── -->
+  <!-- ── Hero placeholder — PR #3 añadirá HeroAbstract + HeroChoreography ── -->
   <Section padY="lg">
     <Container narrow>
       <Eyebrow>IA aplicada a empresas</Eyebrow>
@@ -33,4 +46,7 @@ import Hairline from '../components/astro/ui/Hairline.astro'
       <Hairline />
     </Container>
   </Section>
+
+  <!-- ── Below the fold: DemoSection valida Reveal + Emphasis en vivo ── -->
+  <DemoSection />
 </PageLayout>

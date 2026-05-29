@@ -20,7 +20,7 @@
  * ADR-010: Sin animation-timeline (soporte parcial en Firefox).
  */
 
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import type { CSSProperties, ElementType, ReactNode } from 'react'
 
 interface RevealProps {
@@ -78,9 +78,8 @@ export default function Reveal({
   }, [delay, threshold, rootMargin])
 
   return (
-    // @ts-expect-error — Tag dinámico como ElementType válido
     <Tag
-      ref={ref}
+      ref={ref as React.RefObject<never>}
       className={`reveal ${className}`.trim()}
       style={style}
     >
