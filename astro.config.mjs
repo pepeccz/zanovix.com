@@ -5,8 +5,10 @@ import react from '@astrojs/react'
 import tailwindcss from '@tailwindcss/vite'
 
 // https://astro.build/config
+// Note: In Astro 6, 'hybrid' was renamed to 'static' (same behavior).
+// SSR pages opt-in via `export const prerender = false`.
 export default defineConfig({
-  output: 'hybrid',
+  output: 'server',
   adapter: node({ mode: 'standalone' }),
   integrations: [react()],
   vite: {

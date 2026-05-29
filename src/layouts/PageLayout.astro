@@ -1,0 +1,93 @@
+---
+/**
+ * PageLayout — layout mínimo v1
+ * Estructura semántica: skip-link > header > main > footer
+ * Base.astro (HTML shell completo con fonts + motion) viene en PR #2.
+ * En PR #1 este layout auto-gestiona el <html> shell directamente.
+ */
+import BrandMark from '../components/astro/ui/BrandMark.astro'
+import '../styles/global.css'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const {
+  title = 'Zanovix — IA aplicada a empresas',
+  description = 'Soluciones de inteligencia artificial para empresas. Resultados medibles, implementación ética.',
+} = Astro.props
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <!-- Fuentes self-hosted (no Google Fonts CDN) — PR #2 las moverá a Base.astro -->
+    <link
+      rel="preload"
+      href="/fonts/newsreader-variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+  </head>
+
+  <body class="bg-[var(--color-paper)] text-[var(--color-ink)] font-[var(--font-sans)]">
+    <!-- Skip link de accesibilidad (visible al tabular) -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <header class="border-b border-[var(--color-rule)] py-4">
+      <div class="mx-auto flex max-w-[var(--container-wide)] items-center justify-between px-[var(--spacing-section-x)]">
+        <a
+          href="/"
+          class="flex items-center gap-3 text-[var(--color-ink)] no-underline"
+          aria-label="Zanovix — Inicio"
+        >
+          <BrandMark size={32} />
+          <span class="font-[var(--font-mono)] text-[var(--text-eyebrow)] uppercase tracking-widest">
+            Zanovix
+          </span>
+        </a>
+
+        <!-- Navegación minimal v1 — placeholder para futuras secciones -->
+        <nav aria-label="Navegación principal">
+          <ul class="flex list-none gap-6 m-0 p-0">
+            <!-- PR #2+ añadirá links reales -->
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <footer class="border-t border-[var(--color-rule)] py-8 mt-[var(--spacing-section-y)]">
+      <div class="mx-auto flex max-w-[var(--container-wide)] items-center justify-between px-[var(--spacing-section-x)]">
+        <a
+          href="/"
+          class="flex items-center gap-3 text-[var(--color-ink)] no-underline"
+          aria-label="Zanovix — Inicio"
+        >
+          <BrandMark size={24} />
+          <span class="font-[var(--font-mono)] text-[var(--text-eyebrow)] uppercase tracking-widest">
+            Zanovix
+          </span>
+        </a>
+
+        <p class="text-[var(--text-eyebrow)] text-[var(--ink-mute)] font-[var(--font-mono)]">
+          &copy; {new Date().getFullYear()} Zanovix
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

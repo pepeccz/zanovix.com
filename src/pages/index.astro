@@ -1,17 +1,165 @@
 ---
-
+import PageLayout from '../layouts/PageLayout.astro'
+import Container from '../components/astro/ui/Container.astro'
+import Section from '../components/astro/ui/Section.astro'
+import Eyebrow from '../components/astro/ui/Eyebrow.astro'
+import Hairline from '../components/astro/ui/Hairline.astro'
+import BrandMark from '../components/astro/ui/BrandMark.astro'
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<PageLayout
+  title="Zanovix — IA aplicada a empresas"
+  description="Soluciones de inteligencia artificial para empresas. Resultados medibles, implementación ética."
+>
+  <!-- ── Hero mínimo (placeholder antes de PR #3 HeroAbstract) ── -->
+  <Section padY="lg">
+    <Container narrow>
+      <Eyebrow>IA aplicada a empresas</Eyebrow>
+
+      <h1
+        style="font-size: var(--text-h1); font-family: var(--font-serif); font-weight: 500; line-height: 1.1; margin-top: 1.5rem; margin-bottom: 1.5rem;"
+      >
+        Sistemas que trabajan.<br />
+        Resultados que se miden.
+      </h1>
+
+      <p
+        style="font-size: var(--text-lede); font-family: var(--font-sans); font-weight: 400; color: var(--ink-soft); max-width: 48ch; line-height: 1.6; margin-bottom: 2.5rem;"
+      >
+        Implantamos soluciones de inteligencia artificial en empresas reales.
+        Sin hype, sin promesas vacías — solo sistemas que funcionan y ahorro
+        documentado desde el primer trimestre.
+      </p>
+
+      <Hairline />
+    </Container>
+  </Section>
+
+  <!-- ── Showcase de primitivos ── -->
+  <Section padY="md">
+    <Container narrow>
+      <Eyebrow>Sistema de diseño — primitivos</Eyebrow>
+
+      <div style="margin-top: var(--spacing-stack); display: flex; flex-direction: column; gap: var(--spacing-stack);">
+
+        <!-- Container showcase -->
+        <div>
+          <p style="font-size: var(--text-eyebrow); font-family: var(--font-mono); color: var(--ink-mute); margin-bottom: 0.5rem;">Container</p>
+          <div style="border: 1px solid var(--color-rule); padding: 1rem; background: var(--color-paper);">
+            <Container narrow>
+              <p style="font-size: var(--text-body); font-family: var(--font-sans);">
+                Container narrow — max-width 720px, padding horizontal fluid.
+              </p>
+            </Container>
+          </div>
+        </div>
+
+        <Hairline />
+
+        <!-- Section showcase -->
+        <div>
+          <p style="font-size: var(--text-eyebrow); font-family: var(--font-mono); color: var(--ink-mute); margin-bottom: 0.5rem;">Section</p>
+          <div style="border: 1px solid var(--color-rule);">
+            <Section padY="sm">
+              <p style="font-size: var(--text-body); font-family: var(--font-sans); text-align: center;">
+                Section padY="sm" — padding vertical fluid escalado.
+              </p>
+            </Section>
+          </div>
+        </div>
+
+        <Hairline />
+
+        <!-- Eyebrow showcase -->
+        <div>
+          <p style="font-size: var(--text-eyebrow); font-family: var(--font-mono); color: var(--ink-mute); margin-bottom: 0.5rem;">Eyebrow</p>
+          <Eyebrow>Categoría del artículo — etiqueta superior</Eyebrow>
+        </div>
+
+        <Hairline />
+
+        <!-- Hairline showcase -->
+        <div>
+          <p style="font-size: var(--text-eyebrow); font-family: var(--font-mono); color: var(--ink-mute); margin-bottom: 0.5rem;">Hairline</p>
+          <Hairline />
+          <div style="height: 1rem;"></div>
+          <Hairline strong />
+          <p style="font-size: var(--text-eyebrow); font-family: var(--font-mono); color: var(--ink-mute); margin-top: 0.5rem;">
+            Normal (14% ink) y fuerte (28% ink)
+          </p>
+        </div>
+
+        <Hairline />
+
+        <!-- BrandMark showcase -->
+        <div>
+          <p style="font-size: var(--text-eyebrow); font-family: var(--font-mono); color: var(--ink-mute); margin-bottom: 0.5rem;">BrandMark</p>
+          <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+              <BrandMark size={24} />
+              <span style="font-size: var(--text-eyebrow); font-family: var(--font-mono); color: var(--ink-mute);">24px</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+              <BrandMark size={32} />
+              <span style="font-size: var(--text-eyebrow); font-family: var(--font-mono); color: var(--ink-mute);">32px</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+              <BrandMark size={48} />
+              <span style="font-size: var(--text-eyebrow); font-family: var(--font-mono); color: var(--ink-mute);">48px</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; color: var(--color-teal);">
+              <BrandMark size={32} />
+              <span style="font-size: var(--text-eyebrow); font-family: var(--font-mono); color: var(--ink-mute);">teal</span>
+            </div>
+          </div>
+        </div>
+
+        <Hairline />
+
+        <!-- Escala tipográfica -->
+        <div>
+          <p style="font-size: var(--text-eyebrow); font-family: var(--font-mono); color: var(--ink-mute); margin-bottom: 1rem;">Escala tipográfica fluid</p>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <p style="font-size: var(--text-display); font-family: var(--font-serif); font-weight: 400; line-height: 1;">Display</p>
+            <p style="font-size: var(--text-h1); font-family: var(--font-serif); font-weight: 400; line-height: 1.1;">Título H1</p>
+            <p style="font-size: var(--text-h2); font-family: var(--font-serif); font-weight: 400; line-height: 1.2;">Título H2</p>
+            <p style="font-size: var(--text-h3); font-family: var(--font-sans); font-weight: 500; line-height: 1.3;">Título H3</p>
+            <p style="font-size: var(--text-lede); font-family: var(--font-sans); font-weight: 400; line-height: 1.6; color: var(--ink-soft);">Lede — texto de introducción o subtítulo</p>
+            <p style="font-size: var(--text-body); font-family: var(--font-sans); font-weight: 400; line-height: 1.7;">Body — texto corriente del contenido editorial.</p>
+            <p style="font-size: var(--text-eyebrow); font-family: var(--font-mono); font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase;">Eyebrow / Caption / Mono</p>
+          </div>
+        </div>
+
+        <Hairline />
+
+        <!-- Paleta de colores -->
+        <div>
+          <p style="font-size: var(--text-eyebrow); font-family: var(--font-mono); color: var(--ink-mute); margin-bottom: 1rem;">Paleta bicroma + teal</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; flex-direction: column; gap: 0.25rem; min-width: 7rem;">
+              <div style="background: var(--color-paper); border: 1px solid var(--color-rule); height: 3rem; border-radius: 2px;"></div>
+              <span style="font-size: var(--text-eyebrow); font-family: var(--font-mono);">paper #F4F1EA</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.25rem; min-width: 7rem;">
+              <div style="background: var(--color-ink); height: 3rem; border-radius: 2px;"></div>
+              <span style="font-size: var(--text-eyebrow); font-family: var(--font-mono);">ink #1F2A26</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.25rem; min-width: 7rem;">
+              <div style="background: var(--color-teal); height: 3rem; border-radius: 2px;"></div>
+              <span style="font-size: var(--text-eyebrow); font-family: var(--font-mono);">teal #3BAA8C</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.25rem; min-width: 7rem;">
+              <div style="background: var(--ink-soft); height: 3rem; border-radius: 2px;"></div>
+              <span style="font-size: var(--text-eyebrow); font-family: var(--font-mono);">ink-soft 76%</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.25rem; min-width: 7rem;">
+              <div style="background: var(--ink-mute); height: 3rem; border-radius: 2px;"></div>
+              <span style="font-size: var(--text-eyebrow); font-family: var(--font-mono);">ink-mute 55%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </Container>
+  </Section>
+</PageLayout>
