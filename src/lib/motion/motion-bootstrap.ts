@@ -14,10 +14,13 @@
  *
  * ADR-001: Lenis singleton en script global, no en React island.
  * ADR-002: Sin ClientRouter en v1 (Lenis gana sobre View Transitions).
+ * ADR-011: registerScrollSystem() llamado tras document.fonts.ready para
+ *          garantizar coordenadas estables de ScrollTrigger post-font-swap.
  */
 
 import { initLenis, destroyLenis } from './lenis'
-import { registerGsap, resetGsap } from './gsap'
+import { registerGsap, resetGsap, ScrollTrigger } from './gsap'
+import { registerScrollSystem, teardownScrollSystem } from './scroll-system'
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -29,6 +32,29 @@ if (reduce) {
   document.documentElement.dataset.motion = 'full'
   initLenis()
   registerGsap()
+
+  // ADR-011: esperar a que las fuentes estén listas antes de registrar
+  // scroll-system — garantiza que la altura tipográfica del H1 (Cormorant)
+  // ya está calculada y los triggers no apuntan a coordenadas invalidadas.
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(() => {
+      registerScrollSystem()
+      ScrollTrigger.refresh()
+    })
+  } else {
+    // Fallback para browsers sin document.fonts (edge case)
+    if (typeof requestIdleCallback !== 'undefined') {
+      requestIdleCallback(() => {
+        registerScrollSystem()
+        ScrollTrigger.refresh()
+      })
+    } else {
+      setTimeout(() => {
+        registerScrollSystem()
+        ScrollTrigger.refresh()
+      }, 0)
+    }
+  }
 }
 
 /**
@@ -46,6 +72,19 @@ document.addEventListener('astro:page-load', () => {
   if (reduce) return
   destroyLenis()
   resetGsap()
+  teardownScrollSystem()
   initLenis()
   registerGsap()
+
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(() => {
+      registerScrollSystem()
+      ScrollTrigger.refresh()
+    })
+  } else {
+    setTimeout(() => {
+      registerScrollSystem()
+      ScrollTrigger.refresh()
+    }, 0)
+  }
 })

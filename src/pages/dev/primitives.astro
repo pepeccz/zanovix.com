@@ -8,6 +8,11 @@
  * y primitives durante desarrollo.
  *
  * No incluir en sitemap ni indexar (se gestiona en fase SEO).
+ *
+ * RISK GUARD 2.1 — Stub de Cap 2 para validar pin + Lenis ScrollerProxy:
+ *   Añade al final de la página una sección de 200vh con ScrollTrigger pin.
+ *   Resultado documentado en scroll-system.ts header una vez validado.
+ *   TODO: Retirar o comentar el stub tras la validación visual en Chrome DevTools.
  */
 import PageLayout from '../../layouts/PageLayout.astro'
 import Container from '../../components/astro/ui/Container.astro'
@@ -151,4 +156,78 @@ import BrandMark from '../../components/astro/ui/BrandMark.astro'
       </div>
     </Container>
   </Section>
+
+  <!-- ── RISK GUARD 2.1: Cap2 pin stub ──────────────────────────────── -->
+  <!--
+    Valida que ScrollTrigger pin:true funciona con Lenis ScrollerProxy.
+    Instrucciones de smoke:
+      1. Iniciar el servidor de desarrollo: npm run dev
+      2. Navegar a http://localhost:4321/dev/primitives
+      3. Abrir DevTools > Performance
+      4. Hacer scroll hasta la sección "Cap 2 stub" (~200vh más abajo)
+      5. Verificar que el contenido queda pineado durante el scrub sin desplazarse
+      6. Si el contenido se desplaza incorrectamente → necesita pinType:'transform'
+      7. Documentar resultado en scroll-system.ts header como:
+         ✅ pin:true funciona con Lenis proxy | ⚠️ Requiere pinType:'transform' | ❌ Sin pin
+  -->
+  <div
+    id="cap2-pin-stub"
+    style="
+      height: 200vh;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      padding-top: 20vh;
+      border-top: 1px solid var(--color-rule-strong);
+    "
+  >
+    <div
+      id="cap2-pin-content"
+      style="
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: var(--color-paper);
+        font-family: var(--font-mono);
+        font-size: var(--text-eyebrow);
+        color: var(--ink-mute);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      "
+    >
+      Cap 2 stub — pin test (scroll-system.ts risk guard 2.1)
+    </div>
+  </div>
 </PageLayout>
+
+<script>
+  // ── RISK GUARD 2.1: ScrollTrigger pin test con Lenis proxy ──────────
+  // Resultado esperado: el contenido queda pineado sin desplazarse durante scrub.
+  // Si hay bug conocido GSAP+Lenis con pin:true, se observa un "jump" del contenido.
+  // En ese caso, añadir pinType:'transform' al create() de Cap2 en scroll-system.ts.
+  import { ScrollTrigger } from '../../lib/motion/gsap'
+
+  const trigger = document.getElementById('cap2-pin-stub')
+  const pinnedEl = document.getElementById('cap2-pin-content')
+
+  if (trigger && pinnedEl) {
+    ScrollTrigger.create({
+      trigger,
+      start: 'top top',
+      end: 'bottom top',
+      pin: pinnedEl,
+      scrub: 1,
+      invalidateOnRefresh: true,
+      // Descomentar si pin:true produce jump con Lenis proxy:
+      // pinType: 'transform',
+      onEnter: () => {
+        pinnedEl.style.color = 'var(--color-teal)'
+      },
+      onLeaveBack: () => {
+        pinnedEl.style.color = 'var(--ink-mute)'
+      },
+    })
+  }
+</script>
