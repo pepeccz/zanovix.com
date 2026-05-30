@@ -2,27 +2,32 @@
 /**
  * index.astro — home page
  *
- * Estructura:
- *   PageLayout (→ Base.astro)
- *     ├─ Hero placeholder (PR #3: HeroAbstract + HeroChoreography)
- *     └─ DemoSection (below-the-fold: Reveal + Emphasis en producción)
+ * Compone los 7 capítulos del scroll editorial en orden.
+ * Sin lógica de motion inline — toda la orquestación vive en
+ * scroll-system.ts (bootstrap) y hero-choreography.ts (Cap 1).
  *
- * Base.astro gestiona: HTML shell, fonts, global.css, motion.css,
- * Lenis init, GSAP register, grain overlay, reduced-motion guards.
+ * PR 2 de 3: chapters 1-7 implementados. Motion ya wired en PR 1.
  */
 
 import PageLayout from '../layouts/PageLayout.astro'
-import HeroAbstract from '../components/astro/sections/HeroAbstract.astro'
-import DemoSection from '../components/astro/sections/DemoSection.astro'
+import Cap1Hero from '../components/astro/sections/chapters/Cap1Hero.astro'
+import Cap2Declaracion from '../components/astro/sections/chapters/Cap2Declaracion.astro'
+import Cap3QueHacemos from '../components/astro/sections/chapters/Cap3QueHacemos.astro'
+import Cap4Caso from '../components/astro/sections/chapters/Cap4Caso.astro'
+import Cap5Como from '../components/astro/sections/chapters/Cap5Como.astro'
+import Cap6Manifiesto from '../components/astro/sections/chapters/Cap6Manifiesto.astro'
+import Cap7Contacto from '../components/astro/sections/chapters/Cap7Contacto.astro'
 ---
 
 <PageLayout
   title="Zanovix — IA aplicada a empresas"
   description="Soluciones de inteligencia artificial para empresas. Resultados medibles, implementación ética."
 >
-  <!-- ── Hero: SVG red de nodos + coreografía GSAP 1.5s ── -->
-  <HeroAbstract />
-
-  <!-- ── Below the fold: DemoSection valida Reveal + Emphasis en vivo ── -->
-  <DemoSection />
+  <Cap1Hero />
+  <Cap2Declaracion />
+  <Cap3QueHacemos />
+  <Cap4Caso />
+  <Cap5Como />
+  <Cap6Manifiesto />
+  <Cap7Contacto />
 </PageLayout>

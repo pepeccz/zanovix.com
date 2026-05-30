@@ -1,0 +1,137 @@
+---
+/**
+ * Cap5Como.astro — Capítulo 5: Cómo trabajamos — 3 principios
+ *
+ * Stack vertical con Hairline separator entre principios.
+ * Clase .reveal en cada item para IntersectionObserver stagger.
+ *
+ * Sin motion inline. Copy canonical: copy-override #6015.
+ */
+
+import Eyebrow from '../../ui/Eyebrow.astro'
+import Hairline from '../../ui/Hairline.astro'
+---
+
+<section
+  data-chapter="5"
+  id="cap-5"
+  class="chapter"
+  style="
+    padding-top: var(--spacing-section-y);
+    padding-bottom: var(--spacing-section-y);
+    padding-left: var(--spacing-section-x);
+    padding-right: var(--spacing-section-x);
+  "
+>
+  <div style="max-width: var(--container-wide); margin: 0 auto;">
+    <!-- Eyebrow -->
+    <Eyebrow class="mb-6">// criterio</Eyebrow>
+
+    <!-- H2 -->
+    <h2
+      style="
+        font-family: var(--font-serif);
+        font-size: var(--text-h2);
+        font-weight: 500;
+        line-height: 1.15;
+        color: var(--color-ink);
+        margin-bottom: clamp(2.5rem, 4vw, 4rem);
+      "
+    >
+      Tres principios. Sin excepciones.
+    </h2>
+
+    <!-- Principios en stack vertical con hairlines -->
+    <div style="display: flex; flex-direction: column;">
+
+      <!-- Principio 1 -->
+      <div class="reveal" style="padding-top: clamp(1.5rem, 2.5vw, 2.5rem); padding-bottom: clamp(1.5rem, 2.5vw, 2.5rem);">
+        <h3
+          style="
+            font-family: var(--font-serif);
+            font-size: clamp(1.25rem, 1.5vw + 0.75rem, 1.75rem);
+            font-weight: 500;
+            color: var(--color-ink);
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+          "
+        >
+          Diagnóstico antes que IA.
+        </h3>
+        <p
+          style="
+            font-family: var(--font-sans);
+            font-size: var(--text-body);
+            font-weight: 400;
+            color: var(--ink-mute);
+            line-height: 1.65;
+            max-width: 52ch;
+          "
+        >
+          Si no entendemos el problema, no aplicamos un modelo.
+        </p>
+      </div>
+
+      <Hairline />
+
+      <!-- Principio 2 -->
+      <div class="reveal" style="padding-top: clamp(1.5rem, 2.5vw, 2.5rem); padding-bottom: clamp(1.5rem, 2.5vw, 2.5rem);">
+        <h3
+          style="
+            font-family: var(--font-serif);
+            font-size: clamp(1.25rem, 1.5vw + 0.75rem, 1.75rem);
+            font-weight: 500;
+            color: var(--color-ink);
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+          "
+        >
+          Método antes que herramienta.
+        </h3>
+        <p
+          style="
+            font-family: var(--font-sans);
+            font-size: var(--text-body);
+            font-weight: 400;
+            color: var(--ink-mute);
+            line-height: 1.65;
+            max-width: 52ch;
+          "
+        >
+          El modelo de moda no resuelve un proceso mal diseñado.
+        </p>
+      </div>
+
+      <Hairline />
+
+      <!-- Principio 3 -->
+      <div class="reveal" style="padding-top: clamp(1.5rem, 2.5vw, 2.5rem); padding-bottom: clamp(1.5rem, 2.5vw, 2.5rem);">
+        <h3
+          style="
+            font-family: var(--font-serif);
+            font-size: clamp(1.25rem, 1.5vw + 0.75rem, 1.75rem);
+            font-weight: 500;
+            color: var(--color-ink);
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+          "
+        >
+          Sin sobreingeniería.
+        </h3>
+        <p
+          style="
+            font-family: var(--font-sans);
+            font-size: var(--text-body);
+            font-weight: 400;
+            color: var(--ink-mute);
+            line-height: 1.65;
+            max-width: 52ch;
+          "
+        >
+          La complejidad se justifica o se elimina.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>

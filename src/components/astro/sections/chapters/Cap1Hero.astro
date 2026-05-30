@@ -1,0 +1,103 @@
+---
+/**
+ * Cap1Hero.astro — Capítulo 1: Hero de la home
+ *
+ * Refactor de HeroAbstract.astro → estructura editorial sin SVG.
+ * La tipografía Cormorant Garamond ES la pieza visual.
+ *
+ * IDs preservados para compatibilidad con hero-choreography.ts:
+ *   #hero, #hero-eyebrow, #hero-headline, #hero-lede, #hero-svg-wrapper
+ *
+ * data-chapter="1" para targeting de scroll-system.ts.
+ * Sin imports GSAP/ScrollTrigger inline — la coreografía vive en
+ * hero-choreography.ts importada vía <script>.
+ *
+ * Copy canonical: copy-override #6015 (frame: estudio de IA).
+ */
+---
+
+<section
+  id="hero"
+  data-chapter="1"
+  aria-label="Cap 1 — Zanovix, estudio de inteligencia artificial"
+  class="chapter"
+  style="
+    padding-top: var(--spacing-hero-y);
+    padding-bottom: var(--spacing-hero-y);
+    padding-left: var(--spacing-section-x);
+    padding-right: var(--spacing-section-x);
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  "
+>
+  <!-- Eyebrow mono -->
+  <p
+    id="hero-eyebrow"
+    style="
+      font-family: var(--font-mono);
+      font-size: var(--text-eyebrow);
+      color: var(--color-teal);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+    "
+  >
+    // estudio de inteligencia artificial
+  </p>
+
+  <!-- H1 display Cormorant Garamond -->
+  <h1
+    id="hero-headline"
+    class="display-cormorant"
+    style="
+      max-width: 18ch;
+      margin-bottom: 2rem;
+      opacity: 0;
+    "
+  >
+    Inteligencia artificial que devuelve tiempo.
+  </h1>
+
+  <!-- Sub-línea Newsreader -->
+  <p
+    id="hero-lede"
+    style="
+      font-family: var(--font-serif);
+      font-size: clamp(1.0625rem, 0.4vw + 0.97rem, 1.5rem);
+      font-weight: 400;
+      color: var(--ink-soft);
+      line-height: 1.6;
+      max-width: 48ch;
+      margin-bottom: 0;
+      opacity: 0;
+    "
+  >
+    Diseñamos sistemas con IA aplicada, con criterio. Sin atajos, sin humo, sin prisa.
+  </p>
+
+  <!--
+    #hero-svg-wrapper: preservado para que hero-choreography.ts no rompa al
+    buscar el selector. Oculto — en esta fase la tipografía es la pieza visual.
+  -->
+  <div id="hero-svg-wrapper" style="display: none;" aria-hidden="true"></div>
+</section>
+
+<style>
+  /* Reduced-motion: mostrar todo en estado final */
+  @media (prefers-reduced-motion: reduce) {
+    #hero-eyebrow,
+    #hero-headline,
+    #hero-lede {
+      opacity: 1 !important;
+    }
+  }
+</style>
+
+<script>
+  import '../../../../lib/motion/hero-choreography.ts'
+</script>

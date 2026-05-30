@@ -1,0 +1,66 @@
+---
+/**
+ * Cap6Manifiesto.astro — Capítulo 6: Pull quote editorial
+ *
+ * blockquote con .display-cormorant + font-size override puntual.
+ * Link a /manifiesto — la ruta se crea en PR 3. El href apunta al destino futuro.
+ *
+ * Copy canonical: copy-override #6015.
+ * sin motion inline.
+ */
+
+import Eyebrow from '../../ui/Eyebrow.astro'
+---
+
+<section
+  data-chapter="6"
+  id="cap-6"
+  class="chapter"
+  style="
+    min-height: 80vh;
+    padding-top: var(--spacing-section-y);
+    padding-bottom: var(--spacing-section-y);
+    padding-left: var(--spacing-section-x);
+    padding-right: var(--spacing-section-x);
+    display: flex;
+    align-items: center;
+  "
+>
+  <div style="max-width: var(--container-wide); margin: 0 auto; width: 100%;">
+    <!-- Eyebrow -->
+    <Eyebrow class="mb-8">// manifiesto</Eyebrow>
+
+    <!-- Pull quote -->
+    <blockquote
+      class="display-cormorant"
+      style="
+        font-size: clamp(3.5rem, 6vw, 5rem);
+        line-height: 1.1;
+        max-width: 20ch;
+        color: var(--color-ink);
+        margin: 0 0 2.5rem 0;
+        padding: 0;
+        border: none;
+      "
+    >
+      "No vendemos inteligencia artificial. Devolvemos tiempo a equipos que ya sabían lo que querían construir."
+    </blockquote>
+
+    <!-- Link al manifiesto (ruta creada en PR 3) -->
+    <a
+      href="/manifiesto"
+      style="
+        font-family: var(--font-sans);
+        font-size: var(--text-body);
+        font-weight: 400;
+        color: var(--ink-mute);
+        text-decoration: underline;
+        text-decoration-color: var(--teal-soft);
+        text-underline-offset: 0.25em;
+        transition: color 200ms ease, text-decoration-color 200ms ease;
+      "
+    >
+      Leer el manifiesto completo →
+    </a>
+  </div>
+</section>
