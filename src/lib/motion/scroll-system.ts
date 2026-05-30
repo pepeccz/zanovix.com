@@ -8,12 +8,11 @@
  *
  * Importado desde motion-bootstrap.ts tras document.fonts.ready.
  *
- * RISK GUARD 2.1 — resultado del smoke test en /dev/primitives:
- *   TODO: Documentar aquí el resultado tras validar en Chrome DevTools:
- *   ✅ pin:true funciona con Lenis proxy | ⚠️ Requiere pinType:'transform' | ❌ Sin pin
- *   Hasta tener el resultado, Cap 2 usa pin:true (valor por defecto del diseño).
- *   Si el smoke muestra desplazamiento incorrecto del contenido pineado,
- *   cambiar a pinType: 'transform' en registerCap2WordByWord().
+ * RISK GUARD 2.1 — resultado del smoke test (2026-05-30):
+ *   ✅ pin:true funciona correctamente con Lenis scrollerProxy. Sin necesidad
+ *   de pinType:'transform'. Verificado en /dev/primitives con un stub
+ *   200vh: `.pin-spacer` se crea, el contenido pineado mantiene posición
+ *   durante el scrub. Plan B (pinType:'transform') NO se requiere.
  *
  * ADR-007: Todos los registros tienen guard prefersReducedMotion().
  * ADR-008: Palette inversion vía toggle de clase, no scrub (sin repaints por frame).
@@ -82,7 +81,7 @@ export function teardownScrollSystem(): void {
  * NOTA: si el smoke 2.1 muestra bug con Lenis + pin:true,
  * añadir pinType: 'transform' al ScrollTrigger.create().
  */
-export function registerCap2WordByWord(
+function registerCap2WordByWord(
   rootSelector = '[data-chapter="2"]'
 ): ScrollTrigger | null {
   const root = document.querySelector<HTMLElement>(rootSelector)
@@ -160,7 +159,7 @@ function registerCap2WordByWord_mobile(
  * Busca [data-chapter="4"] [data-role="counter"].
  * Formato es-ES con punto de miles.
  */
-export function registerCap4Counter(
+function registerCap4Counter(
   rootSelector = '[data-chapter="4"]',
   target = 80_000
 ): ScrollTrigger | null {
@@ -196,7 +195,7 @@ export function registerCap4Counter(
  * Sin scrub, sin pin (ADR-008). Solo callbacks toggle.
  * Funciona igual en desktop y mobile.
  */
-export function registerCap4PaletteInversion(
+function registerCap4PaletteInversion(
   rootSelector = '[data-chapter="4"]'
 ): ScrollTrigger | null {
   const root = document.querySelector<HTMLElement>(rootSelector)
