@@ -1,0 +1,37 @@
+---
+/**
+ * CapVideoMask — interludio narrativo entre Cap 1 y Cap 2.
+ *
+ * Sección sticky con máscara CSS en forma de flor que crece scroll-driven.
+ * data-chapter="video-mask" (string, no número) — interludio sin numerar.
+ *
+ * SYNC: utiliza /isotipo-mask.svg como máscara CSS (ADR-015).
+ * El SVG es silueta blanca sobre fondo transparente → mask-mode alpha.
+ * La animación de --mask-sz (120px → 100vmax) vive en flor-video-mask.ts.
+ *
+ * Drop-in del video real: cuando existan los archivos de video, reemplazar
+ * <div class="video-placeholder"> por:
+ *   <video autoplay muted loop playsinline preload="none" aria-hidden="true"
+ *          data-video-player>
+ *     <source src="/video/pepe-loop.webm" type="video/webm" />
+ *     <source src="/video/pepe-loop.mp4"  type="video/mp4" />
+ *   </video>
+ * Sin ningún cambio en flor-video-mask.ts (REQ-7.2, REQ-7.3).
+ */
+---
+
+<section
+  data-chapter="video-mask"
+  data-video-mask-root
+  class="video-mask-section"
+>
+  <div data-video-stage class="video-mask-stage">
+    <!--
+      Placeholder teal mientras no existe el video real.
+      La mask CSS (.video-mask-stage) opera idénticamente sobre este div
+      y sobre el futuro <video>. Sin distinción en el JS (REQ-2.6, REQ-7.2).
+    -->
+    <div class="video-placeholder" aria-hidden="true"></div>
+    <p class="sr-only">Vídeo de presentación de Zanovix.</p>
+  </div>
+</section>

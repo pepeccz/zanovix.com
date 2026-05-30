@@ -21,6 +21,8 @@
 import { initLenis, destroyLenis } from './lenis'
 import { registerGsap, resetGsap, ScrollTrigger } from './gsap'
 import { registerScrollSystem, teardownScrollSystem } from './scroll-system'
+import { registerFlorBloom, teardownFlorBloom } from './flor-bloom'
+import { registerFlorVideoMask, teardownFlorVideoMask } from './flor-video-mask'
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -39,6 +41,8 @@ if (reduce) {
   if (document.fonts?.ready) {
     document.fonts.ready.then(() => {
       registerScrollSystem()
+      registerFlorBloom()
+      registerFlorVideoMask()
       ScrollTrigger.refresh()
     })
   } else {
@@ -46,11 +50,15 @@ if (reduce) {
     if (typeof requestIdleCallback !== 'undefined') {
       requestIdleCallback(() => {
         registerScrollSystem()
+        registerFlorBloom()
+        registerFlorVideoMask()
         ScrollTrigger.refresh()
       })
     } else {
       setTimeout(() => {
         registerScrollSystem()
+        registerFlorBloom()
+        registerFlorVideoMask()
         ScrollTrigger.refresh()
       }, 0)
     }
@@ -73,17 +81,23 @@ document.addEventListener('astro:page-load', () => {
   destroyLenis()
   resetGsap()
   teardownScrollSystem()
+  teardownFlorBloom()
+  teardownFlorVideoMask()
   initLenis()
   registerGsap()
 
   if (document.fonts?.ready) {
     document.fonts.ready.then(() => {
       registerScrollSystem()
+      registerFlorBloom()
+      registerFlorVideoMask()
       ScrollTrigger.refresh()
     })
   } else {
     setTimeout(() => {
       registerScrollSystem()
+      registerFlorBloom()
+      registerFlorVideoMask()
       ScrollTrigger.refresh()
     }, 0)
   }

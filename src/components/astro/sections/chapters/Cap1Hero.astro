@@ -22,6 +22,7 @@
   aria-label="Cap 1 — Zanovix, estudio de inteligencia artificial"
   class="chapter"
   style="
+    position: relative;
     padding-top: var(--spacing-hero-y);
     padding-bottom: var(--spacing-hero-y);
     padding-left: var(--spacing-section-x);
@@ -88,10 +89,57 @@
   </div>
 
   <!--
-    #hero-svg-wrapper: preservado para que hero-choreography.ts no rompa al
-    buscar el selector. Oculto — en esta fase la tipografía es la pieza visual.
+    #hero-svg-wrapper: SVG flor inline con IDs para bloom scrub-driven.
+    position: absolute lateral-derecho en desktop (ADR-013). No altera el
+    flujo tipográfico ni la altura del H1.
+
+    SYNC: geometría pétalo idéntica a BrandMark.astro y /public/isotipo-mask.svg.
+    Cualquier cambio en la forma del pétalo debe replicarse en los 3 archivos.
   -->
-  <div id="hero-svg-wrapper" style="display: none;" aria-hidden="true"></div>
+  <div id="hero-svg-wrapper" class="flor-hero-wrapper" aria-hidden="true">
+    <svg
+      data-flor-bloom-root
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+      width="100%"
+      height="100%"
+      fill="none"
+    >
+      <!--
+        Rotación radial en el atributo transform del SVG (no en CSS).
+        GSAP solo anima opacity — así no toca la rotación.
+      -->
+      <path id="petal-0" d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z"
+        fill="var(--color-teal)" stroke="var(--color-ink)" stroke-width="3.2" stroke-linejoin="round"
+        style="opacity:0;" />
+      <path id="petal-1" d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(45 50 50)"
+        fill="var(--color-teal)" stroke="var(--color-ink)" stroke-width="3.2" stroke-linejoin="round"
+        style="opacity:0;" />
+      <path id="petal-2" d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(90 50 50)"
+        fill="var(--color-teal)" stroke="var(--color-ink)" stroke-width="3.2" stroke-linejoin="round"
+        style="opacity:0;" />
+      <path id="petal-3" d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(135 50 50)"
+        fill="var(--color-teal)" stroke="var(--color-ink)" stroke-width="3.2" stroke-linejoin="round"
+        style="opacity:0;" />
+      <path id="petal-4" d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(180 50 50)"
+        fill="var(--color-teal)" stroke="var(--color-ink)" stroke-width="3.2" stroke-linejoin="round"
+        style="opacity:0;" />
+      <path id="petal-5" d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(225 50 50)"
+        fill="var(--color-teal)" stroke="var(--color-ink)" stroke-width="3.2" stroke-linejoin="round"
+        style="opacity:0;" />
+      <path id="petal-6" d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(270 50 50)"
+        fill="var(--color-teal)" stroke="var(--color-ink)" stroke-width="3.2" stroke-linejoin="round"
+        style="opacity:0;" />
+      <path id="petal-7" d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(315 50 50)"
+        fill="var(--color-teal)" stroke="var(--color-ink)" stroke-width="3.2" stroke-linejoin="round"
+        style="opacity:0;" />
+      <circle
+        id="petal-center"
+        cx="50" cy="50" r="5.5"
+        fill="var(--color-ink)"
+        style="opacity:0;" />
+    </svg>
+  </div>
 </section>
 
 <style>
@@ -101,6 +149,39 @@
     #hero-headline,
     #hero-lede {
       opacity: 1 !important;
+    }
+
+    /* Flor bloom: estado final en reduced-motion */
+    .flor-hero-wrapper [id^="petal-"],
+    .flor-hero-wrapper #petal-center {
+      opacity: 1 !important;
+    }
+  }
+
+  /* Desktop: flor absolute lateral derecho — sin interferir con flujo del H1 */
+  /* La sección tiene position: relative via style inline */
+  .flor-hero-wrapper {
+    position: absolute;
+    right: 6%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: clamp(220px, 30vw, 420px);
+    aspect-ratio: 1 / 1;
+    pointer-events: none;
+    z-index: 1;
+    /* opacity arrancará en 0; hero-choreography.ts la lleva a 1 en t=0.0 */
+    opacity: 0;
+  }
+
+  /* Mobile: flujo normal encima del texto */
+  @media (max-width: 767px) {
+    .flor-hero-wrapper {
+      position: relative;
+      right: auto;
+      top: auto;
+      transform: none;
+      margin: 0 auto 2rem;
+      width: 200px;
     }
   }
 </style>
