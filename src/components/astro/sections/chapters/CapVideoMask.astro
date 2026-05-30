@@ -9,15 +9,12 @@
  * El SVG es silueta blanca sobre fondo transparente → mask-mode alpha.
  * La animación de --mask-sz (120px → 100vmax) vive en flor-video-mask.ts.
  *
- * Drop-in del video real: cuando existan los archivos de video, reemplazar
- * <div class="video-placeholder"> por:
- *   <video autoplay muted loop playsinline preload="none" aria-hidden="true"
- *          data-video-player>
- *     <source src="/video/pepe-loop.webm" type="video/webm" />
- *     <source src="/video/pepe-loop.mp4"  type="video/mp4" />
- *   </video>
- * Sin ningún cambio en flor-video-mask.ts (REQ-7.2, REQ-7.3).
+ * Video: embed YouTube autoplay + muted + loop + sin controles.
+ * El iframe cubre el viewport vía .yt-cover (max(100vw, 177.78vh)).
+ * pointer-events:none para que el scroll y la mask manden, no el reproductor.
  */
+const YT_ID = 'XDU-Ca5l-ao'
+const YT_SRC = `https://www.youtube-nocookie.com/embed/${YT_ID}?autoplay=1&mute=1&loop=1&playlist=${YT_ID}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0`
 ---
 
 <section
@@ -26,12 +23,15 @@
   class="video-mask-section"
 >
   <div data-video-stage class="video-mask-stage">
-    <!--
-      Placeholder teal mientras no existe el video real.
-      La mask CSS (.video-mask-stage) opera idénticamente sobre este div
-      y sobre el futuro <video>. Sin distinción en el JS (REQ-2.6, REQ-7.2).
-    -->
-    <div class="video-placeholder" aria-hidden="true"></div>
+    <div class="yt-cover" aria-hidden="true">
+      <iframe
+        src={YT_SRC}
+        title="Vídeo de presentación de Zanovix"
+        loading="lazy"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        referrerpolicy="strict-origin-when-cross-origin"
+      ></iframe>
+    </div>
     <p class="sr-only">Vídeo de presentación de Zanovix.</p>
   </div>
 </section>

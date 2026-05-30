@@ -172,6 +172,30 @@ header.nav--scrolled {
   background: var(--color-teal);
 }
 
+/**
+ * .yt-cover — wrapper para iframe YouTube cubriendo el viewport en 16:9.
+ * pointer-events:none → ningún click llega al reproductor, manda el scroll.
+ * El iframe usa max(100vw, 177.78vh) × max(56.25vw, 100vh) para asegurar
+ * cover sin letterboxing en cualquier proporción de viewport.
+ */
+.video-mask-stage .yt-cover {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.video-mask-stage .yt-cover iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100vw, 177.78vh);
+  height: max(56.25vw, 100vh);
+  transform: translate(-50%, -50%);
+  border: 0;
+  pointer-events: none;
+}
+
 /* ── Flor persistente: fixed bottom-right ───────────────────────── */
 /**
  * Visible solo en home (PageLayout renderiza condicionalmente via SSR).
