@@ -85,9 +85,24 @@ No requiere nginx ni proxy adicional para servir el sitio.
 
 ---
 
+## Sincronización de contenido desde vault
+
+El archivo `src/content/manifiesto/manifiesto.md` se sincroniza **manualmente** desde el vault de Zanovix:
+
+```bash
+# Sync desde vault al repo
+cp ~/zanovix-os/01-vision/manifiesto.md src/content/manifiesto/manifiesto.md
+```
+
+**Importante tras el sync:**
+1. El frontmatter local (`title` y `updated`) puede diferir del original. Preservar el frontmatter del repo si ya tiene los valores correctos.
+2. Validar con `npx astro check` — debe dar 0 errores.
+3. Hacer commit con mensaje: `content(manifiesto): sync desde vault YYYY-MM-DD`.
+
 ## Documentación viva
 
 - Brand canon: `~/zanovix-os/10-branding/DESIGN.md`
 - Tesis estratégica: `~/zanovix-os/02-strategy/tesis-v0-wip.md`
-- Manifiesto: `~/zanovix-os/01-vision/manifiesto.md`
+- Manifiesto (fuente): `~/zanovix-os/01-vision/manifiesto.md`
+- Manifiesto (repo): `src/content/manifiesto/manifiesto.md`
 - Catálogo de servicios (no público): `~/zanovix-os/03-services/`

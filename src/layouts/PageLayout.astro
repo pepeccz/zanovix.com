@@ -10,6 +10,9 @@
  * REQ-LS-2: header con BrandMark + nav minimal + footer con BrandMark.
  * REQ-LS-3: skip-link accesible.
  * REQ-LS-4: estructura semántica header > main#main-content > footer.
+ *
+ * Nav links: Manifiesto · Contacto · GitHub
+ * Footer: BrandMark + nav inline + © 2026 Zanovix · Málaga
  */
 
 import Base from './Base.astro'
@@ -54,10 +57,36 @@ const { title, description } = Astro.props
         </span>
       </a>
 
-      <!-- Navegación minimal v1 — placeholder para futuras secciones -->
+      <!-- Navegación principal -->
       <nav aria-label="Navegación principal">
         <ul class="flex list-none gap-6 m-0 p-0">
-          <!-- PR futuro añadirá links reales -->
+          <li>
+            <a
+              href="/manifiesto"
+              class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-teal)] transition-colors duration-200"
+            >
+              Manifiesto
+            </a>
+          </li>
+          <li>
+            <a
+              href="/contacto"
+              class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-teal)] transition-colors duration-200"
+            >
+              Contacto
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://github.com/pepeccz"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-teal)] transition-colors duration-200"
+              aria-label="GitHub de Zanovix (abre en nueva pestaña)"
+            >
+              GitHub
+            </a>
+          </li>
         </ul>
       </nav>
     </div>
@@ -68,20 +97,56 @@ const { title, description } = Astro.props
   </main>
 
   <footer class="border-t border-[var(--color-rule)] py-8 mt-[var(--spacing-section-y)]">
-    <div class="mx-auto flex max-w-[var(--container-wide)] items-center justify-between px-[var(--spacing-section-x)]">
-      <a
-        href="/"
-        class="flex items-center gap-3 text-[var(--color-ink)] no-underline"
-        aria-label="Zanovix — Inicio"
-      >
-        <BrandMark size={24} />
-        <span class="font-[var(--font-mono)] text-[var(--text-eyebrow)] uppercase tracking-widest">
-          Zanovix
-        </span>
-      </a>
+    <div
+      class="mx-auto max-w-[var(--container-wide)] px-[var(--spacing-section-x)]"
+      style="display: flex; flex-direction: column; gap: 1.25rem;"
+    >
+      <!-- Fila superior: isotipo + nav inline -->
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <a
+          href="/"
+          class="flex items-center gap-3 text-[var(--color-ink)] no-underline"
+          aria-label="Zanovix — Inicio"
+        >
+          <BrandMark size={32} />
+        </a>
 
+        <nav aria-label="Navegación de pie de página">
+          <ul class="flex list-none gap-6 m-0 p-0 flex-wrap">
+            <li>
+              <a
+                href="/manifiesto"
+                class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--ink-mute)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+              >
+                Manifiesto
+              </a>
+            </li>
+            <li>
+              <a
+                href="/contacto"
+                class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--ink-mute)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+              >
+                Contacto
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/pepeccz"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--ink-mute)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+                aria-label="GitHub de Zanovix (abre en nueva pestaña)"
+              >
+                GitHub
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Línea final: copyright -->
       <p class="text-[var(--text-eyebrow)] text-[var(--ink-mute)] font-[var(--font-mono)]">
-        &copy; {new Date().getFullYear()} Zanovix
+        &copy; 2026 Zanovix · Málaga
       </p>
     </div>
   </footer>

@@ -1,0 +1,140 @@
+---
+/**
+ * manifiesto.astro — Página del manifiesto de Zanovix
+ *
+ * Fuente del copy: src/content/manifiesto/manifiesto.md
+ * (sincronizado manualmente desde ~/zanovix-os/01-vision/manifiesto.md)
+ *
+ * Tipografía: Newsreader 400, sin animation extra — página de lectura.
+ * Contenedor narrow (~64ch) para máxima legibilidad.
+ */
+import { getCollection, render } from 'astro:content'
+import PageLayout from '../layouts/PageLayout.astro'
+
+const entries = await getCollection('manifiesto')
+const entry = entries[0]
+if (!entry) throw new Error('No manifiesto entry found in content collection')
+
+const { Content } = await render(entry)
+---
+
+<PageLayout
+  title="Manifiesto · Zanovix"
+  description="El manifiesto de Zanovix. Por qué existimos, para quién trabajamos y cómo lo hacemos."
+>
+  <article
+    style="
+      max-width: var(--container-wide);
+      margin: 0 auto;
+      padding: var(--spacing-section-y) var(--spacing-section-x);
+    "
+  >
+    <!-- Eyebrow -->
+    <p
+      style="
+        font-family: var(--font-mono);
+        font-size: var(--text-eyebrow);
+        color: var(--color-teal);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 2rem;
+      "
+    >
+      // visión
+    </p>
+
+    <!-- Contenedor narrow para lectura (~64ch) -->
+    <div class="manifesto-body">
+      <Content />
+    </div>
+  </article>
+</PageLayout>
+
+<style>
+  /*
+   * Estilos de prosa para el markdown del manifiesto.
+   * Newsreader 400, line-height generoso, spacing editorial.
+   * Ninguna animación — esta es una página de lectura.
+   */
+  .manifesto-body {
+    max-width: 64ch;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(1rem, 0.3vw + 0.92rem, 1.1875rem);
+    line-height: 1.75;
+    color: var(--color-ink);
+  }
+
+  /* Headings editoriales */
+  .manifesto-body :global(h2) {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 1.5vw + 0.75rem, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-top: 3.5rem;
+    margin-bottom: 1.25rem;
+    color: var(--color-ink);
+  }
+
+  .manifesto-body :global(h3) {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(1.125rem, 1vw + 0.75rem, 1.5rem);
+    line-height: 1.3;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-ink);
+  }
+
+  /* Párrafos con espaciado editorial */
+  .manifesto-body :global(p) {
+    margin-bottom: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .manifesto-body :global(p) {
+      margin-bottom: 2rem;
+    }
+  }
+
+  /* Listas */
+  .manifesto-body :global(ul),
+  .manifesto-body :global(ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .manifesto-body :global(li) {
+    margin-bottom: 0.75rem;
+    line-height: 1.65;
+  }
+
+  /* Strong en lista: peso 500 (nunca 700+) */
+  .manifesto-body :global(strong) {
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  /* Separador horizontal */
+  .manifesto-body :global(hr) {
+    border: none;
+    border-top: 1px solid var(--color-rule);
+    margin: 3rem 0;
+  }
+
+  /* Blockquote / callout inicial */
+  .manifesto-body :global(blockquote) {
+    border-left: 2px solid var(--color-teal);
+    padding-left: 1.25rem;
+    margin-left: 0;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+  }
+
+  /* Em final italic — excepción tipográfica consciente para el cierre */
+  .manifesto-body :global(em) {
+    font-style: italic;
+    color: var(--ink-mute);
+  }
+</style>

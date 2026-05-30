@@ -34,51 +34,58 @@
     justify-content: center;
   "
 >
-  <!-- Eyebrow mono -->
-  <p
-    id="hero-eyebrow"
-    style="
-      font-family: var(--font-mono);
-      font-size: var(--text-eyebrow);
-      color: var(--color-teal);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 1.5rem;
-      opacity: 0;
-    "
-  >
-    // estudio de inteligencia artificial
-  </p>
+  <!--
+    #hero-text: contenedor del grupo de texto.
+    hero-choreography.ts usa este ID para el parallax de scroll (y offset suave).
+    Envuelve eyebrow + headline + lede para que el parallax mueva el grupo completo.
+  -->
+  <div id="hero-text">
+    <!-- Eyebrow mono -->
+    <p
+      id="hero-eyebrow"
+      style="
+        font-family: var(--font-mono);
+        font-size: var(--text-eyebrow);
+        color: var(--color-teal);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+      "
+    >
+      // estudio de inteligencia artificial
+    </p>
 
-  <!-- H1 display Cormorant Garamond -->
-  <h1
-    id="hero-headline"
-    class="display-cormorant"
-    style="
-      max-width: 18ch;
-      margin-bottom: 2rem;
-      opacity: 0;
-    "
-  >
-    Inteligencia artificial que devuelve tiempo.
-  </h1>
+    <!-- H1 display Cormorant Garamond -->
+    <h1
+      id="hero-headline"
+      class="display-cormorant"
+      style="
+        max-width: 18ch;
+        margin-bottom: 2rem;
+        opacity: 0;
+      "
+    >
+      Inteligencia artificial que devuelve tiempo.
+    </h1>
 
-  <!-- Sub-línea Newsreader -->
-  <p
-    id="hero-lede"
-    style="
-      font-family: var(--font-serif);
-      font-size: clamp(1.0625rem, 0.4vw + 0.97rem, 1.5rem);
-      font-weight: 400;
-      color: var(--ink-soft);
-      line-height: 1.6;
-      max-width: 48ch;
-      margin-bottom: 0;
-      opacity: 0;
-    "
-  >
-    Diseñamos sistemas con IA aplicada, con criterio. Sin atajos, sin humo, sin prisa.
-  </p>
+    <!-- Sub-línea Newsreader -->
+    <p
+      id="hero-lede"
+      style="
+        font-family: var(--font-serif);
+        font-size: clamp(1.0625rem, 0.4vw + 0.97rem, 1.5rem);
+        font-weight: 400;
+        color: var(--ink-soft);
+        line-height: 1.6;
+        max-width: 48ch;
+        margin-bottom: 0;
+        opacity: 0;
+      "
+    >
+      Diseñamos sistemas con IA aplicada, con criterio. Sin atajos, sin humo, sin prisa.
+    </p>
+  </div>
 
   <!--
     #hero-svg-wrapper: preservado para que hero-choreography.ts no rompa al
