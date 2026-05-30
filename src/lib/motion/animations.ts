@@ -1,13 +1,15 @@
 /**
  * animations.ts — helpers de motion editorial
  *
- * Tres helpers:
+ * Cuatro helpers:
+ *   prefersReducedMotion — fuente canónica del flag reduced-motion
  *   splitChars   — divide texto en spans animables (accesible)
+ *   splitWords   — divide texto en spans por palabra (Cap 2 word-by-word)
  *   drawPath     — anima stroke-dashoffset nativo (reemplaza DrawSVG de Club)
  *   revealStagger — IntersectionObserver + stagger vía setTimeout (0KB lib extra)
  *
  * Todos respetan prefers-reduced-motion:
- *   - splitChars: no altera el DOM si reduced.
+ *   - splitChars/splitWords: no altera el DOM si reduced.
  *   - drawPath: estado final instantáneo si reduced.
  *   - revealStagger: aplica clase is-revealed inmediatamente si reduced.
  *
@@ -16,6 +18,24 @@
  */
 
 import { gsap } from './gsap'
+
+// ─── prefersReducedMotion ─────────────────────────────────────────────────────
+
+/**
+ * Fuente canónica del flag reduced-motion.
+ * Evaluado en runtime — cubre usuarios que activan RM después de la carga.
+ *
+ * Todos los registros de scroll-system.ts y hero-choreography.ts lo importan
+ * de aquí. Una sola fuente de verdad.
+ *
+ * @returns true si el documento tiene data-motion="reduced" en <html>
+ */
+export function prefersReducedMotion(): boolean {
+  return (
+    typeof document !== 'undefined' &&
+    document.documentElement.dataset.motion === 'reduced'
+  )
+}
 
 // ─── splitChars ──────────────────────────────────────────────────────────────
 
@@ -104,6 +124,103 @@ export function splitChars(el: HTMLElement): HTMLSpanElement[] {
   }
 
   return spans
+}
+
+// ─── splitWords ──────────────────────────────────────────────────────────────
+
+/**
+ * Divide el contenido de un elemento en spans por PALABRA (no por carácter),
+ * preservando `<br>` y nodos inline ajenos como unidades.
+ *
+ * Complementa splitChars (ADR-010): splitChars para el H1 entrance (Cap 1),
+ * splitWords para la declaración word-by-word (Cap 2).
+ *
+ * Accesible: el padre recibe aria-label con el texto original; los spans de
+ * palabra llevan aria-hidden="true" para que screen readers no los doblen.
+ *
+ * Guard idempotente: si el elemento ya fue procesado (data-splitWordsApplied),
+ * devuelve los spans existentes sin mutar el DOM.
+ *
+ * Edge cases:
+ *   - Texto vacío → return []
+ *   - Elementos inline (<em>, <strong>) → clonados como unidad, sin split
+ *   - <br> → preservado
+ *   - Whitespace puro → TextNode (permite word wrap natural del browser)
+ *   - data-motion="reduced" → return [] sin mutar DOM
+ *
+ * @returns Array de spans `.word` en orden de aparición en el texto.
+ */
+export function splitWords(
+  el: HTMLElement,
+  opts: { wordClass?: string } = {}
+): HTMLSpanElement[] {
+  // Reduced-motion guard: no alterar el DOM
+  if (prefersReducedMotion()) return []
+
+  // Guard idempotente
+  if (el.dataset.splitWordsApplied) {
+    return Array.from(el.querySelectorAll<HTMLSpanElement>(
+      `.${opts.wordClass ?? 'word'}`
+    ))
+  }
+
+  // Texto vacío
+  const rawText = (el.textContent ?? '').replace(/\s+/g, ' ').trim()
+  if (!rawText) return []
+
+  // aria-label: preserva el texto original para screen readers
+  if (!el.hasAttribute('aria-label')) {
+    el.setAttribute('aria-label', rawText)
+  }
+
+  // Snapshot de childNodes antes de vaciar
+  const originalNodes = Array.from(el.childNodes)
+  el.textContent = ''
+
+  const wordSpans: HTMLSpanElement[] = []
+  const wordClass = opts.wordClass ?? 'word'
+  let wordIndex = 0
+
+  for (const node of originalNodes) {
+    if (node.nodeName === 'BR') {
+      el.appendChild(document.createElement('br'))
+      continue
+    }
+    if (node.nodeType !== Node.TEXT_NODE) {
+      // Elemento inline ajeno (ej. <em>, <strong>) — clonado como unidad, sin split
+      el.appendChild(node.cloneNode(true))
+      continue
+    }
+
+    const text = node.textContent ?? ''
+    // Split preservando grupos de whitespace como partes separadas
+    const parts = text.split(/(\s+)/)
+
+    for (const part of parts) {
+      if (part === '') continue
+      if (/^\s+$/.test(part)) {
+        // Whitespace puro → TextNode, único punto de wrap permitido
+        el.appendChild(document.createTextNode(part))
+        continue
+      }
+
+      // Palabra: span inline-block con aria-hidden para evitar doble lectura SR
+      const span = document.createElement('span')
+      span.className = wordClass
+      span.setAttribute('aria-hidden', 'true')
+      span.dataset.wordIndex = String(wordIndex)
+      span.style.display = 'inline-block'
+      span.textContent = part
+      el.appendChild(span)
+      wordSpans.push(span)
+      wordIndex++
+    }
+  }
+
+  // Marcar como procesado
+  el.dataset.splitWordsApplied = '1'
+
+  return wordSpans
 }
 
 // ─── drawPath ────────────────────────────────────────────────────────────────

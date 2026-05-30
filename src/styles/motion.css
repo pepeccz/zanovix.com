@@ -53,6 +53,29 @@
   background-size: 100% 1.5px;
 }
 
+/* ── Palette inversion — Cap 4 ──────────────────────────────────── */
+/**
+ * Clase añadida/removida por scroll-system.ts via onEnter/onLeaveBack.
+ * NO hardcodeada en markup — JS controla el toggle.
+ * Contraste teal sobre ink: #3BAA8C / #1F2A26 → ratio ~4.7:1 (WCAG AA ok).
+ * Transición de 240ms: suave sin ser jarring.
+ * En reduced-motion: la transición se colapsa a 0.01ms por el override global.
+ */
+.section--inverted {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  transition: background 240ms ease, color 240ms ease;
+}
+
+.section--inverted .ink-mute {
+  color: var(--paper-overlay);
+}
+
+.section--inverted ::selection {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
 /* ── Grain overlay: textura sutil sobre paper ───────────────────── */
 /**
  * Aplicado en Base.astro via body::before.

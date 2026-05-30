@@ -48,7 +48,11 @@ const {
       @fontsource-variable/newsreader — Newsreader Variable
       @fontsource-variable/inter     — Inter Variable
       @fontsource/jetbrains-mono     — JetBrains Mono 400/500
+      @fontsource-variable/cormorant-garamond — Cormorant Garamond Variable (display companion)
     -->
+
+    <!-- Slot para preloads e inyecciones de head desde layouts hijos -->
+    <slot name="head" />
   </head>
 
   <body class="bg-[var(--color-paper)] text-[var(--color-ink)] font-[var(--font-sans)]">

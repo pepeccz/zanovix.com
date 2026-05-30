@@ -15,6 +15,12 @@
 import Base from './Base.astro'
 import BrandMark from '../components/astro/ui/BrandMark.astro'
 
+// Preload Cormorant Garamond Variable woff2 (latin, wght axis, no italic)
+// Path: @fontsource-variable/cormorant-garamond/files/cormorant-garamond-latin-wght-normal.woff2
+// Si el path no resuelve en una versión futura del package, comentar la línea
+// y documentar aquí: font-display:swap (fontsource default) absorbe el FOUT.
+import cormorantWoff2 from '@fontsource-variable/cormorant-garamond/files/cormorant-garamond-latin-wght-normal.woff2?url'
+
 interface Props {
   title?: string
   description?: string
@@ -24,6 +30,14 @@ const { title, description } = Astro.props
 ---
 
 <Base title={title} description={description}>
+  <link
+    rel="preload"
+    as="font"
+    type="font/woff2"
+    href={cormorantWoff2}
+    crossorigin
+    slot="head"
+  />
   <!-- Skip link de accesibilidad (visible al tabular) -->
   <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 
