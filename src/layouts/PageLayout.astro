@@ -17,6 +17,7 @@
 
 import Base from './Base.astro'
 import BrandMark from '../components/astro/ui/BrandMark.astro'
+import FlorPersistente from '../components/astro/ui/FlorPersistente.astro'
 
 // Preload Cormorant Garamond Variable woff2 (latin, wght axis, no italic)
 // Path: @fontsource-variable/cormorant-garamond/files/cormorant-garamond-latin-wght-normal.woff2
@@ -27,12 +28,18 @@ import cormorantWoff2 from '@fontsource-variable/cormorant-garamond/files/cormor
 interface Props {
   title?: string
   description?: string
+  /** Identificador de página. Propaga data-page al <body> vía Base.astro.
+   *  Valores canónicos: 'home' | 'manifiesto' | 'contacto'. Default: ''.
+   *  Usado por: registerFlorPersistente() en scroll-system.ts (condicional),
+   *  y por el render condicional de <FlorPersistente /> abajo.
+   */
+  page?: string
 }
 
-const { title, description } = Astro.props
+const { title, description, page = '' } = Astro.props
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} page={page}>
   <link
     rel="preload"
     as="font"
@@ -44,7 +51,7 @@ const { title, description } = Astro.props
   <!-- Skip link de accesibilidad (visible al tabular) -->
   <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 
-  <header class="border-b border-[var(--color-rule)] py-4">
+  <header class="sticky top-0 z-50 border-b border-[var(--color-rule)] py-4">
     <div class="mx-auto flex max-w-[var(--container-wide)] items-center justify-between px-[var(--spacing-section-x)]">
       <a
         href="/"
@@ -150,4 +157,33 @@ const { title, description } = Astro.props
       </p>
     </div>
   </footer>
+
+  {page === 'home' && <FlorPersistente />}
+
+  <script is:inline>
+    // Sticky nav scroll-state: toggle .nav--scrolled cuando hero >50% fuera del viewport.
+    // ADR-017: IntersectionObserver inline, sin GSAP.
+    (function setupStickyNav() {
+      var header = document.querySelector('header');
+      if (!header) return;
+
+      var sentinel =
+        document.querySelector('#hero') ||
+        document.querySelector('[data-chapter="1"]');
+
+      // Páginas sin hero (manifiesto, contacto, etc.) → nav siempre en estado scrolled
+      if (!sentinel) {
+        header.classList.add('nav--scrolled');
+        return;
+      }
+
+      var io = new IntersectionObserver(
+        function(entries) {
+          header.classList.toggle('nav--scrolled', entries[0].intersectionRatio < 0.5);
+        },
+        { threshold: [0.5] }
+      );
+      io.observe(sentinel);
+    })();
+  </script>
 </Base>

@@ -1,0 +1,14 @@
+<!-- SYNC: geometría sincronizada con src/components/astro/ui/BrandMark.astro y src/components/astro/sections/chapters/Cap1Hero.astro. Si cambia la geometría del pétalo o del centro, actualizar los 3 archivos. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <g fill="#fff">
+    <path d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z"/>
+    <path d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(45 50 50)"/>
+    <path d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(90 50 50)"/>
+    <path d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(135 50 50)"/>
+    <path d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(180 50 50)"/>
+    <path d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(225 50 50)"/>
+    <path d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(270 50 50)"/>
+    <path d="M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z" transform="rotate(315 50 50)"/>
+    <circle cx="50" cy="50" r="5.5"/>
+  </g>
+</svg>

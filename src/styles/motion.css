@@ -94,6 +94,129 @@ body::before {
   background-size: 128px 128px;
 }
 
+/* ── Sticky nav: estado base y scroll-state ─────────────────────── */
+/**
+ * Header sticky con transición suave entre estado inicial y nav--scrolled.
+ * IntersectionObserver en PageLayout.astro añade/quita .nav--scrolled.
+ * ADR-017: IO inline en PageLayout, sin GSAP.
+ */
+header {
+  transition: background-color 250ms ease, padding-block 200ms ease, backdrop-filter 250ms ease;
+}
+
+header.nav--scrolled {
+  background: color-mix(in srgb, var(--color-paper) 92%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  padding-block: 0.5rem;
+}
+
+/* ── Video mask: sección y stage sticky ─────────────────────────── */
+/**
+ * .video-mask-section — contenedor 200vh con relative.
+ * .video-mask-stage   — sticky internal, 100vh. CSS mask de flor vía --mask-sz.
+ * ADR-014: position sticky CSS nativo, sin pin:true de GSAP.
+ * ADR-015: --mask-sz es la interfaz entre GSAP y el motor CSS.
+ */
+.video-mask-section {
+  position: relative;
+  min-height: 200vh;
+}
+
+.video-mask-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--color-ink);
+
+  --mask-sz: 120px;
+  -webkit-mask-image: url('/isotipo-mask.svg');
+          mask-image: url('/isotipo-mask.svg');
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-size: var(--mask-sz);
+          mask-size: var(--mask-sz);
+}
+
+.video-placeholder,
+.video-mask-stage video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-placeholder {
+  background: var(--color-teal);
+}
+
+/* ── Flor persistente: fixed bottom-right ───────────────────────── */
+/**
+ * Visible solo en home (PageLayout renderiza condicionalmente via SSR).
+ * ADR-016: gate vía prop page, no JS runtime check.
+ * z-index 40: por debajo del nav (50) y grain (999).
+ */
+.flor-persistente {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 40;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+}
+
+.flor-persistente button {
+  all: unset;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  color: var(--color-teal);
+  transform-origin: center;
+  transition: opacity 200ms ease;
+}
+
+.flor-persistente button:hover {
+  opacity: 0.75;
+}
+
+/* ── Mobile overrides ───────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .flor-persistente {
+    width: 40px;
+    height: 40px;
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  /* Video mask: sin scrub en mobile → sección de 100vh, sticky no aporta */
+  .video-mask-section {
+    min-height: 100vh;
+  }
+
+  .video-mask-stage {
+    position: relative;
+  }
+}
+
+/* ── Fallback: navegadores sin soporte CSS mask-image ───────────── */
+/**
+ * Si no hay soporte, el video/placeholder se ve full-size sin máscara.
+ * Verificado con @supports not.
+ */
+@supports not (mask-image: url("/isotipo-mask.svg")) {
+  .video-mask-stage {
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+}
+
 /* ── Reduced-motion: capa autoritativa (override global) ────────── */
 /**
  * Dos capas:
@@ -127,5 +250,15 @@ body::before {
   /* Grain overlay: desactivar — reduce distracción en a11y */
   body::before {
     display: none;
+  }
+
+  /* Nav: sin transición al activar .nav--scrolled */
+  header.nav--scrolled {
+    transition: none;
+  }
+
+  /* Video mask: máscara abierta desde el inicio (sin scrub) */
+  .video-mask-stage {
+    --mask-sz: 100vmax !important;
   }
 }

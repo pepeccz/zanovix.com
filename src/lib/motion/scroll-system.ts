@@ -22,6 +22,7 @@
 
 import { gsap, ScrollTrigger } from './gsap'
 import { prefersReducedMotion, splitWords, revealStagger } from './animations'
+import { getLenis } from './lenis'
 
 // ─── Estado del módulo ────────────────────────────────────────────────────────
 
@@ -57,6 +58,11 @@ export function registerScrollSystem(): void {
     registerCap4PaletteInversion()
     return () => {}
   })
+
+  // Flor persistente: solo en home (SSR-gated, pero doble-check por seguridad)
+  if (document.body.dataset.page === 'home') {
+    registerFlorPersistente()
+  }
 
   registered = true
 }
@@ -233,6 +239,51 @@ function applyCounterFinalState(
   if (!root) return
   const counterEl = root.querySelector<HTMLElement>('[data-role="counter"]')
   if (counterEl) counterEl.textContent = target.toLocaleString('es-ES')
+}
+
+// ─── Flor persistente ────────────────────────────────────────────────────────
+
+/**
+ * Flor persistente fixed bottom-right:
+ *   - Click → lenis.scrollTo(0) o fallback window.scrollTo
+ *   - Rotation scrub global (0% scroll → 0deg, 100% → 360deg)
+ *   - Guard prefersReducedMotion: solo click listener, sin ScrollTrigger
+ *
+ * Se llama condicionalmente: solo cuando body.dataset.page === 'home'.
+ * El elemento [data-flor-persistente] no existe en otras páginas (SSR-gated).
+ */
+function registerFlorPersistente(): void {
+  const btn = document.querySelector<HTMLElement>('[data-flor-persistente] button[data-flor-trigger]')
+  if (!btn) return  // SSR-gated: solo existe en home
+
+  // Click → scroll to top via Lenis si está disponible, fallback nativo
+  btn.addEventListener('click', () => {
+    const lenis = getLenis()
+    if (lenis) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      lenis.scrollTo(0, { duration: 1.2 } as any)
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  })
+
+  // Sin rotación en reduced-motion; la flor queda visible y clickable
+  if (prefersReducedMotion()) return
+
+  const florEl = btn.querySelector<SVGElement>('svg')
+  if (!florEl) return
+
+  // Rotation global scroll-driven: 0% → 0deg, 100% → 360deg
+  ScrollTrigger.create({
+    trigger: document.documentElement,
+    start: 'top top',
+    end: 'bottom bottom',
+    scrub: true,
+    invalidateOnRefresh: true,
+    onUpdate(self) {
+      gsap.set(florEl, { rotation: self.progress * 360, transformOrigin: '50% 50%' })
+    },
+  })
 }
 
 // ─── HMR cleanup ─────────────────────────────────────────────────────────────

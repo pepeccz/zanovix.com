@@ -23,11 +23,14 @@ import '../styles/motion.css'
 interface Props {
   title?: string
   description?: string
+  /** Identificador de página — propaga data-page al <body> para gate SSR/JS. */
+  page?: string
 }
 
 const {
   title = 'Zanovix — IA aplicada a empresas',
   description = 'Soluciones de inteligencia artificial para empresas. Resultados medibles, implementación ética.',
+  page = '',
 } = Astro.props
 ---
 
@@ -55,7 +58,7 @@ const {
     <slot name="head" />
   </head>
 
-  <body class="bg-[var(--color-paper)] text-[var(--color-ink)] font-[var(--font-sans)]">
+  <body class="bg-[var(--color-paper)] text-[var(--color-ink)] font-[var(--font-sans)]" data-page={page}>
     <!--
       Grain overlay: definido en motion.css como body::before.
       SVG noise inline, opacity 0.04, pointer-events: none, fixed inset-0 z-999.
