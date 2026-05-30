@@ -21,16 +21,25 @@
   class="chapter"
   style="
     min-height: 150vh;
-    padding-top: var(--spacing-section-y);
-    padding-bottom: var(--spacing-section-y);
     padding-left: var(--spacing-section-x);
     padding-right: var(--spacing-section-x);
-    display: flex;
-    align-items: center;
-    justify-content: center;
   "
 >
-  <div style="max-width: var(--container-wide); width: 100%;">
+  <!--
+    Wrapper visible: 100vh centrado.
+    Durante el pin de scroll-system.ts, este wrapper es lo que el usuario ve
+    en cada frame del scrub. El padre conserva 150vh para definir el rango
+    de scroll que controla el progress.
+  -->
+  <div
+    data-cap2-stage
+    style="
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    "
+  >
     <p
       data-role="declaration-text"
       class="font-newsreader"
@@ -41,6 +50,7 @@
         line-height: 1.4;
         color: var(--color-ink);
         max-width: 42ch;
+        text-align: center;
       "
     >
       La inteligencia artificial no es magia. Es trabajo con datos reales, decisiones medibles y un método que existía antes del hype. Lo demás es ruido.
