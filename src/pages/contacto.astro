@@ -1,34 +1,37 @@
 ---
 /**
- * contacto.astro — Página de contacto de Zanovix
+ * contacto.astro — pagina de contacto de Zanovix
  *
- * Sin formulario backend, sin captcha, sin calendly.
- * Solo el mailto directo — criterio editorial: la conversación empieza con un email.
+ * El formulario es ahora la via principal: capta el lead junto con el
+ * contexto que el compañero ya infirio (sector/dolor/urgencia desde
+ * sessionStorage, prellenado en cliente). Manda el lead por email
+ * transaccional via /api/lead.
+ *
+ * El mailto se conserva SOLO como linea secundaria de fallback honesto
+ * (dentro del propio formulario y aqui abajo), nunca como CTA primario.
  *
  * Estructura:
- *   - Eyebrow // conversación
- *   - H1 Newsreader font-medium: Hablemos.
- *   - Sub Inter ink-mute: texto pausado
- *   - CTA mailto JetBrains Mono con teal underline
- *   - Mini-info: Málaga · ES
+ *   - Eyebrow // conversacion
+ *   - H1: Hablemos.
+ *   - Sub pausado
+ *   - LeadForm (isla React, client:load): formulario real con prefill
+ *   - Mini-info: Malaga · ES
  */
 import PageLayout from '../layouts/PageLayout.astro'
+import LeadForm from '../components/react/LeadForm.tsx'
 ---
 
 <PageLayout
   title="Contacto · Zanovix"
-  description="Si tienes un proceso que merece criterio, escríbenos. Respondemos en menos de 24h hábiles."
+  description="Cuentanos tu caso en un minuto. Si ya has hablado con el asistente, llegas con el contexto a mano. Respondemos en menos de 24h habiles."
   page="contacto"
+  showCompanion={false}
 >
   <section
     style="
       max-width: var(--container-wide);
       margin: 0 auto;
-      padding: var(--spacing-section-y) var(--spacing-section-x);
-      min-height: 70vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      padding: var(--spacing-hero-y) var(--spacing-section-x) var(--spacing-section-y);
     "
   >
     <!-- Eyebrow -->
@@ -36,66 +39,45 @@ import PageLayout from '../layouts/PageLayout.astro'
       style="
         font-family: var(--font-mono);
         font-size: var(--text-eyebrow);
-        color: var(--color-teal);
+        color: var(--color-teal-deep);
         text-transform: uppercase;
         letter-spacing: 0.1em;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
       "
     >
       // conversación
     </p>
 
-    <!-- H1 Newsreader font-medium -->
+    <!-- H1 -->
     <h1
+      class="display"
       style="
-        font-family: var(--font-serif);
-        font-weight: 500;
-        font-size: clamp(3rem, 6vw + 1rem, 4.5rem);
-        line-height: 1.05;
-        letter-spacing: -0.02em;
+        font-size: var(--text-display);
         color: var(--color-ink);
-        margin-bottom: 1.75rem;
+        margin-bottom: 1.25rem;
         max-width: 16ch;
       "
     >
       Hablemos.
     </h1>
 
-    <!-- Sub Newsreader ink-soft -->
+    <!-- Sub -->
     <p
       style="
-        font-family: var(--font-serif);
-        font-size: clamp(1.0625rem, 0.4vw + 0.97rem, 1.3125rem);
-        font-weight: 400;
+        font-size: var(--text-lede);
+        line-height: 1.55;
         color: var(--ink-soft);
-        line-height: 1.65;
-        max-width: 46ch;
-        margin-bottom: 3rem;
+        max-width: 50ch;
+        margin-bottom: clamp(2rem, 5vw, 3rem);
       "
     >
-      Si tienes un proceso que merece criterio, escríbenos directamente.
-      Respondemos en menos de 24h hábiles.
+      Cuéntanos tu caso en un minuto. Si ya has hablado con el asistente, llegas
+      con el contexto a mano y lo puedes corregir. Respondemos en menos de 24h
+      hábiles.
     </p>
 
-    <!-- CTA mailto — JetBrains Mono con teal underline -->
-    <a
-      href="mailto:hola@zanovix.com"
-      style="
-        font-family: var(--font-mono);
-        font-size: clamp(1.5rem, 3vw + 0.5rem, 3rem);
-        font-weight: 400;
-        color: var(--color-ink);
-        text-decoration: underline;
-        text-decoration-color: var(--color-teal);
-        text-decoration-thickness: 2px;
-        text-underline-offset: 0.35em;
-        display: inline-block;
-        margin-bottom: 2.5rem;
-        transition: color 200ms ease;
-      "
-    >
-      hola@zanovix.com
-    </a>
+    <!-- Formulario real (isla React). Prefill desde el compañero en cliente. -->
+    <LeadForm client:load />
 
     <!-- Mini-info -->
     <p
@@ -104,16 +86,10 @@ import PageLayout from '../layouts/PageLayout.astro'
         font-size: var(--text-eyebrow);
         color: var(--ink-mute);
         letter-spacing: 0.05em;
+        margin-top: clamp(2.5rem, 5vw, 3.5rem);
       "
     >
       Málaga · ES
     </p>
   </section>
 </PageLayout>
-
-<style>
-  /* Hover del mailto: color teal al pasar el ratón */
-  a[href^="mailto"]:hover {
-    color: var(--color-teal);
-  }
-</style>
