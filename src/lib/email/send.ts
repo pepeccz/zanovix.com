@@ -2,27 +2,58 @@
  * send.ts — modulo de envio de email transaccional (server-only)
  *
  * Aislado del resto para poder cambiar de proveedor sin tocar el endpoint
- * ni el formulario. Implementacion actual: Resend (API REST, sin SDK).
+ * ni el formulario. Implementacion actual: Nodemailer + Gmail SMTP
+ * (Google Workspace).
+ *
+ * QUE DEBE MONTAR EL USUARIO (una de estas dos vias):
+ *
+ *   Via A (recomendada, sin tocar el admin del Workspace): App Password.
+ *     1. La cuenta del Workspace que envia (p.ej. hola@zanovix.com) debe
+ *        tener la verificacion en dos pasos (2FA) ACTIVADA.
+ *     2. Crear una App Password en
+ *        https://myaccount.google.com/apppasswords
+ *        (16 caracteres, sin espacios).
+ *     3. Definir las env vars:
+ *          SMTP_USER = hola@zanovix.com
+ *          SMTP_PASS = <la app password de 16 caracteres>
+ *        SMTP_HOST y SMTP_PORT usan los defaults (smtp.gmail.com:465, SSL).
+ *
+ *   Via B (relay del Workspace, requiere config de admin): SMTP relay.
+ *     1. En la consola de admin de Google Workspace, configurar el
+ *        "SMTP relay service" autorizando la IP del servidor (o auth SMTP).
+ *     2. Definir:
+ *          SMTP_HOST = smtp-relay.gmail.com
+ *          SMTP_PORT = 465
+ *          SMTP_USER / SMTP_PASS segun la politica de auth elegida.
+ *
+ *   Opcional en ambas vias:
+ *     LEAD_TO_EMAIL   destino de los leads (default hola@zanovix.com)
+ *     LEAD_FROM_EMAIL remitente; si no se define, usa SMTP_USER.
+ *                     Con Gmail SMTP el remitente debe ser la propia cuenta
+ *                     (o un alias "send as" verificado), no un dominio ajeno.
  *
  * Degradacion honesta (decision sdd/captacion-ia/config): el modulo se
- * construye YA aunque la clave de Resend aun no este conectada. Si no hay
- * RESEND_API_KEY, o si la llamada falla, NO lanza: devuelve un resultado
- * { delivered: false } con motivo, para que el endpoint y el formulario
- * muestren el fallback al email directo (nunca un callejon sin salida).
+ * construye YA aunque las credenciales aun no esten conectadas. Si faltan
+ * SMTP_USER / SMTP_PASS, o si el envio falla, NO lanza: devuelve un
+ * resultado { delivered: false } con motivo, para que el endpoint y el
+ * formulario muestren el fallback al email directo (nunca un callejon sin
+ * salida).
  *
- * SERVER-ONLY: lee import.meta.env (claves de servidor). No debe importarse
- * jamas desde codigo de cliente. Se usa solo dentro de rutas SSR
- * (prerender = false).
+ * SERVER-ONLY: lee import.meta.env (claves de servidor) e importa
+ * nodemailer (modulo de Node). No debe importarse jamas desde codigo de
+ * cliente. Se usa solo dentro de rutas SSR (prerender = false).
  */
+
+import nodemailer from 'nodemailer'
 
 /** Email directo de fallback, visible cuando el envio no esta disponible. */
 export const FALLBACK_EMAIL = 'hola@zanovix.com'
 
-/** Direccion de envio por defecto (dominio verificado en Resend en prod). */
-const DEFAULT_FROM = 'Zanovix <hola@zanovix.com>'
+/** Host SMTP por defecto: Gmail / Google Workspace. */
+const DEFAULT_SMTP_HOST = 'smtp.gmail.com'
 
-/** Endpoint REST de Resend. */
-const RESEND_ENDPOINT = 'https://api.resend.com/emails'
+/** Puerto SMTP por defecto: 465 (SSL implicito). */
+const DEFAULT_SMTP_PORT = 465
 
 /** Datos minimos de un lead listos para componer el email. */
 export interface LeadPayload {
@@ -119,43 +150,54 @@ function buildHtml(lead: LeadPayload): string {
 }
 
 /**
- * Envia el lead por email. Nunca lanza: devuelve siempre un SendResult.
+ * Envia el lead por email via SMTP (Google Workspace). Nunca lanza:
+ * devuelve siempre un SendResult.
  *
- * Comportamiento sin clave (caso actual): devuelve delivered=false con
- * reason='not-configured' para que el formulario muestre el fallback honesto.
+ * Comportamiento sin credenciales (caso actual): devuelve delivered=false
+ * con reason='not-configured' para que el formulario muestre el fallback
+ * honesto. Un fallo del servidor SMTP devuelve reason='provider-error';
+ * un fallo de conexion/timeout, reason='network-error'.
  */
 export async function sendLead(lead: LeadPayload): Promise<SendResult> {
-  const apiKey = import.meta.env.RESEND_API_KEY as string | undefined
+  const host = (import.meta.env.SMTP_HOST as string | undefined) || DEFAULT_SMTP_HOST
+  const port = Number(import.meta.env.SMTP_PORT) || DEFAULT_SMTP_PORT
+  const user = import.meta.env.SMTP_USER as string | undefined
+  const pass = import.meta.env.SMTP_PASS as string | undefined
   const to = (import.meta.env.LEAD_TO_EMAIL as string | undefined) || FALLBACK_EMAIL
-  const from = (import.meta.env.LEAD_FROM_EMAIL as string | undefined) || DEFAULT_FROM
+  // Con Gmail SMTP el remitente debe ser la propia cuenta autenticada (o un
+  // alias "send as" verificado). Por defecto, el propio SMTP_USER.
+  const from = (import.meta.env.LEAD_FROM_EMAIL as string | undefined) || user
 
-  if (!apiKey) {
+  if (!user || !pass) {
     return { delivered: false, reason: 'not-configured', fallbackEmail: to }
   }
 
   try {
-    const res = await fetch(RESEND_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from,
-        to: [to],
-        reply_to: lead.email,
-        subject: buildSubject(lead),
-        text: buildText(lead),
-        html: buildHtml(lead),
-      }),
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      // 465 => SSL implicito (secure). 587/otros => STARTTLS.
+      secure: port === 465,
+      auth: { user, pass },
     })
 
-    if (!res.ok) {
-      return { delivered: false, reason: 'provider-error', fallbackEmail: to }
-    }
+    await transporter.sendMail({
+      from,
+      to,
+      replyTo: lead.email,
+      subject: buildSubject(lead),
+      text: buildText(lead),
+      html: buildHtml(lead),
+    })
 
     return { delivered: true, fallbackEmail: to }
-  } catch {
-    return { delivered: false, reason: 'network-error', fallbackEmail: to }
+  } catch (err) {
+    // Nodemailer agrupa fallos de autenticacion/respuesta del servidor bajo
+    // codigos como EAUTH/EENVELOPE/EMESSAGE; los de socket/DNS bajo
+    // ECONNECTION/ETIMEDOUT/EDNS. Distinguimos solo para el motivo honesto.
+    const code = (err as { code?: string } | undefined)?.code ?? ''
+    const networkCodes = ['ECONNECTION', 'ETIMEDOUT', 'ESOCKET', 'EDNS', 'ECONNREFUSED']
+    const reason = networkCodes.includes(code) ? 'network-error' : 'provider-error'
+    return { delivered: false, reason, fallbackEmail: to }
   }
 }
