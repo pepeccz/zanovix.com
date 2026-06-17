@@ -1,45 +1,68 @@
 /* ── Fuentes self-hosted (no Google Fonts CDN) ─────────────────── */
-@import "@fontsource-variable/newsreader";
-@import "@fontsource-variable/inter";
+/**
+ * Sistema "herramienta honesta": una grotesca humanista (Hanken Grotesk)
+ * cubre display→cuerpo por contraste de peso, + JetBrains Mono FUNCIONAL
+ * (es una herramienta real, no eyebrow decorativo). Cormorant/Newsreader/
+ * Inter retirados: eran el lane editorial-IA que el rediseño abandona.
+ */
+@import "@fontsource-variable/hanken-grotesk";
 @import "@fontsource/jetbrains-mono/400.css";
 @import "@fontsource/jetbrains-mono/500.css";
-@import "@fontsource-variable/cormorant-garamond/wght.css";
 
 @import "tailwindcss";
 
 @theme {
-  /* ── Palette (bicroma estricta: paper + ink + teal) ────────── */
-  --color-paper:        #F4F1EA;
-  --color-ink:          #1F2A26;
-  --color-teal:         #3BAA8C;
-  --color-teal-deep:    #2A8A70;
-  --color-night:        #14201B; /* reservado para dark mode futuro */
+  /* ── Palette ────────────────────────────────────────────────────
+   * "Evolucionar, no tirar": verde/ink/teal se conservan como marca,
+   * pero el fondo abandona el crema cálido (#F4F1EA, el default-IA) por
+   * un off-white tintado HACIA el verde de marca (no hacia warm). Se
+   * añade un verde profundo "drenched" para el compañero y la prueba.
+   * Todo en OKLCH; el tinte de neutros apunta al hue de marca (~165).
+   */
+  --color-paper:        oklch(0.976 0.005 165); /* off-white calmo, no crema */
+  --color-surface:      oklch(0.957 0.008 165); /* superficie de sección */
+  --color-ink:          #1F2A26;                /* verde muy oscuro (texto) */
+  --color-forest:       oklch(0.245 0.030 165); /* superficie drenched (paneles) */
+  --color-forest-deep:  oklch(0.205 0.026 165); /* drenched más profundo */
+  --color-teal:         #3BAA8C;                /* acento (decorativo / large) */
+  --color-teal-deep:    #2A8A70;                /* acento texto AA sobre claro */
+  --color-teal-bright:  oklch(0.80 0.130 170);  /* acento sobre superficies oscuras */
+  --color-night:        #14201B;                /* reservado dark mode */
 
   /* Rule lines (derivadas de ink con opacity) */
-  --color-rule:         color-mix(in oklch, #1F2A26 14%, transparent);
-  --color-rule-strong:  color-mix(in oklch, #1F2A26 28%, transparent);
+  --color-rule:         color-mix(in oklch, #1F2A26 12%, transparent);
+  --color-rule-strong:  color-mix(in oklch, #1F2A26 26%, transparent);
+  /* Rule sobre superficies oscuras (forest) */
+  --color-rule-invert:  color-mix(in oklch, #F4F1EA 16%, transparent);
 
-  /* ── Typography families ────────────────────────────────────── */
-  --font-display:  'Cormorant Garamond Variable', 'Newsreader Variable', Georgia, serif;
-  --font-serif:    'Newsreader Variable', Georgia, serif;
-  --font-sans:     'Inter Variable', system-ui, sans-serif;
+  /* ── Typography families ────────────────────────────────────────
+   * Una sola grotesca humanista (display→cuerpo por peso) + mono real.
+   * --font-serif se mantiene como token apuntando a la grotesca para no
+   * romper páginas aún sin migrar; se retirará al rediseñarlas.
+   */
+  --font-display:  'Hanken Grotesk Variable', system-ui, sans-serif;
+  --font-sans:     'Hanken Grotesk Variable', system-ui, sans-serif;
+  --font-serif:    'Hanken Grotesk Variable', system-ui, sans-serif;
   --font-mono:     'JetBrains Mono', ui-monospace, monospace;
 
-  /* ── Text scale fluid (clamp: min, preferred vw, max) ──────── */
-  --text-giant:    clamp(7.5rem, 12vw + 1rem, 10rem);
-  --text-eyebrow:  clamp(0.6875rem, 0.15vw + 0.66rem, 0.8125rem);
-  --text-body:     clamp(1rem, 0.25vw + 0.94rem, 1.125rem);
-  --text-lede:     clamp(1.0625rem, 0.4vw + 0.97rem, 1.375rem);
-  --text-h3:       clamp(1.25rem, 0.6vw + 1rem, 1.625rem);
-  --text-h2:       clamp(1.75rem, 1.0vw + 1.5rem, 2.75rem);
-  --text-h1:       clamp(2.5rem, 2.2vw + 1.8rem, 4.75rem);
-  --text-display:  clamp(3rem, 5vw + 1rem, 6rem);
+  /* ── Text scale fluid (clamp: min, preferred vw, max) ──────────
+   * Calma, no ceremonia: display ≤4rem (la herramienta no grita).
+   * Ratio ≥1.25 entre pasos. --text-giant se conserva como alias.
+   */
+  --text-giant:    clamp(2.5rem, 3.5vw + 1rem, 4rem);
+  --text-display:  clamp(2.5rem, 3.5vw + 1rem, 4rem);
+  --text-h1:       clamp(2rem, 2.2vw + 1rem, 3rem);
+  --text-h2:       clamp(1.5rem, 1.2vw + 1rem, 2.25rem);
+  --text-h3:       clamp(1.25rem, 0.6vw + 1rem, 1.5rem);
+  --text-lede:     clamp(1.125rem, 0.4vw + 1rem, 1.375rem);
+  --text-body:     clamp(1rem, 0.2vw + 0.95rem, 1.125rem);
+  --text-eyebrow:  clamp(0.75rem, 0.1vw + 0.72rem, 0.8125rem);
 
   /* ── Spacing fluid ──────────────────────────────────────────── */
   --spacing-section-y: clamp(3rem, 4vw + 2rem, 7.5rem);
   --spacing-section-x: clamp(1.25rem, 1.5vw + 1rem, 3rem);
   --spacing-stack:     clamp(1rem, 1vw + 0.75rem, 2rem);
-  --spacing-hero-y:    clamp(4rem, 6vw + 2rem, 10rem);
+  --spacing-hero-y:    clamp(4rem, 6vw + 2rem, 9rem);
 
   /* ── Containers ─────────────────────────────────────────────── */
   --container-narrow:  720px;
@@ -49,15 +72,23 @@
 :root {
   color-scheme: light;
 
-  /* ── Opacity-mixed inks (color-mix en :root, runtime-safe) ─── */
-  --ink-soft:        color-mix(in oklab, #1F2A26 76%, transparent);
-  --ink-mute:        color-mix(in oklab, #1F2A26 55%, transparent);
-  --ink-mute-strong: color-mix(in oklab, #1F2A26 72%, transparent);
-  --paper-overlay:   color-mix(in oklab, #F4F1EA 92%, transparent);
+  /* ── Tintas sobre claro. Todos los valores pasan WCAG 2.2 AA ≥4.5:1
+   *    sobre --color-paper (oklch 0.976). Mínimo teórico: 84% alpha.
+   *    soft=88%→5.7:1 (cuerpo), mute-strong=86%→5.1:1 (labels),
+   *    mute=85%→4.73:1 (eyebrow/meta). Hay jerarquía y todos pasan. */
+  --ink-soft:        color-mix(in oklab, #1F2A26 88%, transparent);
+  --ink-mute:        color-mix(in oklab, #1F2A26 85%, transparent);
+  --ink-mute-strong: color-mix(in oklab, #1F2A26 86%, transparent);
+  --paper-overlay:   color-mix(in oklab, oklch(0.976 0.005 165) 86%, transparent);
+
+  /* ── Tintas sobre oscuro (texto paper sobre forest) ───────────── */
+  --paper-on-dark:       #F4F1EA;
+  --paper-on-dark-soft:  color-mix(in oklab, #F4F1EA 82%, transparent);
+  --paper-on-dark-mute:  color-mix(in oklab, #F4F1EA 64%, transparent);
 
   /* ── Teal opacity variants ──────────────────────────────────── */
   --teal-soft:       color-mix(in oklab, #3BAA8C 60%, transparent);
-  --teal-faint:      color-mix(in oklab, #3BAA8C 18%, transparent);
+  --teal-faint:      color-mix(in oklab, #3BAA8C 16%, transparent);
 }
 
 /* ── Reset base ─────────────────────────────────────────────────── */
@@ -122,19 +153,205 @@ h1, h2, h3, blockquote {
   overflow-wrap: break-word;
 }
 
-/* ── Display companion — Cormorant Garamond ─────────────────────── */
-/**
- * Solo para picos tipográficos editoriales:
- *   - H1 de Cap1Hero (font-size: var(--text-giant))
- *   - Pull quote de Cap6Manifiesto (font-size override puntual)
- * Nunca como italic de énfasis. Peso 400 siempre (regla brand).
+/* ── Display — Hanken Grotesk en modo titular ───────────────────────
+ * La grotesca lleva el peso de los titulares por contraste de peso/tamaño,
+ * no por una familia display aparte. Peso 600, line-height ajustado,
+ * tracking ligeramente cerrado (≥ -0.02em, nunca más).
  */
+.display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-style: normal;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* Alias de compatibilidad para componentes aún sin migrar (capítulos viejos). */
 .display-cormorant {
   font-family: var(--font-display);
-  font-weight: 400;
-  font-style: normal;
-  font-size: var(--text-giant);
-  line-height: 0.95;
+  font-weight: 600;
+  font-size: var(--text-display);
+  line-height: 1.04;
   letter-spacing: -0.02em;
-  font-optical-sizing: auto;
+}
+
+/* ── Compañero (asistente transparente) ──────────────────────────────
+ * Panel "drenched" verde profundo: la home clara contrasta con el tono
+ * de herramienta. Mono usado FUNCIONALMENTE (es UI de una herramienta
+ * real, no eyebrow). Texto paper sobre forest; foco teal-bright AA.
+ */
+.companion {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 16px;
+  padding: clamp(1.25rem, 2vw + 0.75rem, 2rem);
+  font-family: var(--font-sans);
+}
+.companion__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper-on-dark-mute);
+  margin-bottom: 1rem;
+}
+.companion__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-teal-bright);
+  flex: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .companion__dot {
+    animation: companionPulse 2.4s ease-in-out infinite;
+  }
+}
+@keyframes companionPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.companion__prompt {
+  font-size: var(--text-lede);
+  line-height: 1.4;
+  margin: 0 0 1rem;
+  max-width: 32ch;
+}
+.companion__form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.companion__input {
+  flex: 1 1 14rem;
+  min-width: 0;
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 10px;
+  padding: 0.75rem 0.875rem;
+  font: inherit;
+  font-size: var(--text-body);
+}
+.companion__input::placeholder { color: var(--paper-on-dark-mute); }
+.companion__input:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+  border-color: transparent;
+}
+.companion__submit,
+.companion__cta {
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 10px;
+  padding: 0.75rem 1.1rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.companion__submit:hover,
+.companion__cta:hover { background: var(--color-teal); }
+.companion__submit:focus-visible,
+.companion__cta:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.companion__note {
+  margin: 0.875rem 0 0;
+  font-size: var(--text-eyebrow);
+  color: var(--paper-on-dark-mute);
+  line-height: 1.5;
+  max-width: 46ch;
+}
+.companion__think {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.companion__think-line {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  color: var(--paper-on-dark-soft);
+  opacity: 0;
+}
+.companion__think-line::before {
+  content: "▸ ";
+  color: var(--color-teal-bright);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .companion__think-line { animation: companionThinkIn 380ms cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .companion__think-line { opacity: 1; }
+}
+@keyframes companionThinkIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.companion__profile {
+  margin: 0.25rem 0 0;
+  display: grid;
+  gap: 0.875rem;
+}
+.companion__row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.companion__row-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--paper-on-dark-mute);
+}
+.companion__select {
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+  font: inherit;
+  font-size: var(--text-body);
+}
+.companion__select:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+}
+.companion__actions {
+  margin-top: 1.1rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.companion__reset {
+  background: transparent;
+  border: 0;
+  color: var(--paper-on-dark-mute);
+  font: inherit;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0.25rem 0;
+}
+.companion__reset:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
 }
