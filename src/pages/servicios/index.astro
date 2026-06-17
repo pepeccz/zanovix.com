@@ -1,0 +1,255 @@
+---
+/**
+ * servicios/index.astro — hub de servicios
+ *
+ * Cuatro maneras de bajar la IA a una pyme. No es un catálogo: es una guía
+ * honesta de por dónde empezar según lo que de verdad te pesa. Patrón de
+ * lista con hairlines (coherente con la home), sin card-grid ni eyebrow por
+ * sección ni numeración de relleno. GEO es la punta de lanza del servicio web.
+ *
+ * El compañero (dock) se monta desde PageLayout en páginas internas: si traes
+ * contexto desde la home, lo verás resumido aquí con un enlace a contacto.
+ */
+import PageLayout from '../../layouts/PageLayout.astro'
+
+const servicios = [
+  {
+    slug: 'diseno-desarrollo-web-geo',
+    name: 'Diseño y desarrollo web, con GEO',
+    lede:
+      'Una web que carga rápido, se entiende y aparece cuando tus clientes preguntan a una IA por lo que tú haces.',
+    para: 'el dueño que sabe que su web no está a la altura del negocio',
+  },
+  {
+    slug: 'auditoria-ai-readiness',
+    name: 'Auditoría AI Readiness',
+    lede:
+      'Miramos tu empresa por dentro y te decimos sin humo si la IA aporta algo real y por dónde tiene sentido empezar.',
+    para: 'quien no quiere gastar en IA por moda, sino donde mueva la aguja',
+  },
+  {
+    slug: 'software-a-medida',
+    name: 'Software a medida',
+    lede:
+      'Herramientas hechas para tu proceso concreto, no plantillas a las que te toca adaptarte tú.',
+    para: 'el equipo que pelea cada día con hojas de cálculo y tareas a mano',
+  },
+  {
+    slug: 'consultoria-tic',
+    name: 'Consultoría TIC',
+    lede:
+      'Criterio técnico para decidir bien antes de gastar, con alguien que te habla claro y no te vende lo que le interesa.',
+    para: 'quien tiene que tomar una decisión técnica y no sabe en quién confiar',
+  },
+]
+---
+
+<PageLayout
+  title="Servicios · Zanovix"
+  description="Cuatro maneras de bajar la IA a tu empresa: web con GEO, auditoría AI Readiness, software a medida y consultoría TIC. IA aplicada con ingeniería pausada."
+  page="servicios"
+>
+  <!-- ── Intro honesta ──────────────────────────────────────────── -->
+  <section class="intro" aria-labelledby="intro-title">
+    <h1 id="intro-title" class="display intro__title">
+      Cuatro maneras de bajar la IA a tu negocio.
+    </h1>
+    <p class="intro__lede">
+      No es un catálogo para que elijas a ciegas. Casi siempre empezamos por una
+      sola cosa, la que de verdad te mueve la aguja, y construimos desde ahí.
+      Aquí tienes las cuatro, contadas como son.
+    </p>
+    <p class="intro__sign">IA aplicada, con ingeniería pausada.</p>
+  </section>
+
+  <!-- ── Lista de servicios ─────────────────────────────────────── -->
+  <section class="list" aria-label="Servicios de Zanovix">
+    <ul class="list__items">
+      {
+        servicios.map((s) => (
+          <li class="list__item">
+            <a class="list__link" href={`/servicios/${s.slug}`}>
+              <h2 class="list__name">{s.name}</h2>
+              <p class="list__lede">{s.lede}</p>
+              <p class="list__for">
+                Para {s.para}.<span class="list__go" aria-hidden="true">Ver el detalle →</span>
+              </p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- ── Cierre: a la conversación ──────────────────────────────── -->
+  <section class="close" aria-labelledby="close-title">
+    <h2 id="close-title" class="display close__title">
+      ¿No tienes claro por dónde empezar?
+    </h2>
+    <p class="close__lede">
+      Es lo más normal. Cuéntanos tu situación y te decimos con honestidad qué
+      haríamos primero y por qué. Sin compromiso y sin venderte de más.
+    </p>
+    <a class="close__mail" href="mailto:hola@zanovix.com">hola@zanovix.com</a>
+    <p class="close__meta">Málaga · ES · respondemos en menos de 24h hábiles</p>
+  </section>
+</PageLayout>
+
+<style>
+  /* ── Intro ────────────────────────────────────────────────────── */
+  .intro {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-hero-y) var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .intro__title {
+    font-size: var(--text-display);
+    color: var(--color-ink);
+    margin: 0 0 1.25rem;
+    max-width: 18ch;
+  }
+  .intro__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 54ch;
+    margin: 0 0 1.5rem;
+  }
+  .intro__sign {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+    color: var(--ink-mute);
+    margin: 0;
+  }
+
+  /* ── Lista ────────────────────────────────────────────────────── */
+  .list {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: 0 var(--spacing-section-x);
+  }
+  .list__items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .list__item {
+    border-top: 1px solid var(--color-rule);
+  }
+  .list__item:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .list__link {
+    display: grid;
+    gap: 0.5rem;
+    padding: clamp(1.5rem, 3vw, 2.75rem) 0;
+    text-decoration: none;
+    color: inherit;
+  }
+  @media (min-width: 760px) {
+    .list__link {
+      grid-template-columns: minmax(0, 24rem) 1fr;
+      column-gap: clamp(2rem, 5vw, 5rem);
+      align-items: start;
+    }
+  }
+  .list__name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h2);
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+    color: var(--color-ink);
+    margin: 0;
+    transition: color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .list__lede {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 52ch;
+    margin: 0;
+  }
+  .list__for {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    color: var(--ink-mute);
+    margin: 0.25rem 0 0;
+  }
+  .list__go {
+    color: var(--ink-mute-strong);
+    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .list__link:hover .list__go,
+  .list__link:focus-visible .list__go {
+    color: var(--color-teal-deep);
+  }
+  @media (min-width: 760px) {
+    .list__for {
+      justify-content: space-between;
+    }
+  }
+  /* Estado interactivo en todo el bloque enlazado */
+  .list__link:hover .list__name,
+  .list__link:focus-visible .list__name {
+    color: var(--color-teal-deep);
+  }
+  .list__link:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .list__link:hover .list__go {
+      transform: translateX(3px);
+    }
+  }
+
+  /* ── Cierre ───────────────────────────────────────────────────── */
+  .close {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .close__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    max-width: 18ch;
+  }
+  .close__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 52ch;
+    margin: 0 0 2rem;
+  }
+  .close__mail {
+    font-family: var(--font-mono);
+    font-size: clamp(1.5rem, 3vw + 0.5rem, 2.75rem);
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-teal-deep);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+    display: inline-block;
+    margin-bottom: 1.75rem;
+    transition: text-decoration-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .close__mail:hover {
+    text-decoration-color: var(--color-teal);
+  }
+  .close__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.05em;
+    color: var(--ink-mute);
+    margin: 0;
+  }
+</style>

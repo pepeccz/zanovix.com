@@ -1,0 +1,76 @@
+---
+/**
+ * servicios/auditoria-ai-readiness.astro — detalle de servicio
+ *
+ * El argumento del comprador económico: antes de gastar en IA, saber si
+ * aporta algo real y por dónde empezar. Sin números inventados ni plazos
+ * prometidos. Estilos compartidos en global.css (.svc*).
+ */
+import PageLayout from '../../layouts/PageLayout.astro'
+
+const incluye = [
+  'Una mirada honesta a tus procesos: dónde se te van las horas y qué de eso puede hacer una máquina sin romper nada.',
+  'Qué tienes ya y qué te falta para que la IA sea útil: datos, herramientas, forma de trabajar.',
+  'Un orden de prioridades: por dónde empezar para notarlo pronto, y qué dejar para más adelante.',
+  'Un documento claro que puedes enseñar a tu equipo o a quien aprueba el gasto, sin tecnicismos huecos.',
+]
+---
+
+<PageLayout
+  title="Auditoría AI Readiness · Zanovix"
+  description="Evaluamos sin humo si la IA aporta algo real a tu empresa y por dónde tiene sentido empezar. Un orden de prioridades honesto, no una lista de deseos."
+  page="servicios"
+>
+  <article class="svc">
+    <p class="svc__back">
+      <a href="/servicios">← Servicios</a>
+    </p>
+
+    <header class="svc__head">
+      <h1 class="display svc__title">
+        Te dicen que necesitas IA, pero nadie te dice para qué.
+      </h1>
+      <p class="svc__lede">
+        Todo el mundo vende IA y casi nadie te dice si a ti te sirve. Antes de
+        gastar un euro, miramos tu empresa por dentro y te decimos con
+        honestidad dónde aporta algo real y dónde sería tirar el dinero.
+      </p>
+    </header>
+
+    <section class="svc__block" aria-labelledby="que-es">
+      <h2 id="que-es" class="svc__h2">Qué es y para quién</h2>
+      <p class="svc__body">
+        Un diagnóstico ordenado de tu empresa frente a la IA: qué tareas tienen
+        sentido automatizar, qué te falta para hacerlo bien y en qué orden
+        conviene moverse. No es un informe de relleno: es la base para decidir
+        con la cabeza, no por moda.
+      </p>
+      <p class="svc__body">
+        Para quien no quiere apostar a ciegas. Útil sobre todo si ya te has
+        planteado usar IA pero no sabes por dónde, o si te da miedo invertir en
+        algo que luego no use nadie.
+      </p>
+    </section>
+
+    <section class="svc__block" aria-labelledby="incluye">
+      <h2 id="incluye" class="svc__h2">Qué incluye, sin letra pequeña</h2>
+      <ul class="svc__list">
+        {incluye.map((item) => <li class="svc__item">{item}</li>)}
+      </ul>
+      <p class="svc__note">
+        Si tras la auditoría lo honesto es no hacer nada todavía, te lo diremos.
+        Preferimos eso a venderte un proyecto que no necesitas.
+      </p>
+    </section>
+
+    <section class="svc__cta" aria-labelledby="cta">
+      <h2 id="cta" class="display svc__cta-title">¿Empezamos por entenderte?</h2>
+      <p class="svc__cta-lede">
+        Cuéntanos cómo trabajáis hoy y qué os gustaría quitaros de encima. Si ya
+        has hablado con el asistente, lo tienes a mano aquí para seguir desde
+        donde lo dejaste. Si no, escríbenos directamente.
+      </p>
+      <a class="svc__mail" href="mailto:hola@zanovix.com">hola@zanovix.com</a>
+    </section>
+  </article>
+</PageLayout>
