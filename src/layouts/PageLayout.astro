@@ -16,37 +16,25 @@
  */
 
 import Base from './Base.astro'
-import FlorPersistente from '../components/astro/ui/FlorPersistente.astro'
-
-// Preload Cormorant Garamond Variable woff2 (latin, wght axis, no italic)
-// Path: @fontsource-variable/cormorant-garamond/files/cormorant-garamond-latin-wght-normal.woff2
-// Si el path no resuelve en una versión futura del package, comentar la línea
-// y documentar aquí: font-display:swap (fontsource default) absorbe el FOUT.
-import cormorantWoff2 from '@fontsource-variable/cormorant-garamond/files/cormorant-garamond-latin-wght-normal.woff2?url'
+import Companion from '../components/react/Companion.tsx'
 
 interface Props {
   title?: string
   description?: string
-  /** Identificador de página. Propaga data-page al <body> vía Base.astro.
-   *  Valores canónicos: 'home' | 'manifiesto' | 'contacto'. Default: ''.
-   *  Usado por: registerFlorPersistente() en scroll-system.ts (condicional),
-   *  y por el render condicional de <FlorPersistente /> abajo.
+  /** Identificador de pagina. Propaga data-page al <body> via Base.astro.
+   *  Valores canonicos: 'home' | 'manifiesto' | 'contacto'. Default: ''.
    */
   page?: string
+  /** Controla si el dock del Companion se muestra en esta pagina.
+   *  Default: true. Pasar false en paginas como /privacidad.
+   */
+  showCompanion?: boolean
 }
 
-const { title, description, page = '' } = Astro.props
+const { title, description, page = '', showCompanion = true } = Astro.props
 ---
 
 <Base title={title} description={description} page={page}>
-  <link
-    rel="preload"
-    as="font"
-    type="font/woff2"
-    href={cormorantWoff2}
-    crossorigin
-    slot="head"
-  />
   <!-- Skip link de accesibilidad (visible al tabular) -->
   <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 
@@ -63,8 +51,8 @@ const { title, description, page = '' } = Astro.props
         </span>
       </a>
 
-      <!-- Navegación principal -->
-      <nav aria-label="Navegación principal">
+      <!-- Navegación principal (escritorio) -->
+      <nav aria-label="Navegación principal" class="hidden md:block">
         <ul class="flex list-none gap-6 m-0 p-0">
           <li>
             <a
@@ -95,8 +83,56 @@ const { title, description, page = '' } = Astro.props
           </li>
         </ul>
       </nav>
+
+      <!-- Botón hamburguesa (solo móvil) -->
+      <button
+        id="nav-toggle"
+        type="button"
+        class="nav-toggle md:hidden"
+        aria-controls="mobile-nav"
+        aria-expanded="false"
+        aria-label="Abrir menú de navegación"
+      >
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+      </button>
     </div>
   </header>
+
+  <!--
+    Menú móvil: overlay a pantalla completa (solo <768px).
+    Disclosure accesible: aria-expanded en el toggle, focus trap, cierre con
+    Esc / overlay / enlace, bloqueo de scroll del body. Lógica al pie del layout.
+  -->
+  <div id="mobile-nav" class="mobile-nav md:hidden" hidden>
+    <nav aria-label="Navegación principal" class="mobile-nav__panel">
+      <button
+        id="nav-close"
+        type="button"
+        class="mobile-nav__close"
+        aria-label="Cerrar menú de navegación"
+      >
+        <span class="mobile-nav__close-bar"></span>
+        <span class="mobile-nav__close-bar"></span>
+      </button>
+      <ul class="mobile-nav__list">
+        <li><a href="/manifiesto" class="mobile-nav__link">Manifiesto</a></li>
+        <li><a href="/contacto" class="mobile-nav__link">Contacto</a></li>
+        <li>
+          <a
+            href="https://github.com/pepeccz"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mobile-nav__link"
+            aria-label="GitHub de Zanovix (abre en nueva pestaña)"
+          >
+            GitHub
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
 
   <main id="main-content">
     <slot />
@@ -157,7 +193,9 @@ const { title, description, page = '' } = Astro.props
     </div>
   </footer>
 
-  {page === 'home' && <FlorPersistente />}
+  {page !== 'home' && showCompanion && (
+    <Companion variant="dock" client:visible />
+  )}
 
   <script is:inline>
     // Sticky nav scroll-state: toggle .nav--scrolled cuando hero >50% fuera del viewport.
@@ -185,4 +223,181 @@ const { title, description, page = '' } = Astro.props
       io.observe(sentinel);
     })();
   </script>
+
+  <script is:inline>
+    // Menú móvil: disclosure accesible (overlay full-screen <768px).
+    // Focus trap, Esc, cierre por enlace, bloqueo de scroll, restauración de foco.
+    (function setupMobileNav() {
+      var toggle = document.getElementById('nav-toggle');
+      var panel = document.getElementById('mobile-nav');
+      var closeBtn = document.getElementById('nav-close');
+      if (!toggle || !panel) return;
+
+      function focusables() {
+        return panel.querySelectorAll('a[href], button:not([disabled])');
+      }
+
+      function onKeydown(e) {
+        if (e.key === 'Escape') {
+          close();
+          return;
+        }
+        if (e.key !== 'Tab') return;
+        var f = focusables();
+        if (!f.length) return;
+        var first = f[0];
+        var last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+
+      function open() {
+        panel.hidden = false;
+        toggle.setAttribute('aria-expanded', 'true');
+        document.documentElement.style.overflow = 'hidden';
+        document.addEventListener('keydown', onKeydown);
+        var f = focusables();
+        if (f.length) f[0].focus();
+      }
+
+      function close() {
+        panel.hidden = true;
+        toggle.setAttribute('aria-expanded', 'false');
+        document.documentElement.style.overflow = '';
+        document.removeEventListener('keydown', onKeydown);
+        toggle.focus();
+      }
+
+      toggle.addEventListener('click', open);
+      if (closeBtn) closeBtn.addEventListener('click', close);
+      panel.querySelectorAll('.mobile-nav__link').forEach(function (a) {
+        a.addEventListener('click', close);
+      });
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768 && !panel.hidden) close();
+      });
+    })();
+  </script>
+
+  <style>
+    /* ── Botón hamburguesa ─────────────────────────────────────── */
+    .nav-toggle {
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 44px;
+      height: 44px;
+      margin-right: -10px;
+      padding: 10px;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+    }
+    /* Especificidad scoped de Astro > utilidad md:hidden de Tailwind,
+       así que el breakpoint vive aquí para garantizar el ocultado en >=768px. */
+    @media (min-width: 768px) {
+      .nav-toggle {
+        display: none;
+      }
+    }
+    .nav-toggle__bar {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--color-ink);
+    }
+
+    /* ── Overlay de navegación móvil ───────────────────────────── */
+    .mobile-nav {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: var(--color-paper);
+    }
+    .mobile-nav[hidden] {
+      display: none;
+    }
+    .mobile-nav:not([hidden]) {
+      display: flex;
+      flex-direction: column;
+    }
+    /* Nunca visible en escritorio, aunque quedara abierto al cruzar el breakpoint. */
+    @media (min-width: 768px) {
+      .mobile-nav {
+        display: none;
+      }
+    }
+    .mobile-nav__panel {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: var(--spacing-section-x);
+    }
+    .mobile-nav__close {
+      position: absolute;
+      top: 1.5rem;
+      right: var(--spacing-section-x);
+      width: 44px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+    }
+    .mobile-nav__close-bar {
+      position: absolute;
+      width: 24px;
+      height: 2px;
+      background: var(--color-ink);
+    }
+    .mobile-nav__close-bar:first-child {
+      transform: rotate(45deg);
+    }
+    .mobile-nav__close-bar:last-child {
+      transform: rotate(-45deg);
+    }
+    .mobile-nav__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .mobile-nav__link {
+      font-family: var(--font-mono);
+      font-size: var(--text-h3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-ink);
+      text-decoration: none;
+      display: inline-block;
+      padding: 0.25rem 0;
+    }
+
+    /* Animación de entrada (respeta reduced-motion) */
+    @media (prefers-reduced-motion: no-preference) {
+      .mobile-nav:not([hidden]) {
+        animation: mobileNavFade 200ms ease both;
+      }
+    }
+    @keyframes mobileNavFade {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
 </Base>
