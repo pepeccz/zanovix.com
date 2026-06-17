@@ -1,0 +1,306 @@
+---
+/**
+ * sobre/index.astro — "Sobre nosotros" honesto
+ *
+ * Evoca "hay personas detrás, no una máquina". Solo cuenta lo que está en las
+ * fuentes (PRODUCT.md, manifiesto): Pepe Cabeza, Málaga; ingeniería pausada
+ * con IA; el posicionamiento honesto "hoy todavía es en gran parte una
+ * persona, construimos para dejar de serlo".
+ *
+ * IMPORTANTE: NO se inventa biografía, trayectoria, clientes ni datos
+ * personales. Hay un hueco CLARO y marcado (sección "Bio" con borde dashed y
+ * comentario BIO_PLACEHOLDER) para que el usuario rellene la bio y la foto
+ * reales más adelante. Ver más abajo el marcador.
+ *
+ * Decisiones de diseño:
+ *   - Voz cálida y cercana, primera persona del plural y singular donde toca.
+ *   - Cadencia propia: intro a sangre + bloque de persona con hueco de foto +
+ *     posicionamiento honesto + cierre. Sin card-grid ni eyebrow por sección.
+ *   - El compañero (dock) se monta desde PageLayout en internas.
+ */
+import PageLayout from '../../layouts/PageLayout.astro'
+---
+
+<PageLayout
+  title="Sobre nosotros · Zanovix"
+  description="Quién hay detrás de Zanovix: Pepe Cabeza, desde Málaga, bajando IA aplicada a la pyme con ingeniería pausada. Honestos también con dónde estamos hoy."
+  page="sobre"
+>
+  <!-- ── Intro: hay personas detrás ─────────────────────────────── -->
+  <section class="lead" aria-labelledby="lead-title">
+    <h1 id="lead-title" class="display lead__title">
+      Detrás de Zanovix hay personas, no una máquina que vende IA.
+    </h1>
+    <p class="lead__body">
+      Trabajamos en un sector lleno de ruido, de promesas grandes y de gente que
+      te vende lo que sea con tal de cerrar. Nosotros preferimos lo contrario:
+      hablarte claro, decirte cuándo algo no te hace falta y dejarte el porqué
+      por escrito. Eso es más lento. También es lo que hace que dure.
+    </p>
+    <p class="lead__sign">IA aplicada, con ingeniería pausada.</p>
+  </section>
+
+  <!-- ── La persona / el equipo ─────────────────────────────────── -->
+  <section class="person" aria-labelledby="person-title">
+    <h2 id="person-title" class="display person__title">Quién está al frente</h2>
+
+    <div class="person__grid">
+      <!--
+        ┌─────────────────────────────────────────────────────────────┐
+        │ BIO_PLACEHOLDER — RELLENAR CON CONTENIDO REAL                 │
+        │ Sustituir el bloque .person__photo por una foto real de Pepe  │
+        │ (img con alt descriptivo) y el bloque .person__bio por la     │
+        │ biografía real (trayectoria, formación, etc.). Hasta entonces │
+        │ se deja honestamente marcado como pendiente, no inventado.    │
+        └─────────────────────────────────────────────────────────────┘
+      -->
+      <figure class="person__photo" aria-label="Foto pendiente">
+        <span class="person__photo-tag">Foto · pendiente</span>
+      </figure>
+
+      <div class="person__bio">
+        <p class="person__name">Pepe Cabeza</p>
+        <p class="person__role">Fundador · Málaga</p>
+
+        <p class="person__body">
+          Zanovix nace en Málaga con una idea sencilla: que una pyme de aquí, de
+          Vigo o de Cuenca pueda usar IA con criterio sin tener que pasar por una
+          consultora cara y lenta ni por un producto enlatado que no entiende su
+          negocio.
+        </p>
+
+        <!-- BIO_PLACEHOLDER: la biografía detallada (trayectoria, formación,
+             foto) la añade el usuario. No se inventa nada aquí. -->
+        <p class="person__pending">
+          Aquí irá la bio completa: trayectoria, formación y el camino hasta
+          aquí. La estamos escribiendo con calma, igual que todo lo demás.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Posicionamiento honesto (mundo forest) ─────────────────── -->
+  <section class="honest" aria-labelledby="honest-title">
+    <div class="honest__inner">
+      <h2 id="honest-title" class="honest__title">
+        Seamos honestos sobre dónde estamos hoy
+      </h2>
+      <p class="honest__body">
+        Zanovix está empezando. Hoy todavía es, en gran parte, una persona. No lo
+        escondemos: lo decimos porque es la verdad y porque es justo lo que
+        estamos cambiando.
+      </p>
+      <p class="honest__body">
+        Construimos cada día para dejar de serlo: método documentado para que
+        cualquiera del equipo pueda continuar un proyecto, formación de personas
+        con talento que quieren aprender IA aplicada de verdad y procesos que no
+        dependan de un solo nombre. La meta no es ser la empresa más grande. Es
+        ser la que mejor atiende a quien atiende.
+      </p>
+      <p class="honest__quote">
+        No somos solo Pepe. Hoy todavía sí, en gran parte. Trabajamos cada día
+        para que dejemos de serlo.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Cierre: a la conversación ──────────────────────────────── -->
+  <section class="close" aria-labelledby="close-title">
+    <h2 id="close-title" class="display close__title">
+      ¿Hablamos?
+    </h2>
+    <p class="close__lede">
+      Si te encaja cómo pensamos, cuéntanos tu situación. Te respondemos una
+      persona de verdad, sin formularios eternos ni respuestas de plantilla.
+    </p>
+    <a class="close__mail" href="mailto:hola@zanovix.com">hola@zanovix.com</a>
+    <p class="close__meta">Málaga · ES · respondemos en menos de 24h hábiles</p>
+  </section>
+</PageLayout>
+
+<style>
+  /* ── Intro ────────────────────────────────────────────────────── */
+  .lead {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-hero-y) var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .lead__title {
+    font-size: var(--text-display);
+    color: var(--color-ink);
+    margin: 0 0 1.5rem;
+    max-width: 20ch;
+  }
+  .lead__body {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 56ch;
+    margin: 0 0 1.5rem;
+  }
+  .lead__sign {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+    color: var(--ink-mute);
+    margin: 0;
+  }
+
+  /* ── Persona ──────────────────────────────────────────────────── */
+  .person {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: 0 var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .person__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 clamp(2rem, 4vw, 3rem);
+    max-width: 18ch;
+  }
+  .person__grid {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+  @media (min-width: 760px) {
+    .person__grid {
+      grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+      align-items: start;
+      column-gap: clamp(2.5rem, 6vw, 5rem);
+    }
+  }
+
+  /* Hueco de foto: borde dashed honesto hasta que haya foto real. */
+  .person__photo {
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    border: 1px dashed var(--color-rule-strong);
+    border-radius: 4px;
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
+    background: var(--color-surface);
+  }
+  .person__photo-tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute-strong);
+  }
+
+  .person__name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h2);
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+    margin: 0 0 0.25rem;
+  }
+  .person__role {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    /* ink-mute-strong (8.8:1): teal-deep a 12.8px cae a 4.23:1, bajo AA body. */
+    color: var(--ink-mute-strong);
+    margin: 0 0 1.5rem;
+  }
+  .person__body {
+    font-size: var(--text-body);
+    line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 60ch;
+    margin: 0 0 1.25rem;
+  }
+  .person__pending {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--ink-mute-strong);
+    max-width: 60ch;
+    margin: 0;
+    padding-left: 1rem;
+    border-left: 1px solid var(--color-rule-strong);
+  }
+
+  /* ── Posicionamiento honesto (mundo forest drenched) ──────────── */
+  .honest {
+    background: var(--color-forest);
+    color: var(--color-paper);
+  }
+  .honest__inner {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .honest__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h1);
+    letter-spacing: -0.015em;
+    color: var(--color-paper);
+    margin: 0 0 1.5rem;
+    max-width: 22ch;
+  }
+  .honest__body {
+    font-size: var(--text-lede);
+    line-height: 1.6;
+    color: color-mix(in oklab, var(--color-paper) 86%, transparent);
+    max-width: 60ch;
+    margin: 0 0 1.25rem;
+  }
+  .honest__quote {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--color-teal-bright);
+    max-width: 48ch;
+    margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
+    padding-top: clamp(1.5rem, 3vw, 2.5rem);
+    border-top: 1px solid var(--color-rule-invert);
+  }
+
+  /* ── Cierre ───────────────────────────────────────────────────── */
+  .close {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .close__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    max-width: 18ch;
+  }
+  .close__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 54ch;
+    margin: 0 0 2rem;
+  }
+  .close__mail {
+    font-family: var(--font-mono);
+    font-size: clamp(1.5rem, 3vw + 0.5rem, 2.75rem);
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-teal-deep);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+    display: inline-block;
+    margin-bottom: 1.75rem;
+    transition: text-decoration-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .close__mail:hover {
+    text-decoration-color: var(--color-teal);
+  }
+  .close__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.05em;
+    color: var(--ink-mute);
+    margin: 0;
+  }
+</style>
