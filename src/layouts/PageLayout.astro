@@ -11,8 +11,9 @@
  * REQ-LS-3: skip-link accesible.
  * REQ-LS-4: estructura semántica header > main#main-content > footer.
  *
- * Nav links: Manifiesto · Contacto · GitHub
- * Footer: BrandMark + nav inline + © 2026 Zanovix · Málaga
+ * Nav principal (lean, ruta de conversión): Servicios · Casos · Metodología ·
+ * Sobre · Contacto.
+ * Footer (secundarios): Manifiesto · Privacidad · GitHub + © 2026 Zanovix.
  */
 
 import Base from './Base.astro'
@@ -72,10 +73,18 @@ const { title, description, page = '', showCompanion = true } = Astro.props
           </li>
           <li>
             <a
-              href="/manifiesto"
+              href="/metodologia"
               class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
             >
-              Manifiesto
+              Metodología
+            </a>
+          </li>
+          <li>
+            <a
+              href="/sobre"
+              class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+            >
+              Sobre
             </a>
           </li>
           <li>
@@ -84,17 +93,6 @@ const { title, description, page = '', showCompanion = true } = Astro.props
               class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
             >
               Contacto
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://github.com/pepeccz"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
-              aria-label="GitHub de Zanovix (abre en nueva pestaña)"
-            >
-              GitHub
             </a>
           </li>
         </ul>
@@ -135,14 +133,19 @@ const { title, description, page = '', showCompanion = true } = Astro.props
       <ul class="mobile-nav__list">
         <li><a href="/servicios" class="mobile-nav__link">Servicios</a></li>
         <li><a href="/casos" class="mobile-nav__link">Casos</a></li>
-        <li><a href="/manifiesto" class="mobile-nav__link">Manifiesto</a></li>
+        <li><a href="/metodologia" class="mobile-nav__link">Metodología</a></li>
+        <li><a href="/sobre" class="mobile-nav__link">Sobre</a></li>
         <li><a href="/contacto" class="mobile-nav__link">Contacto</a></li>
+      </ul>
+      <ul class="mobile-nav__sublist">
+        <li><a href="/manifiesto" class="mobile-nav__sublink">Manifiesto</a></li>
+        <li><a href="/privacidad" class="mobile-nav__sublink">Privacidad</a></li>
         <li>
           <a
             href="https://github.com/pepeccz"
             target="_blank"
             rel="noopener noreferrer"
-            class="mobile-nav__link"
+            class="mobile-nav__sublink"
             aria-label="GitHub de Zanovix (abre en nueva pestaña)"
           >
             GitHub
@@ -183,10 +186,10 @@ const { title, description, page = '', showCompanion = true } = Astro.props
             </li>
             <li>
               <a
-                href="/contacto"
+                href="/privacidad"
                 class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--ink-mute-strong)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
               >
-                Contacto
+                Privacidad
               </a>
             </li>
             <li>
@@ -299,9 +302,11 @@ const { title, description, page = '', showCompanion = true } = Astro.props
 
       toggle.addEventListener('click', open);
       if (closeBtn) closeBtn.addEventListener('click', close);
-      panel.querySelectorAll('.mobile-nav__link').forEach(function (a) {
-        a.addEventListener('click', close);
-      });
+      panel
+        .querySelectorAll('.mobile-nav__link, .mobile-nav__sublink')
+        .forEach(function (a) {
+          a.addEventListener('click', close);
+        });
       window.addEventListener('resize', function () {
         if (window.innerWidth >= 768 && !panel.hidden) close();
       });
@@ -404,6 +409,27 @@ const { title, description, page = '', showCompanion = true } = Astro.props
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--color-ink);
+      text-decoration: none;
+      display: inline-block;
+      padding: 0.25rem 0;
+    }
+
+    /* Enlaces secundarios del overlay móvil (más discretos que los primarios) */
+    .mobile-nav__sublist {
+      list-style: none;
+      margin: 2rem 0 0;
+      padding: 1.5rem 0 0;
+      border-top: 1px solid var(--color-rule);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.5rem;
+    }
+    .mobile-nav__sublink {
+      font-family: var(--font-mono);
+      font-size: var(--text-eyebrow);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-mute-strong);
       text-decoration: none;
       display: inline-block;
       padding: 0.25rem 0;
