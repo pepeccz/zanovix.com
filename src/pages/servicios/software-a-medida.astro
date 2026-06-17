@@ -1,0 +1,77 @@
+---
+/**
+ * servicios/software-a-medida.astro — detalle de servicio
+ *
+ * Nombra la situación: pelear cada día con hojas de cálculo y tareas a mano.
+ * Herramientas hechas para tu proceso, no plantillas. Sin métricas ni plazos
+ * inventados. Estilos compartidos en global.css (.svc*).
+ */
+import PageLayout from '../../layouts/PageLayout.astro'
+
+const incluye = [
+  'Una herramienta hecha a la medida de tu proceso real, no una plantilla a la que te toque adaptarte tú.',
+  'IA por dentro donde de verdad ahorra trabajo: clasificar, redactar, resumir, avisar. No por aparentar.',
+  'Conexión con lo que ya usas (tu correo, tu hoja de cálculo, tu gestión) para que no haya doble tecleo.',
+  'Código que entendemos y mantenemos, sin dejarte atado a una caja negra que solo nosotros sabemos tocar.',
+]
+---
+
+<PageLayout
+  title="Software a medida · Zanovix"
+  description="Herramientas hechas para tu proceso concreto, con IA donde de verdad ahorra trabajo. No plantillas a las que te toca adaptarte tú."
+  page="servicios"
+>
+  <article class="svc">
+    <p class="svc__back">
+      <a href="/servicios">← Servicios</a>
+    </p>
+
+    <header class="svc__head">
+      <h1 class="display svc__title">
+        Llevas el negocio en hojas de cálculo y a mano.
+      </h1>
+      <p class="svc__lede">
+        Cada día se te van horas en copiar datos, repetir tareas y apagar
+        fuegos que una herramienta bien hecha resolvería sola. No te hace falta
+        un programa enorme, te hace falta uno que encaje con tu manera de
+        trabajar.
+      </p>
+    </header>
+
+    <section class="svc__block" aria-labelledby="que-es">
+      <h2 id="que-es" class="svc__h2">Qué es y para quién</h2>
+      <p class="svc__body">
+        Software hecho a medida de cómo trabajas tú: la herramienta que te falta
+        para dejar de pelear con hojas de cálculo, correos y tareas repetidas.
+        Donde la IA ayuda de verdad, la metemos por dentro; donde no, la
+        dejamos fuera.
+      </p>
+      <p class="svc__body">
+        Para equipos que han crecido a base de parches y notan que el proceso ya
+        no se sostiene a mano. Si lo tuyo es muy concreto, mejor: cuanto más
+        específico, más se nota la diferencia frente a una plantilla genérica.
+      </p>
+    </section>
+
+    <section class="svc__block" aria-labelledby="incluye">
+      <h2 id="incluye" class="svc__h2">Qué incluye, sin letra pequeña</h2>
+      <ul class="svc__list">
+        {incluye.map((item) => <li class="svc__item">{item}</li>)}
+      </ul>
+      <p class="svc__note">
+        Empezamos por la pieza que más te duele y la ponemos en marcha antes de
+        seguir. Nada de proyectos eternos que no ves funcionar hasta el final.
+      </p>
+    </section>
+
+    <section class="svc__cta" aria-labelledby="cta">
+      <h2 id="cta" class="display svc__cta-title">¿Qué te quita el tiempo?</h2>
+      <p class="svc__cta-lede">
+        Cuéntanos qué tarea repetís más y cómo la hacéis hoy. Si ya has hablado
+        con el asistente, lo tienes a mano aquí para seguir desde donde lo
+        dejaste. Si no, escríbenos directamente.
+      </p>
+      <a class="svc__mail" href="mailto:hola@zanovix.com">hola@zanovix.com</a>
+    </section>
+  </article>
+</PageLayout>

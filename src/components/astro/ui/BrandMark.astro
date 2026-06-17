@@ -1,0 +1,71 @@
+---
+/**
+ * BrandMark — Zanovix isotipo de 8 pétalos
+ *
+ * Refinado: pétalos almendrados con paths Bézier (no elipses) + contorno
+ * negro grueso + centro circular sólido + fill teal. Match con brand canon
+ * (~/zanovix-os/10-branding/DESIGN.md §4) y con el PNG real del isotipo.
+ *
+ * Geometría:
+ *   - viewBox 100×100, centro (50, 50)
+ *   - Pétalo canónico apuntando arriba: vesica piscis entre (50, 30) y (50, 4)
+ *   - 8 rotaciones de 45° alrededor del centro
+ *   - Stroke ink grueso 3.2 + linejoin round (suaviza puntas)
+ *   - Center: círculo ink sólido r=5.5
+ *
+ * Variantes (prop `variant`):
+ *   - "brand" (default) — bicolor canon: pétalos teal + contorno ink + centro ink
+ *   - "mono"            — todo en `currentColor` (para tints uniformes via CSS color)
+ *
+ * Uso permitido: header, footer, favicon. NUNCA inline en body como motion-language.
+ */
+interface Props {
+  size?: number
+  variant?: 'brand' | 'mono'
+  class?: string
+  label?: string
+}
+
+const {
+  size = 32,
+  variant = 'brand',
+  class: className = '',
+  label = 'Zanovix',
+} = Astro.props
+
+const petalFill = variant === 'brand' ? 'var(--color-teal)' : 'currentColor'
+const strokeColor = variant === 'brand' ? 'var(--color-ink)' : 'currentColor'
+const centerFill = variant === 'brand' ? 'var(--color-ink)' : 'currentColor'
+
+// Pétalo canónico apuntando hacia arriba desde el centro (50, 50):
+//   - Tip interior cerca del círculo central → (50, 30)
+//   - Tip exterior afuera → (50, 4)
+//   - Curvas vesica piscis: dos cuadráticas simétricas
+const petalPath = 'M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z'
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 100 100"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label={label}
+  class:list={[
+    'transition-opacity duration-200 hover:opacity-75',
+    className,
+  ]}
+>
+  {Array.from({ length: 8 }).map((_, i) => (
+    <path
+      d={petalPath}
+      transform={`rotate(${i * 45} 50 50)`}
+      fill={petalFill}
+      stroke={strokeColor}
+      stroke-width={3.2}
+      stroke-linejoin="round"
+    />
+  ))}
+  <circle cx="50" cy="50" r="5.5" fill={centerFill} />
+</svg>

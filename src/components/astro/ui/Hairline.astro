@@ -1,0 +1,18 @@
+---
+interface Props {
+  strong?: boolean
+  class?: string
+}
+
+const { strong = false, class: className = '' } = Astro.props
+---
+
+<hr
+  class:list={[
+    'border-0 border-t',
+    strong
+      ? 'border-[var(--color-rule-strong)]'
+      : 'border-[var(--color-rule)]',
+    className,
+  ]}
+/>

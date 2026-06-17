@@ -1,0 +1,97 @@
+---
+/**
+ * Emphasis.astro — énfasis editorial con drawn underline teal
+ *
+ * Anima un subrayado teal de 0% a 100% al entrar en el viewport.
+ * Mecanismo: IntersectionObserver + clase CSS 'is-drawn' en motion.css.
+ *
+ * Canon de marca:
+ *   - Sin italic (REQ-BT-6, REQ-BT-4: italic NO como mecanismo de énfasis).
+ *   - Sin bold (font-weight ≤ 500).
+ *   - Color teal exclusivo — el único acento permitido.
+ *   - Underline drawn como única distinción visual.
+ *
+ * Props:
+ *   as    — tag a renderizar (default: 'span')
+ *   delay — delay en ms antes de animar (default: 0)
+ *
+ * La animación de background-size (0% → 100%) está en motion.css:
+ *   .emphasis-text → .emphasis-text.is-drawn
+ *
+ * Reduced-motion: el script comprueba data-motion="reduced" en <html>
+ * y añade is-drawn directamente sin Observer (estado final inmediato).
+ */
+
+interface Props {
+  as?: 'span' | 'strong' | 'em' | 'b'
+  delay?: number
+  class?: string
+}
+
+const {
+  as: Tag = 'span',
+  delay = 0,
+  class: className = '',
+} = Astro.props
+
+// ID único por instancia para el observer
+const uid = `emphasis-${Math.random().toString(36).slice(2, 8)}`
+---
+
+<Tag
+  id={uid}
+  class={`emphasis-text ${className}`.trim()}
+  data-delay={delay}
+>
+  <slot />
+</Tag>
+
+<script>
+  // IntersectionObserver para cada instancia de Emphasis
+  // Espera a que el DOM esté listo (DOMContentLoaded ya ha pasado si el script
+  // está al final del body — Astro lo bundlea correctamente)
+  function initEmphasis() {
+    const elements = document.querySelectorAll<HTMLElement>('.emphasis-text:not([data-emphasis-init])')
+
+    elements.forEach((el) => {
+      el.setAttribute('data-emphasis-init', 'true')
+
+      const delay = parseInt(el.dataset.delay ?? '0', 10)
+      const reduced =
+        document.documentElement.dataset.motion === 'reduced' ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      // Reduced-motion: estado final instantáneo
+      if (reduced) {
+        el.classList.add('is-drawn')
+        return
+      }
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            if (delay > 0) {
+              setTimeout(() => el.classList.add('is-drawn'), delay)
+            } else {
+              el.classList.add('is-drawn')
+            }
+            observer.disconnect()
+          }
+        },
+        { threshold: 0.5, rootMargin: '0px 0px -20px 0px' }
+      )
+
+      observer.observe(el)
+    })
+  }
+
+  // Init en carga inicial
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEmphasis)
+  } else {
+    initEmphasis()
+  }
+
+  // Re-init en astro:page-load (por compatibilidad futura con ClientRouter)
+  document.addEventListener('astro:page-load', initEmphasis)
+</script>

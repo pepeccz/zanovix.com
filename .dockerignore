@@ -1,0 +1,38 @@
+# Control de versiones
+.git
+.gitignore
+.github
+
+# Dependencias (se instalan en el builder stage)
+node_modules
+
+# Artefactos de build (se generan en el builder stage)
+dist
+.astro
+
+# Variables de entorno (nunca deben entrar en la imagen)
+.env
+.env.*
+!.env.example
+
+# Directorios de referencia histórica y tooling local
+legacy/
+.atl/
+openspec/
+
+# Docs y metadata
+README.md
+*.md
+CHANGELOG.md
+LICENSE
+
+# Editores y OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Docker files (no necesario copiarlos dentro de la imagen)
+Dockerfile
+docker-compose.yaml
+.dockerignore

@@ -1,0 +1,413 @@
+---
+/**
+ * metodologia/index.astro — el método como pilar de marca
+ *
+ * Para el comprador económico: "el método es la prueba". Donde /casos cuenta
+ * los cuatro pasos en breve (discovery → propuesta → ejecución medida →
+ * entrega documentada), esta página les da entidad propia: por qué trabajamos
+ * así, qué te llevas en cada paso y los principios que sostienen el método
+ * (conceptos antes que código, honestidad sobre humo, sin sobreingeniería).
+ *
+ * Decisiones de diseño:
+ *   - Cadencia distinta a /casos y /servicios. La sección de pasos vive en el
+ *     mundo claro (no forest) y se lee como secuencia con su porqué y su
+ *     entregable; la numeración 01-04 es legítima porque ES una secuencia real.
+ *   - Bloque de principios en lista hairline (coherente con /servicios), sin
+ *     card-grid ni eyebrow por sección.
+ *   - El compañero (dock) se monta desde PageLayout en internas.
+ *
+ * Honestidad (no negociable): castellano peninsular, trato de tú, sin voseo,
+ * sin guiones largos, anti-hype. Sin números no atribuibles a Zanovix.
+ */
+import PageLayout from '../../layouts/PageLayout.astro'
+
+// Los cuatro pasos, con su porqué y lo que te queda al terminar cada uno.
+const pasos = [
+  {
+    fase: 'Discovery',
+    titulo: 'Entender antes de proponer',
+    porque:
+      'La mayoría de los proyectos que salen mal empiezan resolviendo el problema equivocado. Antes de hablar de IA o de tecnología, miramos cómo trabajas hoy, dónde se te van las horas y dónde tus clientes dejan de encontrarte.',
+    llevas:
+      'Un diagnóstico claro de tu situación y, si hace falta, la respuesta honesta de que todavía no toca meter IA por ningún lado.',
+  },
+  {
+    fase: 'Propuesta',
+    titulo: 'Un plan que cabe en una hoja',
+    porque:
+      'Una propuesta que necesita veinte páginas suele esconder que no se ha entendido el problema. La nuestra dice qué haríamos primero, por qué empezamos por ahí y qué esperamos que cambie. Con lo que dejamos fuera escrito de antemano.',
+    llevas:
+      'Alcance, criterios de éxito y precio sobre la mesa, sin letra pequeña. Puedes leerla y decidir sin necesidad de fiarte de nuestra palabra.',
+  },
+  {
+    fase: 'Ejecución medida',
+    titulo: 'Construir y medir, no prometer',
+    porque:
+      'Si no sabes de dónde partías, cualquier resultado se puede maquillar. Levantamos la línea base antes de tocar nada, trabajamos en tramos cortos y comprobamos contra esa base, no contra una promesa de folleto.',
+    llevas:
+      'Avances visibles cada pocas semanas y la tranquilidad de poder seguir de cerca lo que se hace y por qué, sin sorpresas al final.',
+  },
+  {
+    fase: 'Entrega documentada',
+    titulo: 'Te queda el porqué, no solo el qué',
+    porque:
+      'Lo que no se documenta no se transmite ni se mantiene. Cuando cerramos un proyecto, no te dejamos solo con algo funcionando: te dejamos también el razonamiento por escrito.',
+    llevas:
+      'La solución en marcha y un documento con qué decidimos, qué medimos y qué sigue. Lo puedes enseñar a tu equipo o a quien aprueba el gasto.',
+  },
+]
+
+// Principios que sostienen el método (del manifiesto, en clave de cliente).
+const principios = [
+  {
+    nombre: 'Conceptos antes que código',
+    desc: 'Si no entendemos el problema, no lo resolvemos a base de teclear. Pensamos primero y construimos después. Eso evita la mitad de los líos.',
+  },
+  {
+    nombre: 'Honestidad sobre humo',
+    desc: 'Si algo no se puede, lo decimos. Si algo no compensa, lo decimos. Si una hoja de cálculo resuelve tu problema, te decimos que uses una hoja de cálculo.',
+  },
+  {
+    nombre: 'Sin sobreingeniería',
+    desc: 'Lo mínimo que resuelve tu problema y se mantiene en el tiempo. Cada línea de más es una factura que pagas mañana en mantenimiento.',
+  },
+  {
+    nombre: 'La IA es medio, no fin',
+    desc: 'No metemos IA para que quede moderno. La usamos donde mueve la aguja de verdad y, donde no, usamos lo que funcione. Y te lo contamos sin adornos.',
+  },
+]
+---
+
+<PageLayout
+  title="Metodología · Zanovix"
+  description="Cómo trabajamos un proyecto, paso a paso: discovery, propuesta, ejecución medida y entrega documentada. El método es la prueba del rigor. IA aplicada con ingeniería pausada."
+  page="metodologia"
+>
+  <!-- ── Intro: el método como prueba ───────────────────────────── -->
+  <section class="lead" aria-labelledby="lead-title">
+    <h1 id="lead-title" class="display lead__title">
+      No te pedimos que confíes en nosotros. Te enseñamos cómo trabajamos.
+    </h1>
+    <p class="lead__body">
+      Cuando aún no hay un caso con cifras propias que enseñar, lo honesto es
+      mostrar el método. El nuestro es el mismo en todos los proyectos: cuatro
+      pasos que puedes seguir de cerca y un puñado de principios que no se
+      negocian. Si te encaja la forma de trabajar, lo demás viene solo.
+    </p>
+    <p class="lead__sign">IA aplicada, con ingeniería pausada.</p>
+  </section>
+
+  <!-- ── Los cuatro pasos ───────────────────────────────────────── -->
+  <section class="flow" aria-labelledby="flow-title">
+    <header class="flow__head">
+      <h2 id="flow-title" class="display flow__title">Cómo trabajamos un proyecto</h2>
+      <p class="flow__lede">
+        Siempre el mismo orden, porque el orden importa. No se propone sin
+        entender, no se construye sin medir y no se entrega sin documentar.
+      </p>
+    </header>
+
+    <ol class="steps">
+      {
+        pasos.map((p, i) => (
+          <li class="step">
+            <div class="step__marker">
+              <span class="step__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <span class="step__phase">{p.fase}</span>
+            </div>
+            <div class="step__body">
+              <h3 class="step__title">{p.titulo}</h3>
+              <p class="step__why">{p.porque}</p>
+              <p class="step__take">
+                <span class="step__take-label">Te llevas</span>
+                {p.llevas}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <!-- ── Principios (mundo forest: cambio de mundo deliberado) ──── -->
+  <section class="principles" aria-labelledby="principles-title">
+    <div class="principles__inner">
+      <header class="principles__head">
+        <h2 id="principles-title" class="principles__title">
+          Lo que no se negocia
+        </h2>
+        <p class="principles__lede">
+          El método cambia de proyecto a proyecto en los detalles. Estos cuatro
+          principios, no. Son la razón por la que se puede repetir y por la que
+          puedes fiarte de lo que sale.
+        </p>
+      </header>
+      <ul class="principles__list">
+        {
+          principios.map((p) => (
+            <li class="principle">
+              <h3 class="principle__name">{p.nombre}</h3>
+              <p class="principle__desc">{p.desc}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── Cierre: a la conversación ──────────────────────────────── -->
+  <section class="close" aria-labelledby="close-title">
+    <h2 id="close-title" class="display close__title">
+      ¿Te encaja cómo trabajamos?
+    </h2>
+    <p class="close__lede">
+      Cuéntanos tu situación y te decimos por dónde empezaríamos y por qué. La
+      primera conversación no cuesta nada y de ahí ya sale el primer paso del
+      método.
+    </p>
+    <a class="close__mail" href="mailto:hola@zanovix.com">hola@zanovix.com</a>
+    <p class="close__meta">Málaga · ES · respondemos en menos de 24h hábiles</p>
+  </section>
+</PageLayout>
+
+<style>
+  /* ── Intro ────────────────────────────────────────────────────── */
+  .lead {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-hero-y) var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .lead__title {
+    font-size: var(--text-display);
+    color: var(--color-ink);
+    margin: 0 0 1.5rem;
+    max-width: 20ch;
+  }
+  .lead__body {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 56ch;
+    margin: 0 0 1.5rem;
+  }
+  .lead__sign {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+    color: var(--ink-mute);
+    margin: 0;
+  }
+
+  /* ── Flujo de pasos (mundo claro) ─────────────────────────────── */
+  .flow {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: 0 var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .flow__head {
+    max-width: 56ch;
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  }
+  .flow__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 0.85rem;
+    max-width: 20ch;
+  }
+  .flow__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem 0;
+    padding: clamp(1.75rem, 3.5vw, 2.75rem) 0;
+    border-top: 1px solid var(--color-rule);
+  }
+  .step:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .step__marker {
+    display: flex;
+    align-items: baseline;
+    gap: 0.85rem;
+  }
+  .step__num {
+    font-family: var(--font-mono);
+    font-size: var(--text-h3);
+    font-weight: 500;
+    line-height: 1;
+    color: var(--color-teal-deep);
+  }
+  .step__phase {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute-strong);
+  }
+  .step__body {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .step__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .step__why {
+    font-size: var(--text-body);
+    line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0;
+  }
+  .step__take {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--ink-mute-strong);
+    max-width: 62ch;
+    margin: 0;
+  }
+  .step__take-label {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    /* ink-mute-strong (8.8:1), no teal-deep: a 12.8px el teal cae a 3.94:1,
+       por debajo del umbral AA de cuerpo (4.5:1). El teal queda en step__num
+       (texto grande, ≥3:1 OK). */
+    color: var(--ink-mute-strong);
+    margin-right: 0.6rem;
+  }
+  @media (min-width: 760px) {
+    .step {
+      grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+      column-gap: clamp(2rem, 5vw, 5rem);
+      align-items: start;
+    }
+    .step__marker {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+
+  /* ── Principios (mundo forest drenched) ───────────────────────── */
+  .principles {
+    background: var(--color-forest);
+    color: var(--color-paper);
+  }
+  .principles__inner {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .principles__head {
+    max-width: 56ch;
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  }
+  .principles__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h1);
+    letter-spacing: -0.015em;
+    color: var(--color-paper);
+    margin: 0 0 0.85rem;
+  }
+  .principles__lede {
+    font-size: var(--text-lede);
+    line-height: 1.6;
+    color: color-mix(in oklab, var(--color-paper) 86%, transparent);
+    margin: 0;
+  }
+  .principles__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .principle {
+    display: grid;
+    gap: 0.5rem;
+    padding: clamp(1.5rem, 3vw, 2.25rem) 0;
+    border-top: 1px solid var(--color-rule-invert);
+  }
+  .principle:last-child {
+    border-bottom: 1px solid var(--color-rule-invert);
+  }
+  @media (min-width: 760px) {
+    .principle {
+      grid-template-columns: minmax(0, 22rem) 1fr;
+      column-gap: clamp(2rem, 5vw, 5rem);
+      align-items: baseline;
+    }
+  }
+  .principle__name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    letter-spacing: -0.01em;
+    color: var(--color-paper);
+    margin: 0;
+  }
+  .principle__desc {
+    font-size: var(--text-body);
+    line-height: 1.65;
+    color: color-mix(in oklab, var(--color-paper) 84%, transparent);
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  /* ── Cierre ───────────────────────────────────────────────────── */
+  .close {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .close__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    max-width: 18ch;
+  }
+  .close__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 54ch;
+    margin: 0 0 2rem;
+  }
+  .close__mail {
+    font-family: var(--font-mono);
+    font-size: clamp(1.5rem, 3vw + 0.5rem, 2.75rem);
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-teal-deep);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+    display: inline-block;
+    margin-bottom: 1.75rem;
+    transition: text-decoration-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .close__mail:hover {
+    text-decoration-color: var(--color-teal);
+  }
+  .close__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.05em;
+    color: var(--ink-mute);
+    margin: 0;
+  }
+</style>

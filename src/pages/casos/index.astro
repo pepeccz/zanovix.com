@@ -1,0 +1,417 @@
+---
+/**
+ * casos/index.astro — Casos en modo honesto (posicionamiento Puente)
+ *
+ * Zanovix está empezando: aún no hay casos publicables con número duro
+ * atribuible solo a nosotros. En vez de inventar métricas o rellenar con
+ * casos prestados, esta página enseña con orgullo CÓMO trabajamos, QUÉ
+ * mostrará un caso cuando exista y QUÉ métricas honestas publicaremos. El
+ * tono es confiado, no de disculpa: "estamos empezando, así trabajamos".
+ *
+ * Decisiones de diseño:
+ *   - Cadencia distinta a /servicios (que usa lista de enlaces con hairline).
+ *     Aquí: intro plana + sección de proceso en mundo forest (drenched) como
+ *     cambio de mundo deliberado (no card-grid) + métricas honestas en lista
+ *     hairline + hueco diseñado para insertar casos/testimonios reales.
+ *   - Sin eyebrow por sección, sin numeración 01/02/03 de relleno: los pasos
+ *     del proceso SÍ son una secuencia real, así que el orden informa.
+ *   - El compañero (dock) se monta desde PageLayout en internas.
+ *
+ * Honestidad (no negociable): sin nombres de cliente sin permiso (ni
+ * SmartCatering), sin métricas inventadas, sin 80.000 € ni +31,8 %.
+ */
+import PageLayout from '../../layouts/PageLayout.astro'
+
+// El proceso real, contado como secuencia (el orden informa → numerar es legítimo).
+const proceso = [
+  {
+    fase: 'Discovery',
+    titulo: 'Entender antes de proponer',
+    desc: 'Miramos cómo trabajas hoy, dónde se te van las horas y dónde tus clientes dejan de encontrarte. Sin asumir que la IA es la respuesta: a veces lo honesto es decir que todavía no.',
+  },
+  {
+    fase: 'Propuesta',
+    titulo: 'Un plan que cabe en una hoja',
+    desc: 'Qué haríamos primero, por qué empezamos por ahí y qué esperamos que cambie. Con alcance, criterios de éxito y lo que dejamos fuera escrito de antemano.',
+  },
+  {
+    fase: 'Ejecución medida',
+    titulo: 'Construir y medir, no prometer',
+    desc: 'Levantamos la línea base antes de tocar nada para saber de dónde partimos. Trabajamos en tramos cortos y comprobamos contra esa base, no contra una promesa.',
+  },
+  {
+    fase: 'Entrega documentada',
+    titulo: 'Te queda el porqué, no solo el qué',
+    desc: 'Cierras con la solución funcionando y con el razonamiento por escrito: qué decidimos, qué medimos y qué sigue. Lo puedes enseñar a tu equipo o a quien aprueba el gasto.',
+  },
+]
+
+// Métricas que publicaremos cuando existan, con honestidad sobre el método.
+const metricas = [
+  {
+    nombre: 'Share of Recommendation',
+    desc: 'Cuántas veces una IA te recomienda cuando alguien pregunta por lo que haces, frente a tu competencia.',
+  },
+  {
+    nombre: 'Citas en respuestas de IA',
+    desc: 'Si ChatGPT, Perplexity o Google AI te nombran y enlazan al responder a tus clientes.',
+  },
+  {
+    nombre: 'Horas devueltas al mes',
+    desc: 'El tiempo que dejas de gastar en lo repetitivo una vez la herramienta lo hace por ti, medido sobre tu situación real.',
+  },
+]
+---
+
+<PageLayout
+  title="Casos · Zanovix"
+  description="Estamos empezando y lo contamos con honestidad. Así trabajamos, qué mostrará un caso y qué métricas publicaremos cuando existan. Sin números prestados ni inventados."
+  page="casos"
+>
+  <!-- ── Intro: estado honesto, tono confiado ───────────────────── -->
+  <section class="lead" aria-labelledby="lead-title">
+    <h1 id="lead-title" class="display lead__title">
+      Aún no llenamos esta página de cifras. Y preferimos contarte por qué.
+    </h1>
+    <p class="lead__body">
+      Zanovix está empezando. Podríamos pegar aquí logos y porcentajes
+      prestados, pero entonces esta página no valdría nada para ti. Así que
+      hacemos lo contrario: te enseñamos cómo trabajamos y qué verás en un
+      caso cuando lo publiquemos, con números que de verdad sean nuestros.
+    </p>
+    <p class="lead__sign">IA aplicada, con ingeniería pausada.</p>
+  </section>
+
+  <!-- ── Proceso: mundo forest (cambio de mundo deliberado) ──────── -->
+  <section class="proceso" aria-labelledby="proceso-title">
+    <div class="proceso__inner">
+      <header class="proceso__head">
+        <h2 id="proceso-title" class="proceso__title">Cómo trabajamos un caso</h2>
+        <p class="proceso__lede">
+          Cuatro pasos, siempre los mismos. No es magia: es un método que se
+          puede repetir y que puedes seguir de cerca en cada tramo.
+        </p>
+      </header>
+
+      <ol class="steps">
+        {
+          proceso.map((p, i) => (
+            <li class="step">
+              <span class="step__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <div class="step__text">
+                <p class="step__phase">{p.fase}</p>
+                <h3 class="step__title">{p.titulo}</h3>
+                <p class="step__desc">{p.desc}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── Qué medimos: métricas honestas (lista hairline) ─────────── -->
+  <section class="metrics" aria-labelledby="metrics-title">
+    <div class="metrics__head">
+      <h2 id="metrics-title" class="display metrics__title">
+        Qué publicaremos cuando exista
+      </h2>
+      <p class="metrics__lede">
+        No prometemos un puesto en ningún ranking, porque ese ranking no
+        existe. Medimos cosas que sí se pueden medir y que te importan de
+        verdad. Cuando tengamos cifras propias, irán aquí, con su contexto.
+      </p>
+    </div>
+    <ul class="metrics__list">
+      {
+        metricas.map((m) => (
+          <li class="metric">
+            <h3 class="metric__name">{m.nombre}</h3>
+            <p class="metric__desc">{m.desc}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- ── Hueco diseñado para el primer caso real ─────────────────── -->
+  <section class="slot" aria-labelledby="slot-title">
+    <div class="slot__panel">
+      <p class="slot__tag">Reservado</p>
+      <h2 id="slot-title" class="slot__title">Aquí irá el primer caso, con nombre y cifras propias.</h2>
+      <p class="slot__body">
+        Cuando un proyecto tenga su línea base medida y permiso para contarlo,
+        ocupará este sitio: el trabajo real, lo que cambió y la persona que lo
+        vivió, con su nombre. Hasta entonces, lo dejamos honestamente vacío en
+        lugar de inventarlo.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Cierre: a la conversación ───────────────────────────────── -->
+  <section class="close" aria-labelledby="close-title">
+    <h2 id="close-title" class="display close__title">
+      ¿Quieres ser de los primeros?
+    </h2>
+    <p class="close__lede">
+      Si te encaja cómo trabajamos, hablemos de tu situación. Lo que hagamos
+      juntos puede ser justo el caso que falta en esta página.
+    </p>
+    <a class="close__mail" href="mailto:hola@zanovix.com">hola@zanovix.com</a>
+    <p class="close__meta">Málaga · ES · respondemos en menos de 24h hábiles</p>
+  </section>
+</PageLayout>
+
+<style>
+  /* ── Intro ────────────────────────────────────────────────────── */
+  .lead {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-hero-y) var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .lead__title {
+    font-size: var(--text-display);
+    color: var(--color-ink);
+    margin: 0 0 1.5rem;
+    max-width: 20ch;
+  }
+  .lead__body {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 56ch;
+    margin: 0 0 1.5rem;
+  }
+  .lead__sign {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+    color: var(--ink-mute);
+    margin: 0;
+  }
+
+  /* ── Proceso (mundo forest drenched) ──────────────────────────── */
+  .proceso {
+    background: var(--color-forest);
+    color: var(--color-paper);
+  }
+  .proceso__inner {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .proceso__head {
+    max-width: 56ch;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+  .proceso__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h1);
+    letter-spacing: -0.015em;
+    color: var(--color-paper);
+    margin: 0 0 0.85rem;
+  }
+  .proceso__lede {
+    font-size: var(--text-lede);
+    line-height: 1.6;
+    /* paper a ~82% sobre forest: contraste alto, lectura cálida */
+    color: color-mix(in oklab, var(--color-paper) 86%, transparent);
+    margin: 0;
+  }
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.85rem 1.5rem;
+    align-items: start;
+    padding: clamp(1.5rem, 3.5vw, 2.5rem) 0;
+    border-top: 1px solid var(--color-rule-invert);
+  }
+  .step:last-child {
+    border-bottom: 1px solid var(--color-rule-invert);
+  }
+  .step__num {
+    font-family: var(--font-mono);
+    font-size: var(--text-h3);
+    font-weight: 500;
+    line-height: 1;
+    color: var(--color-teal-bright);
+    padding-top: 0.15em;
+  }
+  .step__text {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .step__phase {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-teal-bright);
+    margin: 0;
+  }
+  .step__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    letter-spacing: -0.01em;
+    color: var(--color-paper);
+    margin: 0;
+  }
+  .step__desc {
+    font-size: var(--text-body);
+    line-height: 1.65;
+    color: color-mix(in oklab, var(--color-paper) 84%, transparent);
+    max-width: 60ch;
+    margin: 0;
+  }
+  @media (min-width: 720px) {
+    .step {
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: clamp(2rem, 5vw, 5rem);
+    }
+  }
+
+  /* ── Métricas honestas ────────────────────────────────────────── */
+  .metrics {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .metrics__head {
+    max-width: 60ch;
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  }
+  .metrics__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 0.85rem;
+    max-width: 20ch;
+  }
+  .metrics__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .metrics__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .metric {
+    display: grid;
+    gap: 0.4rem;
+    padding: clamp(1.25rem, 2.5vw, 2rem) 0;
+    border-top: 1px solid var(--color-rule);
+  }
+  .metric:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  @media (min-width: 720px) {
+    .metric {
+      grid-template-columns: minmax(0, 22rem) 1fr;
+      column-gap: clamp(1.5rem, 4vw, 4rem);
+      align-items: baseline;
+    }
+  }
+  .metric__name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .metric__desc {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 52ch;
+    margin: 0;
+  }
+
+  /* ── Hueco reservado para el primer caso real ─────────────────── */
+  .slot {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: 0 var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .slot__panel {
+    border: 1px dashed var(--color-rule-strong);
+    border-radius: 4px;
+    padding: clamp(2rem, 5vw, 3.5rem);
+  }
+  .slot__tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute-strong);
+    margin: 0 0 1rem;
+  }
+  .slot__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h2);
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    max-width: 24ch;
+  }
+  .slot__body {
+    font-size: var(--text-body);
+    line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  /* ── Cierre ───────────────────────────────────────────────────── */
+  .close {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: 0 var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .close__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    max-width: 18ch;
+  }
+  .close__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 52ch;
+    margin: 0 0 2rem;
+  }
+  .close__mail {
+    font-family: var(--font-mono);
+    font-size: clamp(1.5rem, 3vw + 0.5rem, 2.75rem);
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-teal-deep);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+    display: inline-block;
+    margin-bottom: 1.75rem;
+    transition: text-decoration-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .close__mail:hover {
+    text-decoration-color: var(--color-teal);
+  }
+  .close__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.05em;
+    color: var(--ink-mute);
+    margin: 0;
+  }
+</style>

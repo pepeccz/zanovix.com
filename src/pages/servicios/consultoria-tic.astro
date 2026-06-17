@@ -1,0 +1,77 @@
+---
+/**
+ * servicios/consultoria-tic.astro — detalle de servicio
+ *
+ * Criterio técnico para decidir bien antes de gastar, sin vender lo que
+ * interesa al proveedor. Sin métricas ni plazos inventados. Estilos
+ * compartidos en global.css (.svc*).
+ */
+import PageLayout from '../../layouts/PageLayout.astro'
+
+const incluye = [
+  'Una segunda opinión técnica honesta antes de firmar, contratar o cambiar de proveedor.',
+  'Traducción de lo técnico a algo que puedas decidir tú: qué riesgo hay, qué cuesta de verdad y qué se puede esperar.',
+  'Criterio para elegir herramientas y proveedores sin que nadie te empuje hacia lo que más le conviene a él.',
+  'Un acompañamiento puntual o continuo, según lo que necesites, sin atarte a una iguala que no usas.',
+]
+---
+
+<PageLayout
+  title="Consultoría TIC · Zanovix"
+  description="Criterio técnico para decidir bien antes de gastar, con alguien que te habla claro y no te vende lo que le interesa a él."
+  page="servicios"
+>
+  <article class="svc">
+    <p class="svc__back">
+      <a href="/servicios">← Servicios</a>
+    </p>
+
+    <header class="svc__head">
+      <h1 class="display svc__title">
+        Tienes que decidir y no sabes en quién fiarte.
+      </h1>
+      <p class="svc__lede">
+        Cambiar de sistema, contratar un desarrollo, elegir entre proveedores
+        que dicen cosas distintas. Decisiones técnicas con dinero detrás y
+        nadie neutral que te lo explique claro. Para eso estamos.
+      </p>
+    </header>
+
+    <section class="svc__block" aria-labelledby="que-es">
+      <h2 id="que-es" class="svc__h2">Qué es y para quién</h2>
+      <p class="svc__body">
+        Criterio técnico de tu lado: alguien que entiende la tecnología pero
+        trabaja para ti, no para venderte un producto. Te ayudamos a entender
+        las opciones, los riesgos y el coste real antes de que comprometas
+        presupuesto.
+      </p>
+      <p class="svc__body">
+        Para dueños y responsables que tienen que tomar una decisión técnica
+        importante y quieren una opinión que no esté pagada por la parte
+        interesada. También cuando algo no cuadra con lo que te cuenta tu
+        proveedor actual.
+      </p>
+    </section>
+
+    <section class="svc__block" aria-labelledby="incluye">
+      <h2 id="incluye" class="svc__h2">Qué incluye, sin letra pequeña</h2>
+      <ul class="svc__list">
+        {incluye.map((item) => <li class="svc__item">{item}</li>)}
+      </ul>
+      <p class="svc__note">
+        Si la mejor opción no pasa por contratarnos a nosotros, te lo diremos
+        igual. El valor está en el criterio, no en colocarte un proyecto.
+      </p>
+    </section>
+
+    <section class="svc__cta" aria-labelledby="cta">
+      <h2 id="cta" class="display svc__cta-title">¿Lo consultas con nosotros?</h2>
+      <p class="svc__cta-lede">
+        Cuéntanos qué decisión tienes delante y qué dudas te frenan. Si ya has
+        hablado con el asistente, lo tienes a mano aquí para seguir desde donde
+        lo dejaste. Si no, escríbenos directamente.
+      </p>
+      <a class="svc__mail" href="mailto:hola@zanovix.com">hola@zanovix.com</a>
+    </section>
+  </article>
+</PageLayout>

@@ -1,0 +1,453 @@
+---
+/**
+ * PageLayout.astro — nav + footer con BrandMark
+ *
+ * Envuelve Base.astro (HTML shell + motion) añadiendo la estructura
+ * semántica de página: skip-link > header > main > footer.
+ *
+ * Jerarquía: Base.astro → PageLayout.astro → páginas
+ *
+ * REQ-LS-2: header con BrandMark + nav minimal + footer con BrandMark.
+ * REQ-LS-3: skip-link accesible.
+ * REQ-LS-4: estructura semántica header > main#main-content > footer.
+ *
+ * Nav principal (lean, ruta de conversión): Servicios · Casos · Metodología ·
+ * Sobre · Contacto.
+ * Footer (secundarios): Manifiesto · Privacidad · GitHub + © 2026 Zanovix.
+ */
+
+import Base from './Base.astro'
+import Companion from '../components/react/Companion.tsx'
+
+interface Props {
+  title?: string
+  description?: string
+  /** Identificador de pagina. Propaga data-page al <body> via Base.astro.
+   *  Valores canonicos: 'home' | 'manifiesto' | 'contacto'. Default: ''.
+   */
+  page?: string
+  /** Controla si el dock del Companion se muestra en esta pagina.
+   *  Default: true. Pasar false en paginas como /privacidad.
+   */
+  showCompanion?: boolean
+}
+
+const { title, description, page = '', showCompanion = true } = Astro.props
+---
+
+<Base title={title} description={description} page={page}>
+  <!-- Skip link de accesibilidad (visible al tabular) -->
+  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+  <header class="sticky top-0 z-50 border-b border-[var(--color-rule)] py-4">
+    <div class="mx-auto flex max-w-[var(--container-wide)] items-center justify-between px-[var(--spacing-section-x)]">
+      <a
+        href="/"
+        class="flex items-center gap-3 text-[var(--color-ink)] no-underline"
+        aria-label="Zanovix — Inicio"
+      >
+        <img src="/isotipo.svg" alt="" width="32" height="32" />
+        <span class="font-[var(--font-mono)] text-[var(--text-eyebrow)] uppercase tracking-widest">
+          Zanovix
+        </span>
+      </a>
+
+      <!-- Navegación principal (escritorio) -->
+      <nav aria-label="Navegación principal" class="hidden md:block">
+        <ul class="flex list-none gap-6 m-0 p-0">
+          <li>
+            <a
+              href="/servicios"
+              class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+            >
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a
+              href="/casos"
+              class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+            >
+              Casos
+            </a>
+          </li>
+          <li>
+            <a
+              href="/metodologia"
+              class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+            >
+              Metodología
+            </a>
+          </li>
+          <li>
+            <a
+              href="/sobre"
+              class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+            >
+              Sobre
+            </a>
+          </li>
+          <li>
+            <a
+              href="/contacto"
+              class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+            >
+              Contacto
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Botón hamburguesa (solo móvil) -->
+      <button
+        id="nav-toggle"
+        type="button"
+        class="nav-toggle md:hidden"
+        aria-controls="mobile-nav"
+        aria-expanded="false"
+        aria-label="Abrir menú de navegación"
+      >
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+      </button>
+    </div>
+  </header>
+
+  <!--
+    Menú móvil: overlay a pantalla completa (solo <768px).
+    Disclosure accesible: aria-expanded en el toggle, focus trap, cierre con
+    Esc / overlay / enlace, bloqueo de scroll del body. Lógica al pie del layout.
+  -->
+  <div id="mobile-nav" class="mobile-nav md:hidden" hidden>
+    <nav aria-label="Navegación principal" class="mobile-nav__panel">
+      <button
+        id="nav-close"
+        type="button"
+        class="mobile-nav__close"
+        aria-label="Cerrar menú de navegación"
+      >
+        <span class="mobile-nav__close-bar"></span>
+        <span class="mobile-nav__close-bar"></span>
+      </button>
+      <ul class="mobile-nav__list">
+        <li><a href="/servicios" class="mobile-nav__link">Servicios</a></li>
+        <li><a href="/casos" class="mobile-nav__link">Casos</a></li>
+        <li><a href="/metodologia" class="mobile-nav__link">Metodología</a></li>
+        <li><a href="/sobre" class="mobile-nav__link">Sobre</a></li>
+        <li><a href="/contacto" class="mobile-nav__link">Contacto</a></li>
+      </ul>
+      <ul class="mobile-nav__sublist">
+        <li><a href="/manifiesto" class="mobile-nav__sublink">Manifiesto</a></li>
+        <li><a href="/privacidad" class="mobile-nav__sublink">Privacidad</a></li>
+        <li>
+          <a
+            href="https://github.com/pepeccz"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mobile-nav__sublink"
+            aria-label="GitHub de Zanovix (abre en nueva pestaña)"
+          >
+            GitHub
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <main id="main-content">
+    <slot />
+  </main>
+
+  <footer class="border-t border-[var(--color-rule)] py-8 mt-[var(--spacing-section-y)]">
+    <div
+      class="mx-auto max-w-[var(--container-wide)] px-[var(--spacing-section-x)]"
+      style="display: flex; flex-direction: column; gap: 1.25rem;"
+    >
+      <!-- Fila superior: isotipo + nav inline -->
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <a
+          href="/"
+          class="flex items-center gap-3 text-[var(--color-ink)] no-underline"
+          aria-label="Zanovix — Inicio"
+        >
+          <img src="/isotipo.svg" alt="" width="32" height="32" />
+        </a>
+
+        <nav aria-label="Navegación de pie de página">
+          <ul class="flex list-none gap-6 m-0 p-0 flex-wrap">
+            <li>
+              <a
+                href="/manifiesto"
+                class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--ink-mute-strong)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+              >
+                Manifiesto
+              </a>
+            </li>
+            <li>
+              <a
+                href="/privacidad"
+                class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--ink-mute-strong)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+              >
+                Privacidad
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/pepeccz"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--ink-mute-strong)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+                aria-label="GitHub de Zanovix (abre en nueva pestaña)"
+              >
+                GitHub
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Línea final: copyright -->
+      <p class="text-[var(--text-eyebrow)] text-[var(--ink-mute-strong)] font-[var(--font-mono)]">
+        &copy; 2026 Zanovix · Málaga
+      </p>
+    </div>
+  </footer>
+
+  {/*
+    Dock del Companion en páginas internas. client:load (no client:visible):
+    el dock es position:fixed y solo se renderiza tras leer sessionStorage en
+    el cliente, así que su placeholder SSR mide 0px y client:visible nunca
+    intersecaría. client:load garantiza la hidratación; el componente es mínimo.
+  */}
+  {page !== 'home' && showCompanion && (
+    <Companion variant="dock" client:load />
+  )}
+
+  <script is:inline>
+    // Sticky nav scroll-state: toggle .nav--scrolled cuando hero >50% fuera del viewport.
+    // ADR-017: IntersectionObserver inline, sin GSAP.
+    (function setupStickyNav() {
+      var header = document.querySelector('header');
+      if (!header) return;
+
+      var sentinel =
+        document.querySelector('#hero') ||
+        document.querySelector('[data-chapter="1"]');
+
+      // Páginas sin hero (manifiesto, contacto, etc.) → nav siempre en estado scrolled
+      if (!sentinel) {
+        header.classList.add('nav--scrolled');
+        return;
+      }
+
+      var io = new IntersectionObserver(
+        function(entries) {
+          header.classList.toggle('nav--scrolled', entries[0].intersectionRatio < 0.5);
+        },
+        { threshold: [0.5] }
+      );
+      io.observe(sentinel);
+    })();
+  </script>
+
+  <script is:inline>
+    // Menú móvil: disclosure accesible (overlay full-screen <768px).
+    // Focus trap, Esc, cierre por enlace, bloqueo de scroll, restauración de foco.
+    (function setupMobileNav() {
+      var toggle = document.getElementById('nav-toggle');
+      var panel = document.getElementById('mobile-nav');
+      var closeBtn = document.getElementById('nav-close');
+      if (!toggle || !panel) return;
+
+      function focusables() {
+        return panel.querySelectorAll('a[href], button:not([disabled])');
+      }
+
+      function onKeydown(e) {
+        if (e.key === 'Escape') {
+          close();
+          return;
+        }
+        if (e.key !== 'Tab') return;
+        var f = focusables();
+        if (!f.length) return;
+        var first = f[0];
+        var last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+
+      function open() {
+        panel.hidden = false;
+        toggle.setAttribute('aria-expanded', 'true');
+        document.documentElement.style.overflow = 'hidden';
+        document.addEventListener('keydown', onKeydown);
+        var f = focusables();
+        if (f.length) f[0].focus();
+      }
+
+      function close() {
+        panel.hidden = true;
+        toggle.setAttribute('aria-expanded', 'false');
+        document.documentElement.style.overflow = '';
+        document.removeEventListener('keydown', onKeydown);
+        toggle.focus();
+      }
+
+      toggle.addEventListener('click', open);
+      if (closeBtn) closeBtn.addEventListener('click', close);
+      panel
+        .querySelectorAll('.mobile-nav__link, .mobile-nav__sublink')
+        .forEach(function (a) {
+          a.addEventListener('click', close);
+        });
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768 && !panel.hidden) close();
+      });
+    })();
+  </script>
+
+  <style>
+    /* ── Botón hamburguesa ─────────────────────────────────────── */
+    .nav-toggle {
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 44px;
+      height: 44px;
+      margin-right: -10px;
+      padding: 10px;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+    }
+    /* Especificidad scoped de Astro > utilidad md:hidden de Tailwind,
+       así que el breakpoint vive aquí para garantizar el ocultado en >=768px. */
+    @media (min-width: 768px) {
+      .nav-toggle {
+        display: none;
+      }
+    }
+    .nav-toggle__bar {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--color-ink);
+    }
+
+    /* ── Overlay de navegación móvil ───────────────────────────── */
+    .mobile-nav {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: var(--color-paper);
+    }
+    .mobile-nav[hidden] {
+      display: none;
+    }
+    .mobile-nav:not([hidden]) {
+      display: flex;
+      flex-direction: column;
+    }
+    /* Nunca visible en escritorio, aunque quedara abierto al cruzar el breakpoint. */
+    @media (min-width: 768px) {
+      .mobile-nav {
+        display: none;
+      }
+    }
+    .mobile-nav__panel {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: var(--spacing-section-x);
+    }
+    .mobile-nav__close {
+      position: absolute;
+      top: 1.5rem;
+      right: var(--spacing-section-x);
+      width: 44px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+    }
+    .mobile-nav__close-bar {
+      position: absolute;
+      width: 24px;
+      height: 2px;
+      background: var(--color-ink);
+    }
+    .mobile-nav__close-bar:first-child {
+      transform: rotate(45deg);
+    }
+    .mobile-nav__close-bar:last-child {
+      transform: rotate(-45deg);
+    }
+    .mobile-nav__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .mobile-nav__link {
+      font-family: var(--font-mono);
+      font-size: var(--text-h3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-ink);
+      text-decoration: none;
+      display: inline-block;
+      padding: 0.25rem 0;
+    }
+
+    /* Enlaces secundarios del overlay móvil (más discretos que los primarios) */
+    .mobile-nav__sublist {
+      list-style: none;
+      margin: 2rem 0 0;
+      padding: 1.5rem 0 0;
+      border-top: 1px solid var(--color-rule);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.5rem;
+    }
+    .mobile-nav__sublink {
+      font-family: var(--font-mono);
+      font-size: var(--text-eyebrow);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-mute-strong);
+      text-decoration: none;
+      display: inline-block;
+      padding: 0.25rem 0;
+    }
+
+    /* Animación de entrada (respeta reduced-motion) */
+    @media (prefers-reduced-motion: no-preference) {
+      .mobile-nav:not([hidden]) {
+        animation: mobileNavFade 200ms ease both;
+      }
+    }
+    @keyframes mobileNavFade {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</Base>

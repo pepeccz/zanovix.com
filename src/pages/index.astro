@@ -1,17 +1,232 @@
 ---
+/**
+ * index.astro — home (rediseño "herramienta honesta cálida")
+ *
+ * Eje: el asistente que piensa en voz alta (Companion island). La home se
+ * organiza para llevar a un lead cualificado, sin scroll secuestrado ni
+ * ceremonia. Los capítulos editoriales antiguos quedan en el repo, fuera
+ * de uso, hasta decidir su salvado.
+ *
+ * Slice 1: fundación visual + hero + compañero + servicios + handoff.
+ * Pendiente: páginas de servicios, casos, metodología, sobre, privacidad.
+ */
+import PageLayout from '../layouts/PageLayout.astro'
+import Companion from '../components/react/Companion.tsx'
 
+const services = [
+  {
+    name: 'Diseño y desarrollo web + GEO',
+    desc: 'Webs que cargan rápido, convierten y aparecen cuando tus clientes preguntan a una IA.',
+  },
+  {
+    name: 'Auditoría AI Readiness',
+    desc: 'Evaluamos sin humo si la IA aporta algo real a tu empresa y por dónde tiene sentido empezar.',
+  },
+  {
+    name: 'Software a medida',
+    desc: 'Herramientas hechas para tu proceso concreto, no plantillas a las que te toca adaptarte.',
+  },
+  {
+    name: 'Consultoría TIC',
+    desc: 'Criterio técnico para decidir bien antes de gastar, con alguien que te habla claro.',
+  },
+]
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<PageLayout
+  title="Zanovix — IA aplicada a empresas"
+  description="IA aplicada con ingeniería pausada. Aparece cuando tus clientes preguntan a una IA y deja de contestar a mano lo de siempre. Pruébalo aquí mismo."
+  page="home"
+>
+  <!-- ── Hero: el problema + el asistente como eje ───────────────── -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero__text">
+      <h1 id="hero-title" class="display hero__title">
+        Tus clientes ya le preguntan a una IA.
+      </h1>
+      <p class="hero__lede">
+        Si ahí no apareces, para ellos no existes, y ni te enteras. Lo primero
+        que hacemos es ponerte donde te buscan; lo segundo, que dejes de
+        contestar a mano lo de siempre.
+      </p>
+      <p class="hero__sign">IA aplicada, con ingeniería pausada.</p>
+    </div>
+
+    <div class="hero__tool">
+      <Companion variant="hero" client:load />
+    </div>
+  </section>
+
+  <!-- ── Lo que hacemos ──────────────────────────────────────────── -->
+  <section class="services" aria-labelledby="services-title">
+    <div class="services__head">
+      <h2 id="services-title" class="display services__title">Lo que hacemos</h2>
+      <p class="services__lede">
+        Cuatro maneras de bajar la IA a tu negocio. Empezamos por lo que de
+        verdad te mueve la aguja, no por lo que suena bien.
+      </p>
+    </div>
+    <ul class="services__list">
+      {
+        services.map((s) => (
+          <li class="services__item">
+            <h3 class="services__name">{s.name}</h3>
+            <p class="services__desc">{s.desc}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- ── Handoff a contacto ──────────────────────────────────────── -->
+  <section id="contacto" class="contact" aria-labelledby="contact-title">
+    <h2 id="contact-title" class="display contact__title">
+      Cuando quieras, seguimos en una conversación.
+    </h2>
+    <p class="contact__lede">
+      Sin formularios eternos ni promesas grandes. Nos cuentas tu caso y te
+      decimos con honestidad si podemos ayudarte y cómo.
+    </p>
+    <a class="contact__mail" href="mailto:hola@zanovix.com">hola@zanovix.com</a>
+    <p class="contact__meta">Málaga · ES · respondemos en menos de 24h hábiles</p>
+  </section>
+</PageLayout>
+
+<style>
+  /* ── Hero ─────────────────────────────────────────────────────── */
+  .hero {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-hero-y) var(--spacing-section-x);
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (min-width: 880px) {
+    .hero {
+      grid-template-columns: 1.05fr 0.95fr;
+    }
+  }
+  .hero__title {
+    font-size: var(--text-display);
+    color: var(--color-ink);
+    margin: 0 0 1.25rem;
+    max-width: 16ch;
+  }
+  .hero__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 52ch;
+    margin: 0 0 1.5rem;
+  }
+  .hero__sign {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+    color: var(--ink-mute);
+    margin: 0;
+  }
+
+  /* ── Servicios ────────────────────────────────────────────────── */
+  .services {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .services__head {
+    max-width: 60ch;
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  }
+  .services__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 0.75rem;
+  }
+  .services__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .services__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+  .services__item {
+    display: grid;
+    gap: 0.4rem;
+    padding: clamp(1.25rem, 2.5vw, 2rem) 0;
+    border-top: 1px solid var(--color-rule);
+  }
+  .services__item:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  @media (min-width: 720px) {
+    .services__item {
+      grid-template-columns: minmax(0, 22rem) 1fr;
+      gap: clamp(1.5rem, 4vw, 4rem);
+      align-items: baseline;
+    }
+  }
+  .services__name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .services__desc {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 52ch;
+  }
+
+  /* ── Contacto ─────────────────────────────────────────────────── */
+  .contact {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .contact__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    max-width: 18ch;
+  }
+  .contact__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 50ch;
+    margin: 0 0 2rem;
+  }
+  .contact__mail {
+    font-family: var(--font-mono);
+    font-size: clamp(1.5rem, 3vw + 0.5rem, 2.75rem);
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-teal-deep);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+    display: inline-block;
+    margin-bottom: 1.75rem;
+    transition: text-decoration-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .contact__mail:hover {
+    text-decoration-color: var(--color-teal);
+  }
+  .contact__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.05em;
+    color: var(--ink-mute);
+    margin: 0;
+  }
+</style>
