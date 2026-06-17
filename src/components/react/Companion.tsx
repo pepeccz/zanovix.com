@@ -17,8 +17,8 @@
  *
  * A11y: input etiquetado, aria-live en transiciones de estado, teclado
  * completo, foco visible. Reduced-motion: salta al estado final.
- * Sin JS: hero muestra copy + CTA mailto; dock no aparece (progressive
- * enhancement).
+ * Sin JS: hero muestra copy + CTA a /contacto (formulario); dock no aparece
+ * (progressive enhancement).
  */
 
 import { useEffect, useRef, useState } from 'react'
@@ -238,7 +238,7 @@ function CompanionHero() {
           </div>
 
           <div className="companion__actions">
-            <a className="companion__cta" href="#contacto">
+            <a className="companion__cta" href="/contacto">
               Seguir con una persona
             </a>
             <button className="companion__reset" type="button" onClick={reset}>
