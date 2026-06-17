@@ -2,13 +2,17 @@
 /**
  * privacidad/index.astro — transparencia (parte del producto, no relleno)
  *
- * Documenta CON PRECISIÓN qué hace el compañero v1, descrito desde el código
- * real (src/lib/companion/infer.ts + context.ts):
- *   - Infiere por reglas locales (sin red, sin IA externa todavía) tu sector,
- *     lo que te preocupa y la urgencia a partir del texto que TÚ escribes.
- *   - Lo guarda en sessionStorage (clave zx.companion.v1, se borra al cerrar
- *     la pestaña).
- *   - NADA se envía a Zanovix hasta que tú pulsas un CTA de contacto.
+ * Documenta CON PRECISIÓN qué hace el compañero, descrito desde el código
+ * real (src/lib/companion/infer.ts + context.ts + geo.ts + api/geo-snapshot.ts):
+ *   - Infiere por reglas locales (sin red) tu sector, lo que te preocupa y la
+ *     urgencia a partir del texto que TÚ escribes. Eso no sale del navegador.
+ *   - Solo si tú lo pides y das consentimiento explícito, la "radiografía"
+ *     envía el texto que escribiste a un proveedor de IA externo (OpenRouter,
+ *     y el modelo de Anthropic que sirve por debajo) para mostrarte qué sabe
+ *     una IA de tu negocio. Lo decimos antes de enviar nada.
+ *   - El contexto se guarda en sessionStorage (clave zx.companion.v1, se
+ *     borra al cerrar la pestaña).
+ *   - Nada llega a Zanovix hasta que tú rellenas el formulario de contacto.
  *   - Puedes corregir o borrar lo inferido en el propio compañero.
  *   - Sin cookies de seguimiento, sin venta de datos.
  *   - Contacto para dudas: hola@zanovix.com.
@@ -63,9 +67,14 @@ const datos = [
     <p class="block__body">
       El compañero es el asistente que aparece en la web. A partir del texto que
       tú escribes, intenta deducir tres cosas para no hacerte repetir lo de
-      siempre. Lo hace con reglas sencillas que corren en tu propio navegador.
-      Todavía no usa ninguna IA externa ni se conecta a ningún servidor para
-      pensar: por ahora son reglas, y lo decimos porque es la verdad.
+      siempre. Esa primera lectura la hace con reglas sencillas que corren en tu
+      propio navegador: no sale de tu equipo.
+    </p>
+    <p class="block__body">
+      Hay un segundo paso opcional, la radiografía, que sí usa una IA externa.
+      Solo se ejecuta si tú lo pides y marcas la casilla de consentimiento. Lo
+      contamos con detalle más abajo, porque enviar tu texto a un tercero es
+      algo que tienes que decidir tú, sabiendo qué pasa.
     </p>
     <ul class="data">
       {
@@ -77,6 +86,59 @@ const datos = [
         ))
       }
     </ul>
+  </section>
+
+  <!-- ── La radiografía (IA externa, con consentimiento) ─────────── -->
+  <section class="block" aria-labelledby="geo-title">
+    <h2 id="geo-title" class="display block__title">La radiografía y la IA externa</h2>
+    <p class="block__body">
+      La radiografía es el paso en el que le preguntamos a una IA qué sabe hoy
+      de tu negocio y si te recomendaría cuando alguien pregunta por lo tuyo.
+      Para eso hace falta enviar el texto que has escrito a un proveedor de IA
+      fuera de Zanovix. Por eso te pedimos permiso antes, con una casilla clara.
+      Si no la marcas, no se envía nada y el compañero sigue funcionando solo
+      con las reglas de tu navegador.
+    </p>
+    <ul class="data">
+      <li class="data__row">
+        <h3 class="data__name">Qué se envía</h3>
+        <p class="data__how">
+          El texto que tú escribes sobre tu negocio (y, si lo hay, el sector que
+          el compañero dedujo). No enviamos tu nombre, tu email ni datos de
+          contacto: eso solo viaja si rellenas el formulario.
+        </p>
+      </li>
+      <li class="data__row">
+        <h3 class="data__name">A quién</h3>
+        <p class="data__how">
+          A OpenRouter, que enruta la petición al modelo de IA que la atiende
+          (de Anthropic). Son terceros que procesan el texto para generar la
+          respuesta. Te recomendamos no incluir datos sensibles en lo que
+          escribes.
+        </p>
+      </li>
+      <li class="data__row">
+        <h3 class="data__name">Para qué</h3>
+        <p class="data__how">
+          Solo para generar esa radiografía y enseñártela al momento. No la
+          usamos para perfilarte ni para publicidad.
+        </p>
+      </li>
+      <li class="data__row">
+        <h3 class="data__name">Qué no guardamos</h3>
+        <p class="data__how">
+          Zanovix no almacena ese texto ni el resultado salvo que después
+          decidas rellenar el formulario de contacto. El tratamiento por parte
+          de los proveedores de IA se rige por sus propias políticas.
+        </p>
+      </li>
+    </ul>
+    <p class="block__body">
+      Una cosa importante por honestidad: la radiografía refleja lo que esa IA
+      aprendió en su entrenamiento, no una auditoría en vivo de tu web. Es una
+      aproximación, no un rastreador que entra en tu sitio. Y no existe ser el
+      número uno en ChatGPT: hablamos de si te menciona o no, no de rankings.
+    </p>
   </section>
 
   <!-- ── Dónde se guarda ────────────────────────────────────────── -->
@@ -100,15 +162,17 @@ const datos = [
   <section class="block" aria-labelledby="never-title">
     <h2 id="never-title" class="display block__title">Qué no sale de tu navegador</h2>
     <p class="block__body">
-      Mientras navegas, nada de lo que el compañero deduce viaja a Zanovix. Lo
-      que escribes y lo que el compañero deduce se queda en tu equipo hasta que
-      tú decides dar el paso de hablar con nosotros.
+      Mientras navegas, la lectura por reglas del compañero no viaja a ningún
+      sitio: se queda en tu equipo. El único momento en que tu texto sale es la
+      radiografía, y solo si tú la pides y das tu consentimiento.
     </p>
     <p class="block__body">
-      Solo cuando pulsas un botón de contacto y nos escribes, esos datos llegan a
-      nosotros, porque hace falta para poder responderte. Es una acción
-      consciente tuya, no algo que pase por detrás. Y nunca vendemos ni cedemos
-      tus datos a terceros.
+      Tus datos de contacto (nombre, email, mensaje) llegan a nosotros solo
+      cuando rellenas el formulario, porque hace falta para poder responderte.
+      Es una acción consciente tuya, no algo que pase por detrás. No vendemos ni
+      cedemos tus datos con fines comerciales. Los proveedores que usamos para
+      funcionar (la IA de la radiografía y el correo con el que recibimos tu
+      mensaje) tratan los datos solo para prestar ese servicio.
     </p>
   </section>
 
@@ -137,8 +201,8 @@ const datos = [
     </h2>
     <p class="close__lede">
       Escríbenos y te lo aclaramos sin rodeos. Esta página la mantenemos al día:
-      si el compañero cambia y algún día empieza a usar IA en un servidor, lo
-      contaremos aquí antes de que pase.
+      si el compañero cambia o empieza a usar la IA de otra forma, lo
+      actualizamos aquí.
     </p>
     <a class="cta-primary" href="/contacto">Escribirnos</a>
     <p class="cta-fallback">
