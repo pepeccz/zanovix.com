@@ -1,0 +1,271 @@
+---
+/**
+ * privacidad/index.astro — transparencia (parte del producto, no relleno)
+ *
+ * Documenta CON PRECISIÓN qué hace el compañero v1, descrito desde el código
+ * real (src/lib/companion/infer.ts + context.ts):
+ *   - Infiere por reglas locales (sin red, sin IA externa todavía) tu sector,
+ *     lo que te preocupa y la urgencia a partir del texto que TÚ escribes.
+ *   - Lo guarda en sessionStorage (clave zx.companion.v1, se borra al cerrar
+ *     la pestaña).
+ *   - NADA se envía a Zanovix hasta que tú pulsas un CTA de contacto.
+ *   - Puedes corregir o borrar lo inferido en el propio compañero.
+ *   - Sin cookies de seguimiento, sin venta de datos.
+ *   - Contacto para dudas: hola@zanovix.com.
+ *
+ * Tono honesto, no legalés vacío.
+ *
+ * IMPORTANTE: showCompanion={false}. El dock del compañero NO se monta aquí:
+ * contradiría el tono de la propia página (esta página explica el compañero;
+ * montarlo encima sería ruido). Las demás internas sí lo llevan.
+ */
+import PageLayout from '../../layouts/PageLayout.astro'
+
+// Tabla precisa de lo que infiere el compañero, alineada con infer.ts.
+const datos = [
+  {
+    dato: 'Tu sector',
+    como: 'Lo deduce de palabras del texto que escribes (por ejemplo, si mencionas "restaurante" o "tienda"). Si no lo tiene claro, lo deja en "aún lo estoy situando" en vez de adivinar.',
+  },
+  {
+    dato: 'Lo que te preocupa',
+    como: 'Lo asocia a uno de cuatro problemas frecuentes (que no te encuentren, responder lo mismo, procesos manuales o no saber por dónde empezar con la IA), según lo que cuentes.',
+  },
+  {
+    dato: 'La urgencia',
+    como: 'La estima por cómo lo dices (palabras como "urgente" o "pronto"). Por defecto asume que solo lo estás explorando.',
+  },
+]
+---
+
+<PageLayout
+  title="Privacidad · Zanovix"
+  description="Qué hace el compañero de la web, con precisión: infiere por reglas en tu navegador, no envía nada a Zanovix hasta que tú lo decides, y puedes corregirlo o borrarlo. Sin cookies de seguimiento."
+  page="privacidad"
+  showCompanion={false}
+>
+  <!-- ── Intro honesta ──────────────────────────────────────────── -->
+  <section class="lead" aria-labelledby="lead-title">
+    <h1 id="lead-title" class="display lead__title">
+      Aquí no hay letra pequeña. Te contamos exactamente qué pasa con tus datos.
+    </h1>
+    <p class="lead__body">
+      Esta página no está para cubrirnos las espaldas. Está para que entiendas,
+      sin abogados de por medio, qué hace el compañero de la web, dónde se guarda
+      lo que escribes y qué nunca sale de tu navegador. Si después de leerla te
+      queda una duda, escríbenos.
+    </p>
+  </section>
+
+  <!-- ── Qué hace el compañero ──────────────────────────────────── -->
+  <section class="block" aria-labelledby="companion-title">
+    <h2 id="companion-title" class="display block__title">Qué hace el compañero</h2>
+    <p class="block__body">
+      El compañero es el asistente que aparece en la web. A partir del texto que
+      tú escribes, intenta deducir tres cosas para no hacerte repetir lo de
+      siempre. Lo hace con reglas sencillas que corren en tu propio navegador.
+      Todavía no usa ninguna IA externa ni se conecta a ningún servidor para
+      pensar: por ahora son reglas, y lo decimos porque es la verdad.
+    </p>
+    <ul class="data">
+      {
+        datos.map((d) => (
+          <li class="data__row">
+            <h3 class="data__name">{d.dato}</h3>
+            <p class="data__how">{d.como}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- ── Dónde se guarda ────────────────────────────────────────── -->
+  <section class="block" aria-labelledby="storage-title">
+    <h2 id="storage-title" class="display block__title">Dónde se guarda y cuánto dura</h2>
+    <p class="block__body">
+      Lo que deduce el compañero se guarda solo en tu navegador, en lo que se
+      llama el almacenamiento de sesión. Es una nota que vive en tu propio
+      equipo, no en los nuestros. Sirve para que, si pasas de una página a otra,
+      el compañero recuerde lo que ya le has contado y no te lo vuelva a
+      preguntar.
+    </p>
+    <p class="block__body">
+      Esa nota se borra sola en cuanto cierras la pestaña. No queda guardada de
+      un día para otro: si vuelves mañana, el compañero empieza de cero. No es
+      una cookie de seguimiento y no la usamos para perseguirte por internet.
+    </p>
+  </section>
+
+  <!-- ── Qué NO hacemos ─────────────────────────────────────────── -->
+  <section class="block" aria-labelledby="never-title">
+    <h2 id="never-title" class="display block__title">Qué no sale de tu navegador</h2>
+    <p class="block__body">
+      Mientras navegas, nada de lo que el compañero deduce viaja a Zanovix. Lo
+      que escribes y lo que el compañero deduce se queda en tu equipo hasta que
+      tú decides dar el paso de hablar con nosotros.
+    </p>
+    <p class="block__body">
+      Solo cuando pulsas un botón de contacto y nos escribes, esos datos llegan a
+      nosotros, porque hace falta para poder responderte. Es una acción
+      consciente tuya, no algo que pase por detrás. Y nunca vendemos ni cedemos
+      tus datos a terceros.
+    </p>
+  </section>
+
+  <!-- ── Tu control ─────────────────────────────────────────────── -->
+  <section class="block" aria-labelledby="control-title">
+    <h2 id="control-title" class="display block__title">Lo controlas tú</h2>
+    <p class="block__body">
+      Si el compañero deduce algo que no encaja, puedes corregirlo en el mismo
+      sitio, sin recargar la página. Y si prefieres empezar de cero, puedes
+      borrar lo que ha deducido cuando quieras. Cerrar la pestaña también lo
+      borra todo.
+    </p>
+    <p class="block__body">
+      Como nada de esto se guarda en nuestros servidores mientras solo navegas,
+      no necesitamos pedirte permiso con un aviso de cookies para que el
+      compañero funcione. Cuando nos escribes y nos dejas tus datos, ahí sí los
+      tratamos para responderte, y puedes pedirnos verlos, corregirlos o
+      borrarlos en cualquier momento.
+    </p>
+  </section>
+
+  <!-- ── Cierre / contacto ──────────────────────────────────────── -->
+  <section class="close" aria-labelledby="close-title">
+    <h2 id="close-title" class="display close__title">
+      ¿Te queda alguna duda?
+    </h2>
+    <p class="close__lede">
+      Escríbenos y te lo aclaramos sin rodeos. Esta página la mantenemos al día:
+      si el compañero cambia y algún día empieza a usar IA en un servidor, lo
+      contaremos aquí antes de que pase.
+    </p>
+    <a class="close__mail" href="mailto:hola@zanovix.com">hola@zanovix.com</a>
+    <p class="close__meta">Málaga · ES · responsable del tratamiento: Zanovix</p>
+  </section>
+</PageLayout>
+
+<style>
+  /* ── Intro ────────────────────────────────────────────────────── */
+  .lead {
+    max-width: var(--container-narrow);
+    margin: 0 auto;
+    padding: var(--spacing-hero-y) var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .lead__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 1.5rem;
+    max-width: 24ch;
+  }
+  .lead__body {
+    font-size: var(--text-lede);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  /* ── Bloques de contenido ─────────────────────────────────────── */
+  .block {
+    max-width: var(--container-narrow);
+    margin: 0 auto;
+    padding: 0 var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .block__title {
+    font-size: var(--text-h2);
+    color: var(--color-ink);
+    margin: 0 0 1.25rem;
+    max-width: 24ch;
+  }
+  .block__body {
+    font-size: var(--text-body);
+    line-height: 1.7;
+    color: var(--ink-soft);
+    max-width: 64ch;
+    margin: 0 0 1.25rem;
+  }
+  .block__body:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ── Lista de datos inferidos (hairline) ──────────────────────── */
+  .data {
+    list-style: none;
+    margin: 1.75rem 0 0;
+    padding: 0;
+  }
+  .data__row {
+    display: grid;
+    gap: 0.4rem;
+    padding: clamp(1.25rem, 2.5vw, 1.75rem) 0;
+    border-top: 1px solid var(--color-rule);
+    max-width: 64ch;
+  }
+  .data__row:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  @media (min-width: 640px) {
+    .data__row {
+      grid-template-columns: minmax(0, 14rem) 1fr;
+      column-gap: clamp(1.5rem, 4vw, 3rem);
+      align-items: baseline;
+    }
+  }
+  .data__name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .data__how {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  /* ── Cierre ───────────────────────────────────────────────────── */
+  .close {
+    max-width: var(--container-narrow);
+    margin: 0 auto;
+    padding: 0 var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .close__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    max-width: 18ch;
+  }
+  .close__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin: 0 0 2rem;
+  }
+  .close__mail {
+    font-family: var(--font-mono);
+    font-size: clamp(1.375rem, 2.5vw + 0.5rem, 2.25rem);
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-teal-deep);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+    display: inline-block;
+    margin-bottom: 1.75rem;
+    transition: text-decoration-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .close__mail:hover {
+    text-decoration-color: var(--color-teal);
+  }
+  .close__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.05em;
+    color: var(--ink-mute);
+    margin: 0;
+  }
+</style>
