@@ -263,20 +263,29 @@ function CompanionHero() {
 
 function CompanionDock() {
   const [ctx, setCtx] = useState<CompanionContext | null>(null)
+  const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
     // Solo se muestra si hay contexto guardado desde la home
     setCtx(readContext())
   }, [])
 
-  // Sin contexto: no renderizar nada (el dock no aparece)
-  if (!ctx) return null
+  // Sin contexto, o descartado por el visitante: no renderizar nada
+  if (!ctx || dismissed) return null
 
   return (
     <aside className="companion-dock" aria-label="Contexto del asistente Zanovix">
       <p className="companion-dock__head">
         <span className="companion__dot" aria-hidden="true" />
-        Asistente Zanovix
+        <span className="companion-dock__title">Asistente Zanovix</span>
+        <button
+          type="button"
+          className="companion-dock__dismiss"
+          aria-label="Cerrar el resumen del asistente"
+          onClick={() => setDismissed(true)}
+        >
+          <span aria-hidden="true">×</span>
+        </button>
       </p>
       <dl className="companion-dock__summary">
         <div className="companion-dock__row">
