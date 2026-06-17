@@ -11,6 +11,7 @@
  */
 
 import type { CompanionContext } from './context'
+import type { GeoResult, GeoSnapshot } from './geo'
 
 // ─── Contrato publico ─────────────────────────────────────────────────────────
 
@@ -94,6 +95,77 @@ export const rulesInferencer: Inferencer = {
   },
 }
 
+// ─── v2: radiografia GEO en vivo (LLM real via endpoint) ──────────────────────
+
+/**
+ * geoInferencer — mismo contrato `Inferencer`, pero ademas de inferir por
+ * reglas pide al endpoint /api/geo-snapshot una radiografia GEO REAL.
+ *
+ * Importante: el contrato `infer()` se MANTIENE (devuelve CompanionContext),
+ * para no romper ningun consumidor existente. La radiografia (snapshot) se
+ * obtiene aparte con `requestGeoSnapshot()`, que SOLO se llama tras el
+ * CONSENTIMIENTO explicito del visitante (es lo unico que envia su texto a
+ * un proveedor de IA externo). El contexto por reglas no sale del navegador.
+ *
+ * La superficie React no cambia: el companion sigue usando rulesInferencer
+ * para el perfil editable; geoInferencer añade la capa GEO encima.
+ */
+export const geoInferencer: Inferencer = {
+  // El perfil (sector/dolor/urgencia) se sigue infiriendo localmente.
+  infer: rulesInferencer.infer,
+}
+
+/**
+ * Pide la radiografia GEO al endpoint SSR. Esta es la UNICA funcion que
+ * envia el texto del visitante a un proveedor externo (OpenRouter), y por
+ * eso SOLO debe invocarse tras consentimiento explicito.
+ *
+ * Nunca lanza: ante cualquier fallo de red devuelve un GeoResult en modo
+ * 'fallback' con aviso honesto, para que el companion degrade al perfil por
+ * reglas sin romperse.
+ */
+export async function requestGeoSnapshot(
+  text: string,
+  ctx: CompanionContext,
+): Promise<GeoResult> {
+  const FALLBACK_NOTICE =
+    'No he podido preguntarle en vivo a una IA, asi que te muestro lo que deduzco con reglas. Es una aproximacion mas simple.'
+
+  try {
+    const res = await fetch('/api/geo-snapshot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        description: text,
+        sector: ctx.sector !== SECTOR_FALLBACK ? ctx.sector : undefined,
+      }),
+    })
+
+    if (!res.ok) {
+      return { context: ctx, snapshot: null, source: 'fallback', fallbackNotice: FALLBACK_NOTICE }
+    }
+
+    const data = (await res.json()) as {
+      source?: 'live' | 'fallback'
+      snapshot?: GeoSnapshot | null
+      fallbackNotice?: string
+    }
+
+    if (data.source === 'live' && data.snapshot) {
+      return { context: ctx, snapshot: data.snapshot, source: 'live' }
+    }
+
+    return {
+      context: ctx,
+      snapshot: null,
+      source: 'fallback',
+      fallbackNotice: data.fallbackNotice || FALLBACK_NOTICE,
+    }
+  } catch {
+    return { context: ctx, snapshot: null, source: 'fallback', fallbackNotice: FALLBACK_NOTICE }
+  }
+}
+
 // ─── Exportaciones de apoyo para Companion.tsx ────────────────────────────────
 
 /** Re-exporta las constantes que Companion.tsx necesita para los selects. */
@@ -101,6 +173,3 @@ export const SECTOR_OPTIONS = SECTORS.map((o) => o.value)
 export const PAIN_OPTIONS = PAINS.map((o) => o.value)
 export const URGENCY_OPTIONS = URGENCIES
 export { SECTOR_FALLBACK, PAIN_FALLBACK }
-
-// v2 (fuera de alcance):
-// export const llmInferencer: Inferencer = { ... }

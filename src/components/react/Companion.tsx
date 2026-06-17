@@ -24,6 +24,7 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   rulesInferencer,
+  requestGeoSnapshot,
   SECTOR_OPTIONS,
   PAIN_OPTIONS,
   URGENCY_OPTIONS,
@@ -32,8 +33,19 @@ import {
 } from '../../lib/companion/infer'
 import { readContext, writeContext, clearContext } from '../../lib/companion/context'
 import type { CompanionContext } from '../../lib/companion/context'
+import type { GeoSnapshot } from '../../lib/companion/geo'
 
 type Phase = 'idle' | 'thinking' | 'result'
+
+/** Sub-estado de la radiografia GEO dentro de la fase 'result'. */
+type GeoPhase = 'offer' | 'asking' | 'done'
+
+/** Etiqueta honesta del veredicto del modelo segun reconozca el negocio. */
+const GEO_KNOWN_LABEL: Record<GeoSnapshot['known'], string> = {
+  yes: 'Una IA te reconoce',
+  no: 'Una IA no te conoce todavia',
+  unclear: 'Una IA conoce tu categoria, no tu negocio',
+}
 
 const THINKING_LINES = [
   'Leyendo lo que me cuentas',
@@ -60,8 +72,14 @@ function CompanionHero() {
     pain: PAIN_FALLBACK,
     urgency: URGENCY_OPTIONS[0]!,
   })
+  // ── Estado de la radiografia GEO en vivo ──
+  const [geoPhase, setGeoPhase] = useState<GeoPhase>('offer')
+  const [geoConsent, setGeoConsent] = useState(false)
+  const [geoSnapshot, setGeoSnapshot] = useState<GeoSnapshot | null>(null)
+  const [geoNotice, setGeoNotice] = useState<string | null>(null)
   const timers = useRef<number[]>([])
   const resultRef = useRef<HTMLDivElement>(null)
+  const geoResultRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     return () => timers.current.forEach((t) => clearTimeout(t))
@@ -105,7 +123,31 @@ function CompanionHero() {
     setInput('')
     clearContext()
     setCtx({ sector: SECTOR_FALLBACK, pain: PAIN_FALLBACK, urgency: URGENCY_OPTIONS[0]! })
+    setGeoPhase('offer')
+    setGeoConsent(false)
+    setGeoSnapshot(null)
+    setGeoNotice(null)
     setPhase('idle')
+  }
+
+  /**
+   * Pide la radiografia GEO. SOLO se llama tras consentimiento explicito
+   * (el boton esta deshabilitado hasta marcar el checkbox). Esta es la unica
+   * accion que envia el texto del visitante a un proveedor de IA externo.
+   */
+  async function handleGeo() {
+    if (!geoConsent || geoPhase === 'asking') return
+    setGeoNotice(null)
+    setGeoPhase('asking')
+    const result = await requestGeoSnapshot(ctx.raw ?? input, ctx)
+    if (result.source === 'live' && result.snapshot) {
+      setGeoSnapshot(result.snapshot)
+      setGeoNotice(null)
+    } else {
+      setGeoSnapshot(null)
+      setGeoNotice(result.fallbackNotice ?? null)
+    }
+    setGeoPhase('done')
   }
 
   // Foco al encabezado del perfil al entrar en result
@@ -114,6 +156,13 @@ function CompanionHero() {
       resultRef.current.focus()
     }
   }, [phase])
+
+  // Foco al resultado de la radiografia cuando termina
+  useEffect(() => {
+    if (geoPhase === 'done' && geoResultRef.current) {
+      geoResultRef.current.focus()
+    }
+  }, [geoPhase])
 
   return (
     <section className="companion" aria-label="Asistente de Zanovix">
@@ -235,6 +284,96 @@ function CompanionHero() {
                 ))}
               </select>
             </div>
+          </div>
+
+          {/* ── Radiografia GEO en vivo ──────────────────────────────── */}
+          <div className="companion__geo">
+            {geoPhase === 'offer' && (
+              <>
+                <p className="companion__geo-title">
+                  ¿Quieres ver como te describe hoy una IA?
+                </p>
+                <p className="companion__geo-lede">
+                  Le preguntamos en vivo a un modelo de IA que sabe de tu
+                  negocio y si te recomendaria cuando alguien pregunta por lo
+                  tuyo. Te enseñamos su respuesta tal cual.
+                </p>
+                <label className="companion__consent">
+                  <input
+                    type="checkbox"
+                    className="companion__consent-box"
+                    checked={geoConsent}
+                    onChange={(e) => setGeoConsent(e.target.checked)}
+                  />
+                  <span>
+                    Entiendo que esto envia el texto que he escrito a un
+                    proveedor de IA externo (OpenRouter) para generar la
+                    radiografia.
+                  </span>
+                </label>
+                <button
+                  className="companion__submit companion__geo-go"
+                  type="button"
+                  onClick={handleGeo}
+                  disabled={!geoConsent}
+                >
+                  Ver mi radiografia
+                </button>
+                <p className="companion__note">
+                  Refleja lo que la IA aprendio en su entrenamiento, no una
+                  auditoria en vivo de tu web. Es una aproximacion, no un
+                  crawler.
+                </p>
+              </>
+            )}
+
+            {geoPhase === 'asking' && (
+              <>
+                <p className="sr-only" aria-live="polite">
+                  Preguntando a la IA por tu negocio
+                </p>
+                <p className="companion__geo-asking" aria-hidden="true">
+                  <span className="companion__dot" /> Preguntando a la IA por tu
+                  negocio
+                </p>
+              </>
+            )}
+
+            {geoPhase === 'done' && (
+              <div ref={geoResultRef} tabIndex={-1} aria-live="polite">
+                {geoSnapshot ? (
+                  <>
+                    <p className="companion__geo-verdict">
+                      {GEO_KNOWN_LABEL[geoSnapshot.known]}
+                    </p>
+                    <dl className="companion__geo-dl">
+                      <div className="companion__geo-item">
+                        <dt>Como te describe</dt>
+                        <dd>{geoSnapshot.describes}</dd>
+                      </div>
+                      <div className="companion__geo-item">
+                        <dt>Si te recomendaria</dt>
+                        <dd>{geoSnapshot.recommend}</dd>
+                      </div>
+                      <div className="companion__geo-item">
+                        <dt>Que le falta</dt>
+                        <dd>{geoSnapshot.gap}</dd>
+                      </div>
+                    </dl>
+                    <p className="companion__note">
+                      Esta es la respuesta real del modelo. Refleja su
+                      conocimiento, no una auditoria de tu web. Aqui es donde
+                      entramos nosotros.
+                    </p>
+                  </>
+                ) : (
+                  <p className="companion__geo-fallback">
+                    {geoNotice ??
+                      'No he podido preguntarle a la IA en vivo ahora mismo.'}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="companion__actions">
