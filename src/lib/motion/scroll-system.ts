@@ -44,7 +44,6 @@ export function registerScrollSystem(): void {
   // Desktop: pin + scrub narrativo
   mm.add('(min-width: 768px)', () => {
     registerCap2WordByWord()
-    registerCap4Counter()
     registerCap4PaletteInversion()
     return () => { /* GSAP autorrecicla los triggers dentro del matchMedia */ }
   })
@@ -52,8 +51,6 @@ export function registerScrollSystem(): void {
   // Mobile: fade-in stagger sin pin
   mm.add('(max-width: 767px)', () => {
     registerCap2WordByWord_mobile()
-    // Cap 4 counter: estático
-    applyCounterFinalState()
     // Palette inversion: mismo toggle funciona en mobile
     registerCap4PaletteInversion()
     return () => {}
@@ -161,42 +158,6 @@ function registerCap2WordByWord_mobile(
 }
 
 /**
- * Cap 4 — counter 0 → 80.000 con scrub (desktop).
- * Busca [data-chapter="4"] [data-role="counter"].
- * Formato es-ES con punto de miles.
- */
-function registerCap4Counter(
-  rootSelector = '[data-chapter="4"]',
-  target = 80_000
-): ScrollTrigger | null {
-  const root = document.querySelector<HTMLElement>(rootSelector)
-  if (!root) return null
-
-  const counterEl = root.querySelector<HTMLElement>('[data-role="counter"]')
-  if (!counterEl) return null
-
-  if (prefersReducedMotion()) {
-    counterEl.textContent = target.toLocaleString('es-ES')
-    return null
-  }
-
-  // Estado inicial
-  counterEl.textContent = '0'
-
-  return ScrollTrigger.create({
-    trigger: root,
-    start: 'top 70%',
-    end: 'bottom 30%',
-    scrub: 0.4,
-    invalidateOnRefresh: true,
-    onUpdate(self) {
-      if (prefersReducedMotion()) return
-      counterEl.textContent = Math.round(self.progress * target).toLocaleString('es-ES')
-    },
-  })
-}
-
-/**
  * Cap 4 — palette inversion via toggle de clase .section--inverted.
  * Sin scrub, sin pin (ADR-008). Solo callbacks toggle.
  * Funciona igual en desktop y mobile.
@@ -226,19 +187,6 @@ function registerCap4PaletteInversion(
     onLeave: remove,
     onLeaveBack: remove,
   })
-}
-
-// ─── Helpers internos ─────────────────────────────────────────────────────────
-
-/** Aplica estado final del counter sin ScrollTrigger (mobile / reduced-motion). */
-function applyCounterFinalState(
-  rootSelector = '[data-chapter="4"]',
-  target = 80_000
-): void {
-  const root = document.querySelector<HTMLElement>(rootSelector)
-  if (!root) return
-  const counterEl = root.querySelector<HTMLElement>('[data-role="counter"]')
-  if (counterEl) counterEl.textContent = target.toLocaleString('es-ES')
 }
 
 // ─── Flor persistente ────────────────────────────────────────────────────────

@@ -18,13 +18,13 @@ Zanovix existe para llenar ese hueco. No porque sea un mercado bonito, sino porq
 ## Para quién trabajamos
 
 - **Pymes españolas** que sienten que la IA es importante pero no saben por dónde meterle mano
-- **Personas con talento técnico** que quieren aprender IA aplicada de verdad, no marketing — y que ven en Zanovix un sitio donde crecer
+- **Personas con talento técnico** que quieren aprender IA aplicada de verdad, no marketing, y que ven en Zanovix un sitio donde crecer
 - **Aliados e inversores** que entienden que se construye un negocio sólido haciendo bien lo difícil, no prometiendo lo imposible
-- **El propio equipo Zanovix** — esto también es para nosotros, para no perder el norte
+- **El propio equipo Zanovix**: esto también es para nosotros, para no perder el norte
 
 ## Nuestros principios
 
-1. **Conceptos antes que código.** Si no entendés el problema, no vas a resolverlo con líneas de código. Pensar primero, teclear después.
+1. **Conceptos antes que código.** Si no entiendes el problema, no vas a resolverlo con líneas de código. Pensar primero, teclear después.
 2. **AI-First, pero útil.** La IA es medio, no fin. Si un problema se resuelve mejor sin IA, lo resolvemos sin IA. Y lo decimos.
 3. **Método antes que herramienta.** El stack cambia. La forma de pensar no. Documentamos cómo trabajamos para que sea repetible.
 4. **Sin sobreingeniería.** Lo mínimo que resuelve el problema y se mantiene. Cada línea de código de más es deuda futura.
@@ -40,19 +40,19 @@ Zanovix existe para llenar ese hueco. No porque sea un mercado bonito, sino porq
 Cuando alguien trabaja con Zanovix nota cosas que en otros sitios no:
 
 - Te explicamos qué hacemos y por qué, sin tecnicismos vacíos
-- Te decimos cuándo NO necesitás algo
+- Te decimos cuándo NO necesitas algo
 - Entregamos lo que prometemos, en el plazo que prometimos, o avisamos a tiempo
-- Cada proyecto deja documentación que vos podés leer y entender
+- Cada proyecto deja documentación que puedes leer y entender
 - Si un proyecto no encaja con nosotros, lo decimos antes de cobrar el primer euro
-- No dependés de una sola persona — cualquier persona del equipo puede continuar
+- No dependes de una sola persona: cualquier persona del equipo puede continuar
 
 ## Lo que NO somos
 
-- **No somos una agencia más.** Las agencias venden horas. Nosotros vendemos resultados y método.
+- **No vendemos horas.** Otros venden tiempo; nosotros, resultados y método.
 - **No vendemos humo de IA.** Si el problema se resuelve con una hoja de cálculo, te decimos que uses una hoja de cálculo.
 - **No contratamos por CV.** Contratamos por capacidad de aprender, criterio y honestidad.
 - **No trabajamos con clientes que no respeten el método.** Discovery antes de propuesta. Propuesta antes de código. Sin atajos.
-- **No competimos con grandes consultoras.** Su mercado no es el nuestro. Las pymes no necesitan eso.
+- **No competimos con los grandes.** Su mercado no es el nuestro; las pymes no necesitan eso.
 - **No escondemos errores.** Los aprendemos en público, dentro del equipo y a veces hacia afuera.
 - **No somos solo Pepe.** Hoy todavía sí, en gran parte. En 5 años, no. Trabajamos cada día para que dejemos de serlo.
 
@@ -64,4 +64,4 @@ Eso es lo que estamos construyendo.
 
 ---
 
-*Pepe Cabeza — Málaga, 2026*
+*Pepe Cabeza · Málaga, 2026*

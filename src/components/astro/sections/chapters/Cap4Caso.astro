@@ -1,15 +1,12 @@
 ---
 /**
- * Cap4Caso.astro — Capítulo 4: Caso destacado con counter animado
+ * Cap4Caso.astro — Capítulo 4: Caso destacado
  *
  * .section--inverted la añade scroll-system.ts via registerCap4PaletteInversion().
  * NO se hardcodea en markup. El root debe permitir esa clase aplicada.
  *
- * data-role="counter": el counter 0 → 80.000 lo anima registerCap4Counter().
- * font-variant-numeric tabular-nums previene layout shift durante la animación.
- *
- * Copy canonical: copy-override #6015.
- * Contraste teal #3BAA8C sobre ink #1F2A26: ~4.65:1 — pasa WCAG AA.
+ * Counter animado eliminado: la cifra "80.000 €" no era atribuible ni verificable.
+ * Copy canonical: copy-override #6015 (revisado 2026-06-17).
  */
 
 import Eyebrow from '../../ui/Eyebrow.astro'
@@ -47,34 +44,7 @@ import Eyebrow from '../../ui/Eyebrow.astro'
       Un asistente. Un proceso medido. Un resultado verificable.
     </h2>
 
-    <!-- Counter block -->
-    <div style="margin-bottom: 1.25rem;">
-      <span
-        data-role="counter"
-        style="
-          display: block;
-          font-family: var(--font-display);
-          font-size: clamp(6rem, 12vw, 10rem);
-          font-weight: 400;
-          line-height: 1;
-          color: var(--color-teal);
-          font-variant-numeric: tabular-nums;
-          min-width: 8ch;
-        "
-      >0 €</span>
-      <p
-        style="
-          font-family: var(--font-sans);
-          font-size: var(--text-body);
-          font-weight: 400;
-          color: var(--ink-mute);
-          margin-top: 0.5rem;
-        "
-        class="ink-mute"
-      >
-        ahorrados en el primer año de operación
-      </p>
-    </div>
+    <!-- INTERINO: pendiente re-alineación narrativa Cap4 (caso SmartCatering con datos cuando exista re-baseline GEO) -->
 
     <!-- Body -->
     <p
@@ -86,9 +56,22 @@ import Eyebrow from '../../ui/Eyebrow.astro'
         color: inherit;
         max-width: 54ch;
         opacity: 0.85;
+        margin-bottom: clamp(2rem, 3vw, 3rem);
       "
     >
-      Diseñamos un asistente IA con harness de evaluación continua sobre un flujo crítico de soporte. El equipo del cliente conservó el control. Nosotros, la responsabilidad técnica.
+      Rediseño web completo, saneamiento técnico y GEO en ejecución. Trabajo real con proceso medido: cada fase documentada, cada decisión justificada.
+    </p>
+
+    <p
+      style="
+        font-family: var(--font-sans);
+        font-size: var(--text-body);
+        font-weight: 400;
+        line-height: 1.6;
+        max-width: 54ch;
+      "
+    >
+      El equipo del cliente conserva el control operativo. Nosotros aportamos la estructura técnica y la responsabilidad de ejecución.
     </p>
   </div>
 </section>

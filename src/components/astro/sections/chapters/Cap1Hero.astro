@@ -19,7 +19,7 @@
 <section
   id="hero"
   data-chapter="1"
-  aria-label="Cap 1 — Zanovix, estudio de inteligencia artificial"
+  aria-label="Zanovix: IA aplicada a empresas"
   class="chapter"
   style="
     position: relative;
@@ -47,14 +47,14 @@
       style="
         font-family: var(--font-mono);
         font-size: var(--text-eyebrow);
-        color: var(--color-teal);
+        color: var(--ink-mute-strong);
         text-transform: uppercase;
         letter-spacing: 0.1em;
         margin-bottom: 1.5rem;
         opacity: 0;
       "
     >
-      // estudio de inteligencia artificial
+      // IA aplicada
     </p>
 
     <!-- H1 display Cormorant Garamond -->
@@ -65,9 +65,11 @@
         max-width: 18ch;
         margin-bottom: 2rem;
         opacity: 0;
+        overflow-wrap: break-word;
+        text-wrap: balance;
       "
     >
-      Inteligencia artificial que devuelve tiempo.
+      La búsqueda cambió.
     </h1>
 
     <!-- Sub-línea Newsreader -->
@@ -80,11 +82,24 @@
         color: var(--ink-soft);
         line-height: 1.6;
         max-width: 48ch;
-        margin-bottom: 0;
+        margin-bottom: 2rem;
         opacity: 0;
       "
     >
-      Diseñamos sistemas con IA aplicada, con criterio. Sin atajos, sin humo, sin prisa.
+      Tus clientes ya le preguntan a ChatGPT, no solo a Google. Si ahí no apareces, para ellos no existes, y ni te enteras. Lo primero que hacemos es ponerte donde te buscan. Lo segundo, que dejes de contestar a mano lo de siempre.
+    </p>
+
+    <!-- Brand sign-off: low-hierarchy closing mark, static (no animation ID) -->
+    <p
+      class="hero-signoff"
+      style="
+        font-family: var(--font-mono);
+        font-size: var(--text-eyebrow);
+        color: var(--ink-mute-strong);
+        letter-spacing: 0.08em;
+      "
+    >
+      Ingeniería pausada con IA
     </p>
   </div>
 
@@ -148,6 +163,12 @@
     #hero-eyebrow,
     #hero-headline,
     #hero-lede {
+      opacity: 1 !important;
+    }
+
+    /* Flor wrapper: asegurar visibilidad (fix: opacity:0 en .flor-hero-wrapper
+       no puede ocultar a sus hijos cuando estos son forzados a opacity:1) */
+    .flor-hero-wrapper {
       opacity: 1 !important;
     }
 

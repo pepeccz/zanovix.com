@@ -84,7 +84,7 @@ html {
   height: 1px;
   overflow: hidden;
   z-index: 100;
-  background: var(--color-teal);
+  background: var(--color-ink);
   color: var(--color-paper);
   padding: 0.5rem 1rem;
   font-family: var(--font-sans);
@@ -101,6 +101,25 @@ html {
   overflow: visible;
   outline: 2px solid var(--color-ink);
   outline-offset: 2px;
+}
+
+/* ── Global focus-visible ───────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+/* ── Flor focus ─────────────────────────────────────────────────────── */
+.flor-persistente button:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* ── Headline wrap ──────────────────────────────────────────────────── */
+h1, h2, h3, blockquote {
+  text-wrap: balance;
+  overflow-wrap: break-word;
 }
 
 /* ── Display companion — Cormorant Garamond ─────────────────────── */

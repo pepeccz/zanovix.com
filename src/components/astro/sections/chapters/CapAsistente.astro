@@ -1,0 +1,130 @@
+---
+/**
+ * CapAsistente.astro — Capítulo intermedio: El asistente IA como diferencial
+ *
+ * Presenta el asistente como motor de conversión y prueba viviente.
+ * Tono VISION/DEMO honesto — no es un chatbot funcional todavía.
+ * Clase .reveal en los bloques para IntersectionObserver stagger.
+ *
+ * Sin motion inline.
+ */
+
+import Eyebrow from '../../ui/Eyebrow.astro'
+import Hairline from '../../ui/Hairline.astro'
+---
+
+<section
+  data-chapter="6b"
+  id="asistente"
+  class="chapter"
+  style="
+    padding-top: var(--spacing-section-y);
+    padding-bottom: var(--spacing-section-y);
+    padding-left: var(--spacing-section-x);
+    padding-right: var(--spacing-section-x);
+  "
+>
+  <div style="max-width: var(--container-wide); margin: 0 auto; width: 100%;">
+    <!-- Eyebrow -->
+    <Eyebrow class="mb-8">// el medio es el mensaje</Eyebrow>
+
+    <!-- Titular -->
+    <h2
+      class="reveal"
+      style="
+        font-family: var(--font-serif);
+        font-size: clamp(2rem, 4vw + 0.5rem, 4rem);
+        font-weight: 500;
+        line-height: 1.1;
+        color: var(--color-ink);
+        max-width: 26ch;
+        margin-bottom: clamp(1.5rem, 2.5vw, 2.5rem);
+      "
+    >
+      Esta web podría estar ayudándote a decidir ahora mismo.
+    </h2>
+
+    <Hairline />
+
+    <!-- Cuerpo -->
+    <div
+      class="reveal"
+      style="
+        padding-top: clamp(1.5rem, 2.5vw, 2.5rem);
+        padding-bottom: clamp(1.5rem, 2.5vw, 2.5rem);
+      "
+    >
+      <p
+        style="
+          font-family: var(--font-sans);
+          font-size: var(--text-body);
+          font-weight: 400;
+          color: var(--ink-mute-strong);
+          line-height: 1.65;
+          max-width: 58ch;
+          margin-bottom: 1.25rem;
+        "
+      >
+        Imagina un asistente que te escucha, entiende tu caso concreto y te dice
+        en minutos si la IA tiene sentido para ti. Sin demos genéricas. Sin perder
+        el tiempo con alguien que no puede ayudarte todavía.
+      </p>
+      <p
+        style="
+          font-family: var(--font-sans);
+          font-size: var(--text-body);
+          font-weight: 400;
+          color: var(--ink-mute-strong);
+          line-height: 1.65;
+          max-width: 58ch;
+        "
+      >
+        Eso es lo que construimos para nuestros clientes: sistemas que precualifican,
+        orientan y convierten antes de que entres en escena. Lo que ves aquí es la
+        misma lógica aplicada a nuestra propia web.
+      </p>
+    </div>
+
+    <Hairline />
+
+    <!-- CTA -->
+    <div
+      class="reveal"
+      style="
+        padding-top: clamp(1.5rem, 2.5vw, 2.5rem);
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+      "
+    >
+      <a
+        href="#contacto"
+        style="
+          font-family: var(--font-mono);
+          font-size: clamp(0.875rem, 1vw + 0.5rem, 1.125rem);
+          font-weight: 400;
+          color: var(--color-ink);
+          background: transparent;
+          border: 1px solid var(--color-rule);
+          padding: 0.75rem 1.5rem;
+          text-decoration: none;
+          letter-spacing: -0.01em;
+          transition: border-color 200ms ease, color 200ms ease;
+        "
+      >
+        Cuéntanos tu caso
+      </a>
+      <span
+        style="
+          font-family: var(--font-sans);
+          font-size: 0.875rem;
+          font-weight: 400;
+          color: var(--ink-mute-strong);
+        "
+      >
+        El asistente llega pronto. De momento, hablamos directamente.
+      </span>
+    </div>
+  </div>
+</section>

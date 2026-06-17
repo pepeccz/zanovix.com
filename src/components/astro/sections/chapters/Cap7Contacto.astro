@@ -34,6 +34,7 @@ import BrandMark from '../../ui/BrandMark.astro'
 
     <!-- H2 -->
     <h2
+      id="contacto"
       style="
         font-family: var(--font-serif);
         font-size: clamp(2rem, 4vw + 0.5rem, 4rem);
@@ -47,7 +48,23 @@ import BrandMark from '../../ui/BrandMark.astro'
       Si tienes un proceso que merece criterio, hablemos.
     </h2>
 
-    <!-- CTA mailto -->
+    <!-- CTA primario: asistente (próximamente) -->
+    <p
+      style="
+        font-family: var(--font-sans);
+        font-size: var(--text-body);
+        font-weight: 400;
+        color: var(--ink-mute-strong, var(--color-ink));
+        line-height: 1.65;
+        max-width: 52ch;
+        margin-bottom: clamp(1.5rem, 2.5vw, 2.5rem);
+      "
+    >
+      Cuéntale tu caso a nuestro asistente y te decimos en minutos si la IA
+      tiene sentido para ti. Sin rodeos, sin demo de catálogo.
+    </p>
+
+    <!-- CTA mailto — alternativa directa -->
     <a
       href="mailto:hola@zanovix.com"
       style="
@@ -68,7 +85,7 @@ import BrandMark from '../../ui/BrandMark.astro'
     </a>
 
     <!-- Mini-footer interno — NO el footer del PageLayout (eso es PR 3) -->
-    <footer
+    <div
       style="
         display: flex;
         align-items: center;
@@ -83,11 +100,11 @@ import BrandMark from '../../ui/BrandMark.astro'
           font-family: var(--font-sans);
           font-size: 0.875rem;
           font-weight: 400;
-          color: var(--ink-mute);
+          color: var(--ink-mute-strong, var(--ink-mute));
         "
       >
         © 2026 Zanovix · Málaga
       </p>
-    </footer>
+    </div>
   </div>
 </section>
