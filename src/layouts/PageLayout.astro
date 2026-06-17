@@ -56,6 +56,14 @@ const { title, description, page = '', showCompanion = true } = Astro.props
         <ul class="flex list-none gap-6 m-0 p-0">
           <li>
             <a
+              href="/servicios"
+              class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
+            >
+              Servicios
+            </a>
+          </li>
+          <li>
+            <a
               href="/manifiesto"
               class="font-[var(--font-mono)] text-[var(--text-eyebrow)] text-[var(--color-ink)] no-underline uppercase tracking-widest hover:text-[var(--color-ink)] transition-colors duration-200"
             >
@@ -117,6 +125,7 @@ const { title, description, page = '', showCompanion = true } = Astro.props
         <span class="mobile-nav__close-bar"></span>
       </button>
       <ul class="mobile-nav__list">
+        <li><a href="/servicios" class="mobile-nav__link">Servicios</a></li>
         <li><a href="/manifiesto" class="mobile-nav__link">Manifiesto</a></li>
         <li><a href="/contacto" class="mobile-nav__link">Contacto</a></li>
         <li>
@@ -193,8 +202,14 @@ const { title, description, page = '', showCompanion = true } = Astro.props
     </div>
   </footer>
 
+  {/*
+    Dock del Companion en páginas internas. client:load (no client:visible):
+    el dock es position:fixed y solo se renderiza tras leer sessionStorage en
+    el cliente, así que su placeholder SSR mide 0px y client:visible nunca
+    intersecaría. client:load garantiza la hidratación; el componente es mínimo.
+  */}
   {page !== 'home' && showCompanion && (
-    <Companion variant="dock" client:visible />
+    <Companion variant="dock" client:load />
   )}
 
   <script is:inline>
