@@ -11,6 +11,8 @@
  * de uso, hasta decidir su salvado.
  */
 import PageLayout from '../layouts/PageLayout.astro'
+import BrandPetals from '../components/astro/ui/BrandPetals.astro'
+import MethodDiagram from '../components/astro/ui/MethodDiagram.astro'
 
 const services = [
   {
@@ -38,7 +40,7 @@ const services = [
   page="home"
 >
   <!-- ── Hero: el mensaje firmado + CTAs claros ──────────────────── -->
-  <section class="hero" aria-labelledby="hero-title">
+  <section id="hero" class="hero" aria-labelledby="hero-title">
     <div class="hero__text">
       <h1 id="hero-title" class="display hero__title">
         Tus clientes ya le preguntan a una IA.
@@ -62,6 +64,7 @@ const services = [
          Markup decorativo (aria-hidden), construido con el sistema v2.
          No es stock ni la herramienta interactiva: esa vive en /servicios. -->
     <div class="hero__scene" aria-hidden="true">
+      <BrandPetals tone="paper" corner="bottom-right" size={220} />
       <p class="hero__scene-head">
         <span class="hero__scene-dot"></span>
         Una IA, ahora mismo
@@ -100,6 +103,99 @@ const services = [
         ))
       }
     </ul>
+  </section>
+
+  <!-- ── Radiografia GEO: preview fiel del resultado real ────────────
+   * No es un mockup falso ni stock: es una REPRODUCCION del propio resultado
+   * que devuelve el producto (la radiografia GEO en vivo, GeoSimulator). Se
+   * muestra el momento honesto que vende: "una IA no te conoce todavia". Las
+   * clases .geosim__* son LAS MISMAS del componente real (global.css), asi
+   * que el preview es fiel pixel a pixel, no una imitacion. Es estatico
+   * (aria-hidden) porque la herramienta interactiva vive en /servicios, donde
+   * pide el nombre real; aqui solo enseña como se ve para invitar a probarla.
+   -->
+  <section class="proof" aria-labelledby="proof-title">
+    <div class="proof__inner">
+      <div class="proof__text">
+        <h2 id="proof-title" class="display proof__title">
+          Mira cómo te ve una IA hoy.
+        </h2>
+        <p class="proof__lede">
+          Le preguntamos en vivo a una IA por el nombre real de tu negocio. Si
+          eres una pyme, lo normal es que no te conozca todavía. Eso no es malo:
+          es exactamente lo primero que arreglamos.
+        </p>
+        <p class="proof__note">
+          Esto es lo que verías al hacer la prueba con tu negocio. La de verdad,
+          con tu nombre, está a un clic.
+        </p>
+        <a
+          class="cta-primary"
+          href="/servicios/diseno-desarrollo-web-geo"
+        >
+          Hacer mi radiografía GEO
+        </a>
+      </div>
+
+      <!-- Reproduccion fiel del resultado del producto (estatica, decorativa).
+           Mundo forest, mismas clases que el GeoSimulator real. -->
+      <div class="proof__demo" aria-hidden="true">
+        <div class="geosim">
+          <BrandPetals tone="paper" corner="top-right" size={180} />
+          <p class="geosim__head">
+            <span class="geosim__dot"></span>
+            Radiografía GEO en vivo
+          </p>
+          <p class="geosim__verdict">Una IA no te conoce todavía</p>
+          <dl class="geosim__dl">
+            <div class="geosim__item">
+              <dt>Qué sabe de ti</dt>
+              <dd>
+                No tengo información sobre un negocio con ese nombre en esa zona.
+              </dd>
+            </div>
+            <div class="geosim__item">
+              <dt>Si te recomendaría</dt>
+              <dd>
+                Al preguntar por tu categoría, nombraría a otros antes que a ti.
+              </dd>
+            </div>
+            <div class="geosim__item">
+              <dt>Qué le falta</dt>
+              <dd>
+                Señales claras de quién eres, dónde estás y qué haces, donde la
+                IA las pueda leer.
+              </dd>
+            </div>
+          </dl>
+          <p class="geosim__note">
+            Respuesta real del modelo. Aquí es donde entramos nosotros.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Tira del metodo: diagrama a medida ───────────────────────────
+   * Mundo forest "drenched" deliberado: rompe la planicie tipografica con un
+   * momento de color y enseña el metodo como FLUJO (no como mas texto). El
+   * diagrama explica que el orden importa y dirige a /metodologia. Significado,
+   * no relleno: para el comprador economico, el metodo ES la prueba del rigor.
+   -->
+  <section class="method" aria-labelledby="method-title">
+    <div class="method__inner">
+      <BrandPetals tone="paper" corner="top-left" size={300} />
+      <header class="method__head">
+        <h2 id="method-title" class="display method__title">
+          Cómo trabajamos, en cuatro pasos.
+        </h2>
+        <p class="method__lede">
+          Siempre el mismo orden, porque el orden importa. No proponemos sin
+          entender, no construimos sin medir y no entregamos sin documentar.
+        </p>
+      </header>
+      <MethodDiagram variant="strip" tone="forest" withLink={true} />
+    </div>
   </section>
 
   <!-- ── Handoff a contacto ──────────────────────────────────────── -->
@@ -169,6 +265,8 @@ const services = [
    * paper sobre forest (tintas AA en :root). El teal solo como acento.
    */
   .hero__scene {
+    position: relative;
+    overflow: hidden;
     background: var(--color-forest);
     color: var(--paper-on-dark);
     border: 1px solid var(--color-rule-invert);
@@ -179,6 +277,11 @@ const services = [
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
+  /* El texto de la escena por encima del motivo de marca (marca de agua). */
+  .hero__scene > :not(.brandpetals) {
+    position: relative;
+    z-index: 1;
   }
   .hero__scene-head {
     display: flex;
@@ -345,6 +448,87 @@ const services = [
     color: var(--ink-soft);
     margin: 0;
     max-width: 52ch;
+  }
+
+  /* ── Prueba GEO (preview fiel del resultado real) ─────────────────── */
+  .proof {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .proof__inner {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (min-width: 880px) {
+    .proof__inner {
+      grid-template-columns: 0.95fr 1.05fr;
+    }
+  }
+  .proof__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    max-width: 16ch;
+  }
+  .proof__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 50ch;
+    margin: 0 0 1.25rem;
+  }
+  .proof__note {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--ink-mute-strong);
+    max-width: 48ch;
+    margin: 0 0 1.75rem;
+  }
+  /* El panel forest del preview lleva el motivo de marca recortado: necesita
+     contexto de recorte propio (el componente .geosim no lo trae). */
+  .proof__demo .geosim {
+    position: relative;
+    overflow: hidden;
+  }
+  .proof__demo .geosim > :not(.brandpetals) {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Tira del metodo (mundo forest drenched) ──────────────────────── */
+  .method {
+    background: var(--color-forest);
+    color: var(--paper-on-dark);
+  }
+  .method__inner {
+    position: relative;
+    overflow: hidden;
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .method__inner > :not(.brandpetals) {
+    position: relative;
+    z-index: 1;
+  }
+  .method__head {
+    max-width: 56ch;
+    margin-bottom: clamp(2rem, 4vw, 3.25rem);
+  }
+  .method__title {
+    font-size: var(--text-h1);
+    color: var(--paper-on-dark);
+    margin: 0 0 0.85rem;
+    max-width: 18ch;
+  }
+  .method__lede {
+    font-size: var(--text-lede);
+    line-height: 1.6;
+    color: var(--paper-on-dark-soft);
+    max-width: 54ch;
+    margin: 0;
   }
 
   /* ── Contacto ─────────────────────────────────────────────────── */

@@ -20,42 +20,10 @@
  * sin guiones largos, anti-hype. Sin números no atribuibles a Zanovix.
  */
 import PageLayout from '../../layouts/PageLayout.astro'
+import MethodDiagram from '../../components/astro/ui/MethodDiagram.astro'
 
-// Los cuatro pasos, con su porqué y lo que te queda al terminar cada uno.
-const pasos = [
-  {
-    fase: 'Discovery',
-    titulo: 'Entender antes de proponer',
-    porque:
-      'La mayoría de los proyectos que salen mal empiezan resolviendo el problema equivocado. Antes de hablar de IA o de tecnología, miramos cómo trabajas hoy, dónde se te van las horas y dónde tus clientes dejan de encontrarte.',
-    llevas:
-      'Un diagnóstico claro de tu situación y, si hace falta, la respuesta honesta de que todavía no toca meter IA por ningún lado.',
-  },
-  {
-    fase: 'Propuesta',
-    titulo: 'Un plan que cabe en una hoja',
-    porque:
-      'Una propuesta que necesita veinte páginas suele esconder que no se ha entendido el problema. La nuestra dice qué haríamos primero, por qué empezamos por ahí y qué esperamos que cambie. Con lo que dejamos fuera escrito de antemano.',
-    llevas:
-      'Alcance, criterios de éxito y precio sobre la mesa, sin letra pequeña. Puedes leerla y decidir sin necesidad de fiarte de nuestra palabra.',
-  },
-  {
-    fase: 'Ejecución medida',
-    titulo: 'Construir y medir, no prometer',
-    porque:
-      'Si no sabes de dónde partías, cualquier resultado se puede maquillar. Levantamos la línea base antes de tocar nada, trabajamos en tramos cortos y comprobamos contra esa base, no contra una promesa de folleto.',
-    llevas:
-      'Avances visibles cada pocas semanas y la tranquilidad de poder seguir de cerca lo que se hace y por qué, sin sorpresas al final.',
-  },
-  {
-    fase: 'Entrega documentada',
-    titulo: 'Te queda el porqué, no solo el qué',
-    porque:
-      'Lo que no se documenta no se transmite ni se mantiene. Cuando cerramos un proyecto, no te dejamos solo con algo funcionando: te dejamos también el razonamiento por escrito.',
-    llevas:
-      'La solución en marcha y un documento con qué decidimos, qué medimos y qué sigue. Lo puedes enseñar a tu equipo o a quien aprueba el gasto.',
-  },
-]
+// Los cuatro pasos viven ahora en MethodDiagram (variant 'full'), reutilizable
+// en la home (variant 'strip') y aqui. La copia larga es la misma firmada.
 
 // Principios que sostienen el método (del manifiesto, en clave de cliente).
 const principios = [
@@ -107,26 +75,7 @@ const principios = [
       </p>
     </header>
 
-    <ol class="steps">
-      {
-        pasos.map((p, i) => (
-          <li class="step">
-            <div class="step__marker">
-              <span class="step__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              <span class="step__phase">{p.fase}</span>
-            </div>
-            <div class="step__body">
-              <h3 class="step__title">{p.titulo}</h3>
-              <p class="step__why">{p.porque}</p>
-              <p class="step__take">
-                <span class="step__take-label">Te llevas</span>
-                {p.llevas}
-              </p>
-            </div>
-          </li>
-        ))
-      }
-    </ol>
+    <MethodDiagram variant="full" tone="paper" withLink={false} />
   </section>
 
   <!-- ── Principios (mundo forest: cambio de mundo deliberado) ──── -->
@@ -223,89 +172,6 @@ const principios = [
     line-height: 1.55;
     color: var(--ink-soft);
     margin: 0;
-  }
-  .steps {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .step {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.85rem 0;
-    padding: clamp(1.75rem, 3.5vw, 2.75rem) 0;
-    border-top: 1px solid var(--color-rule);
-  }
-  .step:last-child {
-    border-bottom: 1px solid var(--color-rule);
-  }
-  .step__marker {
-    display: flex;
-    align-items: baseline;
-    gap: 0.85rem;
-  }
-  .step__num {
-    font-family: var(--font-mono);
-    font-size: var(--text-h3);
-    font-weight: 500;
-    line-height: 1;
-    color: var(--color-teal-deep);
-  }
-  .step__phase {
-    font-family: var(--font-mono);
-    font-size: var(--text-eyebrow);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--ink-mute-strong);
-  }
-  .step__body {
-    display: grid;
-    gap: 0.6rem;
-  }
-  .step__title {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: var(--text-h3);
-    letter-spacing: -0.01em;
-    color: var(--color-ink);
-    margin: 0;
-  }
-  .step__why {
-    font-size: var(--text-body);
-    line-height: 1.65;
-    color: var(--ink-soft);
-    max-width: 62ch;
-    margin: 0;
-  }
-  .step__take {
-    font-size: var(--text-body);
-    line-height: 1.6;
-    color: var(--ink-mute-strong);
-    max-width: 62ch;
-    margin: 0;
-  }
-  .step__take-label {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: var(--text-eyebrow);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    /* ink-mute-strong (8.8:1), no teal-deep: a 12.8px el teal cae a 3.94:1,
-       por debajo del umbral AA de cuerpo (4.5:1). El teal queda en step__num
-       (texto grande, ≥3:1 OK). */
-    color: var(--ink-mute-strong);
-    margin-right: 0.6rem;
-  }
-  @media (min-width: 760px) {
-    .step {
-      grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
-      column-gap: clamp(2rem, 5vw, 5rem);
-      align-items: start;
-    }
-    .step__marker {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
   }
 
   /* ── Principios (mundo forest drenched) ───────────────────────── */
