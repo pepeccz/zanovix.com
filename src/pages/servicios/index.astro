@@ -11,6 +11,7 @@
  * contexto desde la home, lo verás resumido aquí con un enlace a contacto.
  */
 import PageLayout from '../../layouts/PageLayout.astro'
+import BrandPetals from '../../components/astro/ui/BrandPetals.astro'
 
 /* Tres intervenciones POSIBLES después del diagnóstico. AI Readiness se retiró
  * del catálogo: ahora es el Diagnóstico (la puerta). Estas tres son lo que
@@ -78,17 +79,25 @@ const servicios = [
     </ul>
   </section>
 
-  <!-- ── Acompañamiento mensual: la relación tras la intervención ───── -->
+  <!-- ── Acompañamiento mensual: la relación tras la intervención ─────
+   * Cambio de mundo deliberado a forest (drenched), igual que en home y
+   * casos: rompe la planicie tipográfica del hub y da ritmo visual. El motivo
+   * de marca sella el bloque como firma de Zanovix. No es decorativo de
+   * relleno: marca el cambio de fase (de elegir intervención a la relación).
+   -->
   <section class="accomp" aria-labelledby="accomp-title">
-    <p class="accomp__tag">Después de la intervención</p>
-    <h2 id="accomp-title" class="display accomp__title">
-      Lo que hacemos no se entrega y se olvida.
-    </h2>
-    <p class="accomp__lede">
-      Si encaja, seguimos a tu lado cada mes: ajustes, mediciones y criterio
-      cuando lo necesites, con una cuota fija. Sin candado, sin permanencias.
-      Te puedes ir cuando quieras; preferimos que te quedes porque aporta.
-    </p>
+    <div class="accomp__inner">
+      <BrandPetals tone="paper" corner="top-right" size={260} />
+      <p class="accomp__tag">Después de la intervención</p>
+      <h2 id="accomp-title" class="display accomp__title">
+        Lo que hacemos no se entrega y se olvida.
+      </h2>
+      <p class="accomp__lede">
+        Si encaja, seguimos a tu lado cada mes: ajustes, mediciones y criterio
+        cuando lo necesites, con una cuota fija. Sin candado, sin permanencias.
+        Te puedes ir cuando quieras; preferimos que te quedes porque aporta.
+      </p>
+    </div>
   </section>
 
   <!-- ── Cierre: a la puerta del embudo ─────────────────────────────── -->
@@ -155,30 +164,41 @@ const servicios = [
     margin: 0;
   }
 
-  /* ── Acompañamiento mensual (la relación tras la intervención) ──── */
+  /* ── Acompañamiento mensual (mundo forest drenched) ──────────────── */
   .accomp {
+    background: var(--color-forest);
+    color: var(--paper-on-dark);
+    margin-top: var(--spacing-section-y);
+  }
+  .accomp__inner {
+    position: relative;
+    overflow: hidden;
     max-width: var(--container-wide);
     margin: 0 auto;
-    padding: var(--spacing-section-y) var(--spacing-section-x) 0;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .accomp__inner > :not(.brandpetals) {
+    position: relative;
+    z-index: 1;
   }
   .accomp__tag {
     font-family: var(--font-mono);
     font-size: var(--text-eyebrow);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--ink-mute-strong);
+    color: var(--paper-on-dark-soft);
     margin: 0 0 0.75rem;
   }
   .accomp__title {
     font-size: var(--text-h1);
-    color: var(--color-ink);
+    color: var(--paper-on-dark);
     margin: 0 0 1rem;
     max-width: 20ch;
   }
   .accomp__lede {
     font-size: var(--text-lede);
-    line-height: 1.55;
-    color: var(--ink-soft);
+    line-height: 1.6;
+    color: var(--paper-on-dark-soft);
     max-width: 58ch;
     margin: 0;
   }

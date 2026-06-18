@@ -1,0 +1,227 @@
+---
+/**
+ * DimensionGrid.astro — las cuatro dimensiones que mira el diagnóstico
+ *
+ * Qué es: un diagrama a medida de las cuatro dimensiones del diagnóstico
+ * Zanovix (visibilidad ante la IA, procesos y horas, datos y herramientas,
+ * criterio para decidir). No es decoración ni un card-grid de iconos de
+ * relleno: EXPLICA qué mira el diagnóstico y por qué es una mirada completa,
+ * no un solo número. Cada dimensión lleva un glifo SVG a medida que dibuja su
+ * idea (una señal que se emite, un reloj con tramos, datos sueltos que se
+ * ordenan, una bifurcación de decisión), no un pictograma genérico de stock.
+ *
+ * Por qué un diagrama y no solo la lista: la página del diagnóstico es la
+ * puerta del embudo y necesita sentirse sólida. Cuatro ejes con su glifo
+ * comunican de un vistazo "esto es una mirada de 360°", algo que una lista de
+ * texto plano no transmite. El glifo da imagen sin stock y sin mentir.
+ *
+ * Mundo: 'paper' (claro, default) o 'forest' (drenched). El teal marca el
+ * trazo activo del glifo; el texto va en tintas AA (nunca teal en cuerpo).
+ *
+ * A11y: es informativo, así que NO va aria-hidden. Lista semántica (<ul>):
+ * un lector lo lee como cuatro dimensiones con su descripción. El glifo SVG sí
+ * es decorativo (aria-hidden): la información vive en el título y el texto.
+ */
+interface Props {
+  tone?: 'paper' | 'forest'
+  class?: string
+}
+
+const { tone = 'paper', class: className = '' } = Astro.props
+
+// Cuatro dimensiones reales del diagnóstico (mapean 1:1 a las intervenciones).
+// glyph nombra el dibujo a medida; el orden no implica prioridad (no numerado).
+const dimensiones = [
+  {
+    glyph: 'signal',
+    titulo: 'Visibilidad ante la IA',
+    texto:
+      'Si apareces cuando tus clientes preguntan a un modelo por lo que tú haces, y qué te falta para que te citen.',
+  },
+  {
+    glyph: 'hours',
+    titulo: 'Procesos y horas',
+    texto:
+      'Dónde se te va el tiempo cada día y qué de eso puede hacer una máquina sin romper nada.',
+  },
+  {
+    glyph: 'data',
+    titulo: 'Datos y herramientas',
+    texto:
+      'Qué tienes ya y qué te falta para que la IA sea útil de verdad, no un capricho.',
+  },
+  {
+    glyph: 'criteria',
+    titulo: 'Criterio para decidir',
+    texto:
+      'Un orden de prioridades honesto: qué hacer primero para notarlo pronto y qué dejar para más adelante.',
+  },
+]
+---
+
+<ul class:list={['dgrid', `dgrid--${tone}`, className]}>
+  {
+    dimensiones.map((d) => (
+      <li class="dgrid__cell">
+        {/* Glifo a medida: dibuja la idea de la dimensión, no un icono de
+            stock. Decorativo (aria-hidden); el peso informativo lo lleva el
+            texto. viewBox comun 0 0 48 48, trazo redondeado, acento teal en
+            el elemento activo. */}
+        <span class="dgrid__glyph" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none" focusable="false">
+            {d.glyph === 'signal' && (
+              <>
+                {/* Una antena que emite: arcos crecientes desde un punto. */}
+                <circle cx="16" cy="34" r="3" class="dgrid__accent-fill" />
+                <path d="M22 30a10 10 0 0 1 0-14" class="dgrid__stroke" />
+                <path d="M27 34a17 17 0 0 0 0-24" class="dgrid__stroke" />
+                <path d="M32 38a24 24 0 0 0 0-32" class="dgrid__accent-stroke" />
+              </>
+            )}
+            {d.glyph === 'hours' && (
+              <>
+                {/* Un reloj con un tramo marcado: las horas que se recuperan. */}
+                <circle cx="24" cy="24" r="15" class="dgrid__stroke" />
+                <path
+                  d="M24 24V12"
+                  class="dgrid__stroke"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M24 24l8 5"
+                  class="dgrid__accent-stroke"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M24 9a15 15 0 0 1 13 7.5"
+                  class="dgrid__accent-stroke"
+                />
+              </>
+            )}
+            {d.glyph === 'data' && (
+              <>
+                {/* Datos sueltos que se ordenan hacia una columna limpia. */}
+                <circle cx="11" cy="13" r="2.5" class="dgrid__stroke-fill" />
+                <circle cx="15" cy="24" r="2.5" class="dgrid__stroke-fill" />
+                <circle cx="10" cy="35" r="2.5" class="dgrid__stroke-fill" />
+                <path d="M20 13h8M20 24h12M20 35h8" class="dgrid__stroke" stroke-linecap="round" />
+                <rect x="34" y="9" width="6" height="30" rx="2" class="dgrid__accent-stroke" />
+              </>
+            )}
+            {d.glyph === 'criteria' && (
+              <>
+                {/* Una bifurcación: un camino entra, se decide, sale uno. */}
+                <path d="M10 24h9" class="dgrid__stroke" stroke-linecap="round" />
+                <path d="M19 24l9-9M19 24l9 9" class="dgrid__stroke" stroke-linecap="round" />
+                <circle cx="19" cy="24" r="3" class="dgrid__accent-fill" />
+                <circle cx="31" cy="15" r="3" class="dgrid__stroke" />
+                <circle cx="31" cy="33" r="3" class="dgrid__stroke" />
+                <path d="M34 15h5" class="dgrid__accent-stroke" stroke-linecap="round" />
+              </>
+            )}
+          </svg>
+        </span>
+        <div class="dgrid__body">
+          <h3 class="dgrid__title">{d.titulo}</h3>
+          <p class="dgrid__text">{d.texto}</p>
+        </div>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .dgrid {
+    --dg-ink: var(--color-ink);
+    --dg-soft: var(--ink-soft);
+    --dg-rule: var(--color-rule);
+    --dg-stroke: var(--ink-mute-strong);
+    --dg-accent: var(--color-teal-deep);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+  .dgrid--forest {
+    --dg-ink: var(--paper-on-dark);
+    --dg-soft: var(--paper-on-dark-soft);
+    --dg-rule: var(--color-rule-invert);
+    --dg-stroke: var(--paper-on-dark-soft);
+    --dg-accent: var(--color-teal-bright);
+  }
+
+  /* Móvil: lista plana con hairlines (no card-grid). Escritorio: dos columnas
+     que mantienen el ritmo sin convertirse en tarjetas iguales. */
+  .dgrid__cell {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: clamp(0.9rem, 2.5vw, 1.4rem);
+    align-items: start;
+    padding: clamp(1.25rem, 3vw, 1.75rem) 0;
+    border-top: 1px solid var(--dg-rule);
+  }
+  .dgrid__cell:last-child {
+    border-bottom: 1px solid var(--dg-rule);
+  }
+  @media (min-width: 760px) {
+    .dgrid {
+      grid-template-columns: 1fr 1fr;
+      column-gap: clamp(2rem, 4vw, 3.5rem);
+    }
+    /* En dos columnas, las dos primeras celdas comparten la regla superior y
+       las dos últimas la inferior; quitamos las redundantes del medio. */
+    .dgrid__cell:nth-child(3),
+    .dgrid__cell:nth-child(4) {
+      border-top: 1px solid var(--dg-rule);
+    }
+  }
+
+  .dgrid__glyph {
+    flex: none;
+    width: clamp(40px, 9vw, 48px);
+    height: clamp(40px, 9vw, 48px);
+    display: block;
+  }
+  .dgrid__glyph svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  /* Trazos del glifo: tinta AA por defecto, teal solo en el elemento activo. */
+  .dgrid__stroke {
+    stroke: var(--dg-stroke);
+    stroke-width: 2;
+  }
+  .dgrid__stroke-fill {
+    fill: var(--dg-stroke);
+  }
+  .dgrid__accent-stroke {
+    stroke: var(--dg-accent);
+    stroke-width: 2.2;
+  }
+  .dgrid__accent-fill {
+    fill: var(--dg-accent);
+  }
+
+  .dgrid__body {
+    min-width: 0;
+  }
+  .dgrid__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    color: var(--dg-ink);
+    margin: 0 0 0.4rem;
+    text-wrap: balance;
+  }
+  .dgrid__text {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--dg-soft);
+    max-width: 48ch;
+    margin: 0;
+  }
+</style>

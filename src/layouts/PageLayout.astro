@@ -53,7 +53,7 @@ const { title, description, page = '' } = Astro.props
       </a>
 
       <!-- Navegación principal (escritorio) -->
-      <nav aria-label="Navegación principal" class="hidden md:block">
+      <nav aria-label="Navegación principal" class="hidden lg:block">
         <ul class="flex list-none gap-6 m-0 p-0 items-center">
           <li>
             <a
@@ -110,7 +110,7 @@ const { title, description, page = '' } = Astro.props
       <button
         id="nav-toggle"
         type="button"
-        class="nav-toggle md:hidden"
+        class="nav-toggle lg:hidden"
         aria-controls="mobile-nav"
         aria-expanded="false"
         aria-label="Abrir menú de navegación"
@@ -127,7 +127,7 @@ const { title, description, page = '' } = Astro.props
     Disclosure accesible: aria-expanded en el toggle, focus trap, cierre con
     Esc / overlay / enlace, bloqueo de scroll del body. Lógica al pie del layout.
   -->
-  <div id="mobile-nav" class="mobile-nav md:hidden" hidden>
+  <div id="mobile-nav" class="mobile-nav lg:hidden" hidden>
     <nav aria-label="Navegación principal" class="mobile-nav__panel">
       <button
         id="nav-close"
@@ -360,7 +360,7 @@ const { title, description, page = '' } = Astro.props
           a.addEventListener('click', close);
         });
       window.addEventListener('resize', function () {
-        if (window.innerWidth >= 768 && !panel.hidden) close();
+        if (window.innerWidth >= 1024 && !panel.hidden) close();
       });
     })();
   </script>
@@ -397,9 +397,9 @@ const { title, description, page = '' } = Astro.props
       border: 0;
       cursor: pointer;
     }
-    /* Especificidad scoped de Astro > utilidad md:hidden de Tailwind,
-       así que el breakpoint vive aquí para garantizar el ocultado en >=768px. */
-    @media (min-width: 768px) {
+    /* Especificidad scoped de Astro > utilidad lg:hidden de Tailwind,
+       así que el breakpoint vive aquí para garantizar el ocultado en >=1024px. */
+    @media (min-width: 1024px) {
       .nav-toggle {
         display: none;
       }
@@ -426,7 +426,7 @@ const { title, description, page = '' } = Astro.props
       flex-direction: column;
     }
     /* Nunca visible en escritorio, aunque quedara abierto al cruzar el breakpoint. */
-    @media (min-width: 768px) {
+    @media (min-width: 1024px) {
       .mobile-nav {
         display: none;
       }
