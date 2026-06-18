@@ -18,12 +18,38 @@
  */
 import PageLayout from '../../layouts/PageLayout.astro'
 import ReadinessCheck from '../../components/react/ReadinessCheck.tsx'
+import BrandPetals from '../../components/astro/ui/BrandPetals.astro'
+import DimensionGrid from '../../components/astro/ui/DimensionGrid.astro'
+import FlowSteps from '../../components/astro/ui/FlowSteps.astro'
 
-const queMiramos = [
-  'Visibilidad ante la IA: si apareces cuando tus clientes preguntan a un modelo por lo que tú haces, y qué te falta para que te citen.',
-  'Procesos y horas: dónde se te va el tiempo cada día y qué de eso puede hacer una máquina sin romper nada.',
-  'Datos y herramientas: qué tienes ya y qué te falta para que la IA sea útil de verdad, no un capricho.',
-  'Criterio para decidir: un orden de prioridades honesto, qué hacer primero para notarlo pronto y qué dejar para más adelante.',
+// Las cuatro etapas del embudo, con el diagnóstico marcado como la puerta.
+// FlowSteps lo dibuja como flujo dirigido: deja claro que todo pasa por aquí.
+const embudo = [
+  {
+    tag: 'Gratis',
+    titulo: 'Te haces una idea',
+    texto:
+      'Pruebas en un minuto cómo te ve una IA hoy. Orientación automática, sin compromiso, para llegar con las ideas más claras.',
+  },
+  {
+    tag: 'Diagnóstico',
+    titulo: 'Entendemos tu negocio',
+    texto:
+      'Una mirada humana y a fondo. Vale por sí solo, puede concluir que no necesitas nada y se acredita contra el trabajo si decides seguir.',
+    door: true,
+  },
+  {
+    tag: 'Intervención',
+    titulo: 'Hacemos solo lo que toca',
+    texto:
+      'Web que aparece ante la IA, una herramienta a medida o criterio para decidir. Solo lo que el diagnóstico recomienda, en orden.',
+  },
+  {
+    tag: 'Acompañamiento',
+    titulo: 'Seguimos a tu lado cada mes',
+    texto:
+      'Si encaja, una cuota mensual sin candado: ajustes, mediciones y criterio cuando hace falta. Te puedes ir cuando quieras.',
+  },
 ]
 ---
 
@@ -46,19 +72,27 @@ const queMiramos = [
       </p>
     </header>
 
-    <!-- ── La puerta: cómo encaja en todo ───────────────────────────── -->
-    <section class="svc__block" aria-labelledby="puerta">
-      <h2 id="puerta" class="svc__h2">La puerta de entrada a todo</h2>
-      <p class="svc__body">
-        Cualquier trabajo que hagamos contigo, una web que aparezca ante la IA,
-        una herramienta a medida o criterio técnico para decidir, empieza aquí.
-        Primero entendemos, luego proponemos. Nunca al revés.
-      </p>
-      <p class="svc__body">
-        El diagnóstico vale por sí solo. Te llevas un orden de prioridades claro
-        que puedes enseñar a tu equipo o a quien aprueba el gasto, lo
-        contrates con nosotros o no.
-      </p>
+    <!-- ── La puerta: cómo encaja en todo ───────────────────────────────
+     * El flujo a medida (FlowSteps) dibuja el embudo con el diagnóstico
+     * marcado como LA PUERTA. No es decorativo: explica que todo el trabajo
+     * pasa por aquí, algo que la lista de texto no transmite de un vistazo.
+     -->
+    <section class="svc__block dgn__puerta" aria-labelledby="puerta">
+      <BrandPetals tone="ink" corner="top-right" size={200} />
+      <div class="dgn__puerta-inner">
+        <h2 id="puerta" class="svc__h2">La puerta de entrada a todo</h2>
+        <p class="svc__body">
+          Cualquier trabajo que hagamos contigo, una web que aparezca ante la
+          IA, una herramienta a medida o criterio técnico para decidir, empieza
+          aquí. Primero entendemos, luego proponemos. Nunca al revés.
+        </p>
+        <p class="svc__body dgn__puerta-body">
+          El diagnóstico vale por sí solo. Te llevas un orden de prioridades
+          claro que puedes enseñar a tu equipo o a quien aprueba el gasto, lo
+          contrates con nosotros o no.
+        </p>
+        <FlowSteps steps={embudo} tone="paper" class="dgn__flow" />
+      </div>
     </section>
 
     <!-- ── Las tres promesas honestas ────────────────────────────────── -->
@@ -92,12 +126,14 @@ const queMiramos = [
       </ul>
     </section>
 
-    <!-- ── Qué miramos ──────────────────────────────────────────────── -->
+    <!-- ── Qué miramos: las cuatro dimensiones ──────────────────────────
+     * DimensionGrid dibuja las cuatro dimensiones con un glifo a medida cada
+     * una. No es un card-grid de iconos: comunica "mirada de 360°" de un
+     * vistazo, justo lo que necesita la página clave para sentirse sólida.
+     -->
     <section class="svc__block" aria-labelledby="que-miramos">
       <h2 id="que-miramos" class="svc__h2">Qué miramos, sin letra pequeña</h2>
-      <ul class="svc__list">
-        {queMiramos.map((item) => <li class="svc__item">{item}</li>)}
-      </ul>
+      <DimensionGrid tone="paper" />
     </section>
 
     <!-- ── CTA primario: reservar el diagnóstico (humano, de pago) ───── -->
@@ -153,6 +189,24 @@ const queMiramos = [
 </PageLayout>
 
 <style>
+  /* ── La puerta: bloque con el flujo del embudo + motivo de marca ──────
+   * El bloque es el contexto de recorte del BrandPetals (relative + overflow);
+   * el contenido va por encima de la marca de agua (z-index). */
+  .dgn__puerta {
+    position: relative;
+    overflow: hidden;
+  }
+  .dgn__puerta-inner {
+    position: relative;
+    z-index: 1;
+  }
+  .dgn__puerta-body {
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+  .dgn__flow {
+    max-width: 60ch;
+  }
+
   /* ── Las tres promesas (pilares del diagnóstico) ──────────────────
    * No es un card-grid decorativo: son tres compromisos con jerarquía real.
    * Lista plana con hairlines en móvil, columnas en escritorio. Sin iconos

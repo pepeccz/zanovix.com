@@ -1,0 +1,178 @@
+---
+/**
+ * FlowSteps.astro — flujo dirigido reutilizable (la espina del embudo)
+ *
+ * Qué es: un diagrama de flujo a medida que muestra una secuencia de etapas
+ * conectadas por una línea que avanza, con una etapa destacada como nodo
+ * central. Pensado para dibujar el embudo de Zanovix (gratis → diagnóstico →
+ * intervención → acompañamiento) dejando claro que el DIAGNÓSTICO es la puerta
+ * por la que pasa todo. No es decoración: EXPLICA el orden y señala la puerta.
+ *
+ * Por qué un diagrama y no solo texto: el modelo de negocio es una secuencia
+ * con una pieza central (la puerta de pago). Un flujo con un nodo marcado lo
+ * comunica de un vistazo; una lista no transmite "todo pasa por aquí".
+ *
+ * Reutilizable: recibe los pasos por props, así sirve para el embudo del
+ * diagnóstico y para cualquier otra secuencia futura. El paso con `door:true`
+ * se resalta (anillo teal y peso) como la pieza central.
+ *
+ * Mundo: 'paper' (claro, default) o 'forest' (drenched). El teal marca el
+ * avance de la línea y la puerta; el texto va en tintas AA (nunca teal cuerpo).
+ *
+ * A11y: informativo, NO aria-hidden. Lista ordenada semántica (<ol>): un lector
+ * lo lee como "etapa 1 de 4...". El rail/conector SVG-CSS es aria-hidden: la
+ * secuencia ya la da el <ol> y el orden del DOM. La etiqueta de la puerta se
+ * anuncia como texto real, no solo como color.
+ */
+export interface FlowStep {
+  tag: string
+  titulo: string
+  texto: string
+  /** Marca la etapa central (la puerta del embudo). */
+  door?: boolean
+}
+
+interface Props {
+  steps: FlowStep[]
+  tone?: 'paper' | 'forest'
+  class?: string
+}
+
+const { steps, tone = 'paper', class: className = '' } = Astro.props
+---
+
+<ol class:list={['flow', `flow--${tone}`, className]}>
+  {
+    steps.map((s, i) => (
+      <li class:list={['flow__step', { 'flow__step--door': s.door }]}>
+        {/* Rail decorativo: nodo + segmento hacia el siguiente. aria-hidden
+            porque la secuencia la da el <ol>. La puerta lleva un nodo mayor. */}
+        <span class="flow__rail" aria-hidden="true">
+          <span class="flow__node" />
+          {i < steps.length - 1 && <span class="flow__line" />}
+        </span>
+        <div class="flow__content">
+          <p class="flow__tag">
+            {s.tag}
+            {s.door && <span class="flow__door-mark">la puerta</span>}
+          </p>
+          <h3 class="flow__title">{s.titulo}</h3>
+          <p class="flow__text">{s.texto}</p>
+        </div>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .flow {
+    --fl-ink: var(--color-ink);
+    --fl-soft: var(--ink-soft);
+    --fl-mute: var(--ink-mute-strong);
+    --fl-rule: var(--color-rule);
+    --fl-accent: var(--color-teal-deep);
+    --fl-node-ring: var(--color-paper);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+  .flow--forest {
+    --fl-ink: var(--paper-on-dark);
+    --fl-soft: var(--paper-on-dark-soft);
+    --fl-mute: var(--paper-on-dark-soft);
+    --fl-rule: var(--color-rule-invert);
+    --fl-accent: var(--color-teal-bright);
+    --fl-node-ring: var(--color-forest);
+  }
+
+  /* Vertical en móvil: la línea baja conectando los nodos. */
+  .flow__step {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0 clamp(0.9rem, 2vw, 1.25rem);
+  }
+  .flow__rail {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 18px;
+  }
+  .flow__node {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--fl-accent);
+    box-shadow: 0 0 0 4px var(--fl-node-ring), 0 0 0 5px var(--fl-rule);
+    flex: none;
+    margin-top: 0.3rem;
+  }
+  /* La puerta: nodo mayor, anillo teal visible. Es el centro del flujo. */
+  .flow__step--door .flow__node {
+    width: 17px;
+    height: 17px;
+    box-shadow:
+      0 0 0 4px var(--fl-node-ring),
+      0 0 0 6px var(--fl-accent);
+  }
+  .flow__line {
+    flex: 1;
+    width: 2px;
+    margin: 0.35rem 0;
+    background: linear-gradient(to bottom, var(--fl-accent), var(--fl-rule));
+    border-radius: 999px;
+    min-height: 1.5rem;
+  }
+
+  .flow__content {
+    padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  }
+  .flow__step:last-child .flow__content {
+    padding-bottom: 0;
+  }
+  .flow__tag {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--fl-mute);
+    margin: 0 0 0.35rem;
+  }
+  /* Etiqueta de la puerta: texto real (no solo color), con acento de fondo. */
+  .flow__door-mark {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fl-ink);
+    border: 1px solid var(--fl-accent);
+    border-radius: 999px;
+    padding: 0.1rem 0.55rem;
+  }
+  .flow__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    color: var(--fl-ink);
+    margin: 0 0 0.4rem;
+    text-wrap: balance;
+  }
+  .flow__step--door .flow__title {
+    font-size: var(--text-h2);
+  }
+  .flow__text {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--fl-soft);
+    max-width: 54ch;
+    margin: 0;
+  }
+</style>
