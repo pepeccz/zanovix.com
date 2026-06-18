@@ -2,51 +2,46 @@
 /**
  * privacidad/index.astro — transparencia (parte del producto, no relleno)
  *
- * Documenta CON PRECISIÓN qué hace el compañero, descrito desde el código
- * real (src/lib/companion/infer.ts + context.ts + geo.ts + api/geo-snapshot.ts):
- *   - Infiere por reglas locales (sin red) tu sector, lo que te preocupa y la
- *     urgencia a partir del texto que TÚ escribes. Eso no sale del navegador.
- *   - Solo si tú lo pides y das consentimiento explícito, la "radiografía"
- *     envía el texto que escribiste a un proveedor de IA externo (OpenRouter,
- *     y el modelo de Anthropic que sirve por debajo) para mostrarte qué sabe
- *     una IA de tu negocio. Lo decimos antes de enviar nada.
- *   - El contexto se guarda en sessionStorage (clave zx.companion.v1, se
- *     borra al cerrar la pestaña).
+ * Documenta CON PRECISIÓN qué pasa con tus datos, descrito desde el código
+ * real (src/lib/assistant + companion/geo.ts + companion/context.ts +
+ * api/assistant.ts + api/geo-snapshot.ts):
+ *   - El asistente de la web conversa con una IA externa (OpenRouter) solo
+ *     cuando tú abres el panel y escribes: lo que escribes se envía a ese
+ *     proveedor para poder responderte. Lo decimos en el propio panel.
+ *   - La radiografía GEO de la página de servicio: solo si tú lo pides y das
+ *     consentimiento explícito, envía el texto que escribiste a la misma IA
+ *     externa para mostrarte qué sabe de tu negocio.
+ *   - El contexto del formulario se guarda en sessionStorage (clave
+ *     zx.companion.v1, se borra al cerrar la pestaña).
  *   - Nada llega a Zanovix hasta que tú rellenas el formulario de contacto.
- *   - Puedes corregir o borrar lo inferido en el propio compañero.
  *   - Sin cookies de seguimiento, sin venta de datos.
- *   - Contacto para dudas: hola@zanovix.com.
+ *   - Contacto para dudas: info@zanovix.com.
  *
  * Tono honesto, no legalés vacío.
- *
- * IMPORTANTE: showCompanion={false}. El dock del compañero NO se monta aquí:
- * contradiría el tono de la propia página (esta página explica el compañero;
- * montarlo encima sería ruido). Las demás internas sí lo llevan.
  */
 import PageLayout from '../../layouts/PageLayout.astro'
 
-// Tabla precisa de lo que infiere el compañero, alineada con infer.ts.
+// Qué se envía a la IA externa cuando usas el asistente o la radiografía.
 const datos = [
   {
-    dato: 'Tu sector',
-    como: 'Lo deduce de palabras del texto que escribes (por ejemplo, si mencionas "restaurante" o "tienda"). Si no lo tiene claro, lo deja en "aún lo estoy situando" en vez de adivinar.',
+    dato: 'El asistente de la web',
+    como: 'Si abres el panel del asistente y le escribes, lo que escribes se envía a una IA externa (OpenRouter) para poder responderte. No se abre solo: solo si tú lo abres. Te lo decimos en el propio panel antes de que escribas.',
   },
   {
-    dato: 'Lo que te preocupa',
-    como: 'Lo asocia a uno de cuatro problemas frecuentes (que no te encuentren, responder lo mismo, procesos manuales o no saber por dónde empezar con la IA), según lo que cuentes.',
+    dato: 'La radiografía GEO',
+    como: 'En la página del servicio de web y GEO, si rellenas el nombre de tu negocio y marcas la casilla de consentimiento, ese texto se envía a la misma IA externa para enseñarte qué sabe de ti. Sin marcar la casilla, no se envía nada.',
   },
   {
-    dato: 'La urgencia',
-    como: 'La estima por cómo lo dices (palabras como "urgente" o "pronto"). Por defecto asume que solo lo estás explorando.',
+    dato: 'El formulario de contacto',
+    como: 'Tu nombre, email y mensaje solo llegan a Zanovix cuando rellenas y envías el formulario. Es una acción consciente tuya, no algo que pase por detrás.',
   },
 ]
 ---
 
 <PageLayout
   title="Privacidad · Zanovix"
-  description="Qué hace el compañero de la web, con precisión: infiere por reglas en tu navegador, no envía nada a Zanovix hasta que tú lo decides, y puedes corregirlo o borrarlo. Sin cookies de seguimiento."
+  description="Qué hace el asistente de la web, con precisión: es una IA, solo envía tu texto cuando tú lo decides, no llega nada a Zanovix hasta que rellenas el formulario. Sin cookies de seguimiento."
   page="privacidad"
-  showCompanion={false}
 >
   <!-- ── Intro honesta ──────────────────────────────────────────── -->
   <section class="lead" aria-labelledby="lead-title">
@@ -55,26 +50,31 @@ const datos = [
     </h1>
     <p class="lead__body">
       Esta página no está para cubrirnos las espaldas. Está para que entiendas,
-      sin abogados de por medio, qué hace el compañero de la web, dónde se guarda
-      lo que escribes y qué nunca sale de tu navegador. Si después de leerla te
+      sin abogados de por medio, qué hace el asistente de la web, dónde se guarda
+      lo que escribes y qué no sale sin que tú lo decidas. Si después de leerla te
       queda una duda, escríbenos.
     </p>
   </section>
 
-  <!-- ── Qué hace el compañero ──────────────────────────────────── -->
+  <!-- ── Qué hace el asistente ──────────────────────────────────── -->
   <section class="block" aria-labelledby="companion-title">
-    <h2 id="companion-title" class="display block__title">Qué hace el compañero</h2>
+    <h2 id="companion-title" class="display block__title">El asistente de la web</h2>
     <p class="block__body">
-      El compañero es el asistente que aparece en la web. A partir del texto que
-      tú escribes, intenta deducir tres cosas para no hacerte repetir lo de
-      siempre. Esa primera lectura la hace con reglas sencillas que corren en tu
-      propio navegador: no sale de tu equipo.
+      En la web hay un asistente que puedes abrir cuando quieras desde el botón
+      de la esquina. Nunca se abre solo. Es una IA, no una persona, y te lo
+      decimos en el propio panel en cuanto lo abres. Sirve para aclararte dudas
+      sobre lo que hacemos y ayudarte a encontrar lo que buscas.
     </p>
     <p class="block__body">
-      Hay un segundo paso opcional, la radiografía, que sí usa una IA externa.
-      Solo se ejecuta si tú lo pides y marcas la casilla de consentimiento. Lo
-      contamos con detalle más abajo, porque enviar tu texto a un tercero es
-      algo que tienes que decidir tú, sabiendo qué pasa.
+      Cuando le escribes, lo que escribes se envía a una IA externa (OpenRouter)
+      para poder responderte. Por eso te avisamos antes: enviar tu texto a un
+      tercero es algo que conviene que sepas. Si no abres el asistente ni le
+      escribes, no se envía nada. Te recomendamos no incluir datos sensibles en
+      lo que escribas.
+    </p>
+    <p class="block__body">
+      A continuación tienes, en una línea, los tres momentos en los que tus
+      datos viajan a algún sitio. Lo demás se queda donde está.
     </p>
     <ul class="data">
       {
@@ -96,15 +96,14 @@ const datos = [
       de tu negocio y si te recomendaría cuando alguien pregunta por lo tuyo.
       Para eso hace falta enviar el texto que has escrito a un proveedor de IA
       fuera de Zanovix. Por eso te pedimos permiso antes, con una casilla clara.
-      Si no la marcas, no se envía nada y el compañero sigue funcionando solo
-      con las reglas de tu navegador.
+      Si no la marcas, no se envía nada.
     </p>
     <ul class="data">
       <li class="data__row">
         <h3 class="data__name">Qué se envía</h3>
         <p class="data__how">
-          El texto que tú escribes sobre tu negocio (y, si lo hay, el sector que
-          el compañero dedujo). No enviamos tu nombre, tu email ni datos de
+          El nombre de tu negocio y lo que escribas sobre él (y, si los rellenas,
+          el sector y la zona). No enviamos tu nombre, tu email ni datos de
           contacto: eso solo viaja si rellenas el formulario.
         </p>
       </li>
@@ -145,26 +144,26 @@ const datos = [
   <section class="block" aria-labelledby="storage-title">
     <h2 id="storage-title" class="display block__title">Dónde se guarda y cuánto dura</h2>
     <p class="block__body">
-      Lo que deduce el compañero se guarda solo en tu navegador, en lo que se
-      llama el almacenamiento de sesión. Es una nota que vive en tu propio
-      equipo, no en los nuestros. Sirve para que, si pasas de una página a otra,
-      el compañero recuerde lo que ya le has contado y no te lo vuelva a
-      preguntar.
+      Si rellenas la radiografía GEO, lo que escribes se guarda un momento solo
+      en tu navegador, en lo que se llama el almacenamiento de sesión, para que
+      el formulario de contacto pueda recuperarlo si decides escribirnos. Es una
+      nota que vive en tu propio equipo, no en los nuestros.
     </p>
     <p class="block__body">
       Esa nota se borra sola en cuanto cierras la pestaña. No queda guardada de
-      un día para otro: si vuelves mañana, el compañero empieza de cero. No es
-      una cookie de seguimiento y no la usamos para perseguirte por internet.
+      un día para otro: si vuelves mañana, todo empieza de cero. No es una
+      cookie de seguimiento y no la usamos para perseguirte por internet.
     </p>
   </section>
 
   <!-- ── Qué NO hacemos ─────────────────────────────────────────── -->
   <section class="block" aria-labelledby="never-title">
-    <h2 id="never-title" class="display block__title">Qué no sale de tu navegador</h2>
+    <h2 id="never-title" class="display block__title">Qué no sale sin que tú lo decidas</h2>
     <p class="block__body">
-      Mientras navegas, la lectura por reglas del compañero no viaja a ningún
-      sitio: se queda en tu equipo. El único momento en que tu texto sale es la
-      radiografía, y solo si tú la pides y das tu consentimiento.
+      Mientras solo navegas, no enviamos nada a ningún sitio. Tu texto sale en
+      dos momentos, y los dos los decides tú: cuando le escribes al asistente y
+      cuando pides la radiografía con su casilla marcada. En ambos va a la misma
+      IA externa, solo para responderte.
     </p>
     <p class="block__body">
       Tus datos de contacto (nombre, email, mensaje) llegan a nosotros solo
@@ -180,17 +179,18 @@ const datos = [
   <section class="block" aria-labelledby="control-title">
     <h2 id="control-title" class="display block__title">Lo controlas tú</h2>
     <p class="block__body">
-      Si el compañero deduce algo que no encaja, puedes corregirlo en el mismo
-      sitio, sin recargar la página. Y si prefieres empezar de cero, puedes
-      borrar lo que ha deducido cuando quieras. Cerrar la pestaña también lo
-      borra todo.
+      El asistente no se abre solo: lo abres y lo cierras tú. La radiografía no
+      se envía si no marcas su casilla. Y antes de enviar el formulario puedes
+      revisar y editar el mensaje, incluido lo que venga del asistente o de la
+      radiografía. Cerrar la pestaña borra lo que se hubiera guardado en tu
+      navegador.
     </p>
     <p class="block__body">
       Como nada de esto se guarda en nuestros servidores mientras solo navegas,
-      no necesitamos pedirte permiso con un aviso de cookies para que el
-      compañero funcione. Cuando nos escribes y nos dejas tus datos, ahí sí los
-      tratamos para responderte, y puedes pedirnos verlos, corregirlos o
-      borrarlos en cualquier momento.
+      no necesitamos pedirte permiso con un aviso de cookies para que la web
+      funcione. Cuando nos escribes y nos dejas tus datos, ahí sí los tratamos
+      para responderte, y puedes pedirnos verlos, corregirlos o borrarlos en
+      cualquier momento.
     </p>
   </section>
 
@@ -201,13 +201,13 @@ const datos = [
     </h2>
     <p class="close__lede">
       Escríbenos y te lo aclaramos sin rodeos. Esta página la mantenemos al día:
-      si el compañero cambia o empieza a usar la IA de otra forma, lo
+      si el asistente cambia o empieza a usar la IA de otra forma, lo
       actualizamos aquí.
     </p>
     <a class="cta-primary" href="/contacto" data-open-contact data-contact-origin="privacidad">Escribirnos</a>
     <p class="cta-fallback">
       Si lo prefieres, escríbenos directo a
-      <a href="mailto:hola@zanovix.com">hola@zanovix.com</a>.
+      <a href="mailto:info@zanovix.com">info@zanovix.com</a>.
     </p>
     <p class="close__meta">Málaga · ES · responsable del tratamiento: Zanovix</p>
   </section>

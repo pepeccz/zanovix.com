@@ -17,8 +17,8 @@
  */
 
 import Base from './Base.astro'
-import Companion from '../components/react/Companion.tsx'
 import ContactDialog from '../components/react/ContactDialog.tsx'
+import Assistant from '../components/react/Assistant.tsx'
 
 interface Props {
   title?: string
@@ -27,13 +27,12 @@ interface Props {
    *  Valores canonicos: 'home' | 'manifiesto' | 'contacto'. Default: ''.
    */
   page?: string
-  /** Controla si el dock del Companion se muestra en esta pagina.
-   *  Default: true. Pasar false en paginas como /privacidad.
-   */
+  /** Compat: prop historica del dock del Companion (ya retirado). Se acepta
+   *  para no romper paginas que aun la pasan; no tiene efecto. */
   showCompanion?: boolean
 }
 
-const { title, description, page = '', showCompanion = true } = Astro.props
+const { title, description, page = '' } = Astro.props
 ---
 
 <Base title={title} description={description} page={page}>
@@ -216,20 +215,20 @@ const { title, description, page = '', showCompanion = true } = Astro.props
   </footer>
 
   {/*
-    Dock del Companion en páginas internas. client:load (no client:visible):
-    el dock es position:fixed y solo se renderiza tras leer sessionStorage en
-    el cliente, así que su placeholder SSR mide 0px y client:visible nunca
-    intersecaría. client:load garantiza la hidratación; el componente es mínimo.
+    Asistente global discreto. Montado UNA vez aqui para estar disponible en
+    todas las paginas. client:idle: no es critico para el primer paint y solo
+    reacciona a una accion explicita del visitante (NUNCA se abre solo). El
+    lanzador es position:fixed y discreto; al abrir muestra un panel calmado.
+    Reemplaza al dock y al hero del antiguo Companion.
   */}
-  {page !== 'home' && showCompanion && (
-    <Companion variant="dock" client:load />
-  )}
+  <Assistant client:idle />
 
   {/*
     Dialogo de captacion en contexto. Montado UNA vez aqui para estar
     disponible en todas las paginas. client:idle: no es critico para el
     primer paint y solo reacciona a una accion explicita del visitante.
-    Escucha el CustomEvent global `zx:open-contact` (ver script delegado).
+    Escucha el CustomEvent global `zx:open-contact` (ver script delegado),
+    que dispara tanto un CTA [data-open-contact] como el handoff del asistente.
   */}
   <ContactDialog client:idle />
 
