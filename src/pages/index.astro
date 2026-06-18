@@ -533,7 +533,7 @@ const pasos = [
     font-size: var(--text-eyebrow);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-teal-deep);
+    color: var(--ink-mute-strong);
     margin: 0 0 0.75rem;
   }
   .accomp__title {
@@ -591,8 +591,20 @@ const pasos = [
     font-size: var(--text-eyebrow);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-teal-deep);
+    color: var(--ink-mute-strong);
     margin: 0 0 0.75rem;
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .proof__tag::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-teal-deep);
   }
   .proof__title {
     font-size: var(--text-h1);

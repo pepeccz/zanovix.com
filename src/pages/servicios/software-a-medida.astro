@@ -27,6 +27,11 @@ const incluye = [
       <a href="/servicios">← Servicios</a>
     </p>
 
+    <p class="svc__from">
+      Esto es una intervención: empieza con un
+      <a href="/diagnostico" data-open-contact data-contact-origin="servicio-software-diagnostico">diagnóstico</a>.
+    </p>
+
     <header class="svc__head">
       <h1 class="display svc__title">
         Llevas el negocio en hojas de cálculo y a mano.
@@ -41,13 +46,14 @@ const incluye = [
 
     <!-- ── Esbozo de automatización: la prueba en vivo (pieza central) ── -->
     <section class="svc__sim" aria-labelledby="sim-title">
+      <p class="svc__sim-tag">Pre-diagnóstico gratis · lo hace una IA en 1 minuto</p>
       <h2 id="sim-title" class="display svc__sim-title">
         ¿Qué se podría automatizar?
       </h2>
       <p class="svc__sim-lede">
         Describe una tarea que repites cada día. Le preguntamos en vivo a una IA
-        qué parte se podría automatizar y qué parte no. Es un esbozo a partir de
-        lo que cuentas, no una propuesta ni un presupuesto.
+        qué parte se podría automatizar y qué parte no. Es una orientación
+        gratis a partir de lo que cuentas, no el diagnóstico ni un presupuesto.
       </p>
       <AutomationSketch client:visible />
       <noscript>
@@ -88,10 +94,11 @@ const incluye = [
     <section class="svc__cta" aria-labelledby="cta">
       <h2 id="cta" class="display svc__cta-title">¿Qué te quita el tiempo?</h2>
       <p class="svc__cta-lede">
-        Cuéntanos qué tarea repetís más y cómo la hacéis hoy. Si ya has hablado
-        con el asistente, llegas con el contexto a mano y lo puedes corregir.
+        Esto empieza por el diagnóstico: miramos tu proceso entero antes de
+        construir nada y decidimos si una herramienta a medida tiene sentido.
+        Si seguimos, puede continuar con un acompañamiento mensual sin candado.
       </p>
-      <a class="cta-primary" href="/contacto" data-open-contact data-contact-origin="servicio-software-a-medida">Contar mi caso</a>
+      <a class="cta-primary" href="/diagnostico" data-open-contact data-contact-origin="reservar-diagnostico">Reservar diagnóstico</a>
       <p class="cta-fallback">
         Si lo prefieres, escríbenos directo a
         <a href="mailto:info@zanovix.com">info@zanovix.com</a>.
