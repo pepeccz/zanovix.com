@@ -12,6 +12,9 @@
  */
 import PageLayout from '../../layouts/PageLayout.astro'
 
+/* Tres intervenciones POSIBLES después del diagnóstico. AI Readiness se retiró
+ * del catálogo: ahora es el Diagnóstico (la puerta). Estas tres son lo que
+ * hacemos si el diagnóstico lo recomienda, no opciones a elegir a ciegas. */
 const servicios = [
   {
     slug: 'diseno-desarrollo-web-geo',
@@ -19,13 +22,6 @@ const servicios = [
     lede:
       'Una web que carga rápido, se entiende y aparece cuando tus clientes preguntan a una IA por lo que tú haces.',
     para: 'el dueño que sabe que su web no está a la altura del negocio',
-  },
-  {
-    slug: 'auditoria-ai-readiness',
-    name: 'Auditoría AI Readiness',
-    lede:
-      'Miramos tu empresa por dentro y te decimos sin humo si la IA aporta algo real y por dónde tiene sentido empezar.',
-    para: 'quien no quiere gastar en IA por moda, sino donde mueva la aguja',
   },
   {
     slug: 'software-a-medida',
@@ -46,18 +42,19 @@ const servicios = [
 
 <PageLayout
   title="Servicios · Zanovix"
-  description="Cuatro maneras de bajar la IA a tu empresa: web con GEO, auditoría AI Readiness, software a medida y consultoría TIC. IA aplicada con ingeniería pausada."
+  description="Lo que hacemos cuando el diagnóstico lo recomienda: web con GEO, software a medida y consultoría TIC. Intervenciones a medida, no un catálogo para elegir a ciegas."
   page="servicios"
 >
-  <!-- ── Intro honesta ──────────────────────────────────────────── -->
+  <!-- ── Intro: intervenciones POST-diagnóstico ─────────────────────── -->
   <section class="intro" aria-labelledby="intro-title">
+    <p class="intro__from">Esto empieza con un <a href="/diagnostico" data-open-contact data-contact-origin="servicios-intro-diagnostico">diagnóstico</a></p>
     <h1 id="intro-title" class="display intro__title">
-      Cuatro maneras de bajar la IA a tu negocio.
+      Esto es lo que hacemos si el diagnóstico lo recomienda.
     </h1>
     <p class="intro__lede">
-      No es un catálogo para que elijas a ciegas. Casi siempre empezamos por una
-      sola cosa, la que de verdad te mueve la aguja, y construimos desde ahí.
-      Aquí tienes las cuatro, contadas como son.
+      No es un catálogo para que elijas a ciegas. Primero entendemos tu negocio
+      con el diagnóstico, y desde ahí decidimos qué intervención tiene sentido,
+      en qué orden y por qué. Estas son las tres que hacemos.
     </p>
     <p class="intro__sign">IA aplicada, con ingeniería pausada.</p>
   </section>
@@ -81,16 +78,30 @@ const servicios = [
     </ul>
   </section>
 
-  <!-- ── Cierre: a la conversación ──────────────────────────────── -->
+  <!-- ── Acompañamiento mensual: la relación tras la intervención ───── -->
+  <section class="accomp" aria-labelledby="accomp-title">
+    <p class="accomp__tag">Después de la intervención</p>
+    <h2 id="accomp-title" class="display accomp__title">
+      Lo que hacemos no se entrega y se olvida.
+    </h2>
+    <p class="accomp__lede">
+      Si encaja, seguimos a tu lado cada mes: ajustes, mediciones y criterio
+      cuando lo necesites, con una cuota fija. Sin candado, sin permanencias.
+      Te puedes ir cuando quieras; preferimos que te quedes porque aporta.
+    </p>
+  </section>
+
+  <!-- ── Cierre: a la puerta del embudo ─────────────────────────────── -->
   <section class="close" aria-labelledby="close-title">
     <h2 id="close-title" class="display close__title">
       ¿No tienes claro por dónde empezar?
     </h2>
     <p class="close__lede">
-      Es lo más normal. Cuéntanos tu situación y te decimos con honestidad qué
-      haríamos primero y por qué. Sin compromiso y sin venderte de más.
+      Es lo más normal, y para eso está el diagnóstico. Cuéntanos tu situación,
+      lo miramos a fondo y te decimos con honestidad qué haríamos primero y por
+      qué. Si no hace falta nada, también te lo diremos.
     </p>
-    <a class="cta-primary" href="/contacto" data-open-contact data-contact-origin="servicios-index">Contar mi caso</a>
+    <a class="cta-primary" href="/diagnostico" data-open-contact data-contact-origin="reservar-diagnostico">Reservar diagnóstico</a>
     <p class="cta-fallback">
       Si lo prefieres, escríbenos directo a
       <a href="mailto:info@zanovix.com">info@zanovix.com</a>.
@@ -119,11 +130,56 @@ const servicios = [
     max-width: 54ch;
     margin: 0 0 1.5rem;
   }
+  .intro__from {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-mute-strong);
+    margin: 0 0 1rem;
+  }
+  .intro__from a {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-teal-deep);
+    text-underline-offset: 3px;
+  }
+  .intro__from a:hover {
+    text-decoration-color: var(--color-teal);
+  }
   .intro__sign {
     font-family: var(--font-mono);
     font-size: var(--text-eyebrow);
     letter-spacing: 0.06em;
     color: var(--ink-mute);
+    margin: 0;
+  }
+
+  /* ── Acompañamiento mensual (la relación tras la intervención) ──── */
+  .accomp {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x) 0;
+  }
+  .accomp__tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute-strong);
+    margin: 0 0 0.75rem;
+  }
+  .accomp__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    max-width: 20ch;
+  }
+  .accomp__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 58ch;
     margin: 0;
   }
 

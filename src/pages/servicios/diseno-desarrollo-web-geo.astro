@@ -30,6 +30,11 @@ const incluye = [
       <a href="/servicios">← Servicios</a>
     </p>
 
+    <p class="svc__from">
+      Esto es una intervención: empieza con un
+      <a href="/diagnostico" data-open-contact data-contact-origin="servicio-geo-diagnostico">diagnóstico</a>.
+    </p>
+
     <header class="svc__head">
       <h1 class="display svc__title">
         Tus clientes preguntan a una IA, y tu web no sale.
@@ -43,12 +48,14 @@ const incluye = [
 
     <!-- ── Radiografia GEO: la prueba en vivo (pieza central) ───────── -->
     <section class="svc__sim" aria-labelledby="sim-title">
+      <p class="svc__sim-tag">Pre-diagnóstico gratis · lo hace una IA en 1 minuto</p>
       <h2 id="sim-title" class="display svc__sim-title">
         Mira cómo te ve una IA hoy
       </h2>
       <p class="svc__sim-lede">
         Escribe el nombre real de tu negocio. Le preguntamos en vivo a una IA y
-        te enseñamos su respuesta tal cual, sin maquillar.
+        te enseñamos su respuesta tal cual, sin maquillar. Es una orientación
+        gratis, no el diagnóstico: ese es humano y va a fondo.
       </p>
       <GeoSimulator client:visible />
       <noscript>
@@ -89,12 +96,13 @@ const incluye = [
     </section>
 
     <section class="svc__cta" aria-labelledby="cta">
-      <h2 id="cta" class="display svc__cta-title">¿Lo vemos con tu caso?</h2>
+      <h2 id="cta" class="display svc__cta-title">¿Lo vemos a fondo con tu caso?</h2>
       <p class="svc__cta-lede">
-        Cuéntanos qué haces y dónde estás hoy. Si ya has probado la radiografia
-        de aquí arriba, llegas con el contexto a mano y lo afinamos juntos.
+        Esto empieza por el diagnóstico: miramos tu negocio entero, no solo la
+        web, y decidimos si esta intervención tiene sentido. Si seguimos, lo que
+        construimos puede continuar con un acompañamiento mensual sin candado.
       </p>
-      <a class="cta-primary" href="/contacto" data-open-contact data-contact-origin="servicio-geo">Contar mi caso</a>
+      <a class="cta-primary" href="/diagnostico" data-open-contact data-contact-origin="reservar-diagnostico">Reservar diagnóstico</a>
       <p class="cta-fallback">
         Si lo prefieres, escríbenos directo a
         <a href="mailto:info@zanovix.com">info@zanovix.com</a>.

@@ -1041,6 +1041,48 @@ h1, h2, h3, blockquote {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* Enlace al diagnóstico desde un detalle de intervención: recuerda que el
+ * trabajo empieza por la puerta del embudo. */
+.svc__from {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-mute-strong);
+  margin: 0 0 clamp(1.5rem, 4vw, 2.5rem);
+}
+.svc__from a {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-teal-deep);
+  text-underline-offset: 3px;
+}
+.svc__from a:hover {
+  text-decoration-color: var(--color-teal);
+}
+/* Etiqueta "pre-diagnóstico gratis" sobre los demos: los separa del de pago.
+ * Texto en ink-mute-strong (AA sobre paper); el teal solo como acento de
+ * marcador, nunca como color de texto legible. */
+.svc__sim-tag {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute-strong);
+  margin: 0 0 0.75rem;
+  padding-left: 1.1rem;
+  position: relative;
+}
+.svc__sim-tag::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-teal-deep);
+}
 .svc__head {
   margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
 }

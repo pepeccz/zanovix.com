@@ -44,7 +44,7 @@ const { title, description, page = '' } = Astro.props
       <a
         href="/"
         class="flex items-center gap-3 text-[var(--color-ink)] no-underline"
-        aria-label="Zanovix — Inicio"
+        aria-label="Zanovix · Inicio"
       >
         <img src="/isotipo.svg" alt="" width="32" height="32" />
         <span class="font-[var(--font-mono)] text-[var(--text-eyebrow)] uppercase tracking-widest">
@@ -54,7 +54,15 @@ const { title, description, page = '' } = Astro.props
 
       <!-- Navegación principal (escritorio) -->
       <nav aria-label="Navegación principal" class="hidden md:block">
-        <ul class="flex list-none gap-6 m-0 p-0">
+        <ul class="flex list-none gap-6 m-0 p-0 items-center">
+          <li>
+            <a
+              href="/diagnostico"
+              class="nav-link--door font-[var(--font-mono)] text-[var(--text-eyebrow)] no-underline uppercase tracking-widest transition-colors duration-200"
+            >
+              Diagnóstico
+            </a>
+          </li>
           <li>
             <a
               href="/servicios"
@@ -131,6 +139,7 @@ const { title, description, page = '' } = Astro.props
         <span class="mobile-nav__close-bar"></span>
       </button>
       <ul class="mobile-nav__list">
+        <li><a href="/diagnostico" class="mobile-nav__link mobile-nav__link--door">Diagnóstico</a></li>
         <li><a href="/servicios" class="mobile-nav__link">Servicios</a></li>
         <li><a href="/casos" class="mobile-nav__link">Casos</a></li>
         <li><a href="/metodologia" class="mobile-nav__link">Metodología</a></li>
@@ -169,7 +178,7 @@ const { title, description, page = '' } = Astro.props
         <a
           href="/"
           class="flex items-center gap-3 text-[var(--color-ink)] no-underline"
-          aria-label="Zanovix — Inicio"
+          aria-label="Zanovix · Inicio"
         >
           <img src="/isotipo.svg" alt="" width="32" height="32" />
         </a>
@@ -357,6 +366,23 @@ const { title, description, page = '' } = Astro.props
   </script>
 
   <style>
+    /* ── Enlace destacado "Diagnóstico" (la puerta del embudo) ───────
+     * Más visible que el resto del nav sin gritar: ink fuerte + subrayado
+     * teal permanente. El teal solo como acento de subrayado (no texto). */
+    .nav-link--door {
+      color: var(--color-ink);
+      border-bottom: 2px solid var(--color-teal-deep);
+      padding-bottom: 2px;
+    }
+    .nav-link--door:hover {
+      border-color: var(--color-teal);
+    }
+    .mobile-nav__link--door {
+      color: var(--color-ink);
+      border-bottom: 2px solid var(--color-teal-deep);
+      width: fit-content;
+    }
+
     /* ── Botón hamburguesa ─────────────────────────────────────── */
     .nav-toggle {
       display: inline-flex;

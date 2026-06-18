@@ -14,28 +14,36 @@ import PageLayout from '../layouts/PageLayout.astro'
 import BrandPetals from '../components/astro/ui/BrandPetals.astro'
 import MethodDiagram from '../components/astro/ui/MethodDiagram.astro'
 
-const services = [
+/* Los cuatro pasos del embudo: el orden de cómo trabajamos contigo. El
+ * diagnóstico es la espina (paso 2, la puerta de pago). Lo gratis (paso 1) y
+ * el acompañamiento (paso 4) lo rodean. Sin precios: el coste se define en el
+ * diagnóstico. */
+const pasos = [
   {
-    name: 'Diseño y desarrollo web + GEO',
-    desc: 'Webs que cargan rápido, convierten y aparecen cuando tus clientes preguntan a una IA.',
+    tag: 'Gratis',
+    name: 'Te haces una idea, sin pagar nada',
+    desc: 'Pruebas en un minuto cómo te ve una IA hoy. Una orientación automática e instantánea, sin compromiso, para llegar con las ideas más claras.',
   },
   {
-    name: 'Auditoría AI Readiness',
-    desc: 'Evaluamos sin humo si la IA aporta algo real a tu empresa y por dónde tiene sentido empezar.',
+    tag: 'La puerta',
+    name: 'Hacemos el diagnóstico',
+    desc: 'Una mirada humana y a fondo a tu negocio frente a la IA. Por aquí empieza todo. Puede concluir que no necesitas nada y se acredita contra el trabajo si decides seguir.',
   },
   {
-    name: 'Software a medida',
-    desc: 'Herramientas hechas para tu proceso concreto, no plantillas a las que te toca adaptarte.',
+    tag: 'El trabajo',
+    name: 'Intervenimos donde de verdad aporta',
+    desc: 'Web que aparece ante la IA, una herramienta a medida o criterio técnico para decidir. Solo lo que el diagnóstico recomienda, en orden, midiendo.',
   },
   {
-    name: 'Consultoría TIC',
-    desc: 'Criterio técnico para decidir bien antes de gastar, con alguien que te habla claro.',
+    tag: 'La relación',
+    name: 'Te acompañamos cada mes',
+    desc: 'Si encaja, seguimos a tu lado con una cuota mensual sin candado. Estamos cuando hace falta y te puedes ir cuando quieras.',
   },
 ]
 ---
 
 <PageLayout
-  title="Zanovix — IA aplicada a empresas"
+  title="Zanovix · IA aplicada a empresas"
   description="IA aplicada con ingeniería pausada. Aparece cuando tus clientes preguntan a una IA y deja de contestar a mano lo de siempre. Pruébalo aquí mismo."
   page="home"
 >
@@ -51,9 +59,9 @@ const services = [
         contestar a mano lo de siempre.
       </p>
       <div class="hero__cta-row">
-        <a class="cta-primary" href="/contacto" data-open-contact data-contact-origin="home-hero">Cuéntanos tu caso</a>
-        <a class="cta-ghost" href="/servicios/diseno-desarrollo-web-geo">
-          Mira cómo te ve una IA hoy
+        <a class="cta-primary" href="/diagnostico" data-open-contact data-contact-origin="reservar-diagnostico">Reservar diagnóstico</a>
+        <a class="cta-ghost" href="#proof">
+          Pruébalo gratis
           <span class="cta-ghost__arrow" aria-hidden="true">→</span>
         </a>
       </div>
@@ -84,25 +92,41 @@ const services = [
     </div>
   </section>
 
-  <!-- ── Lo que hacemos ──────────────────────────────────────────── -->
-  <section class="services" aria-labelledby="services-title">
-    <div class="services__head">
-      <h2 id="services-title" class="display services__title">Lo que hacemos</h2>
-      <p class="services__lede">
-        Cuatro maneras de bajar la IA a tu negocio. Empezamos por lo que de
-        verdad te mueve la aguja, no por lo que suena bien.
+  <!-- ── Cómo trabajamos contigo: los 4 pasos del embudo ──────────────
+   * Sustituye el antiguo catálogo plano "Lo que hacemos". El diagnóstico es la
+   * espina; el orden importa y se lee como una secuencia real, no como cuatro
+   * opciones a elegir a ciegas. Numeración deliberada porque ES una secuencia.
+   -->
+  <section class="steps" aria-labelledby="steps-title">
+    <div class="steps__head">
+      <h2 id="steps-title" class="display steps__title">Cómo trabajamos contigo</h2>
+      <p class="steps__lede">
+        No es un catálogo para que elijas a ciegas. Es un camino con un orden:
+        primero entender, luego intervenir, después acompañar. El diagnóstico es
+        la puerta por la que pasa todo.
       </p>
     </div>
-    <ul class="services__list">
+    <ol class="steps__list">
       {
-        services.map((s) => (
-          <li class="services__item">
-            <h3 class="services__name">{s.name}</h3>
-            <p class="services__desc">{s.desc}</p>
+        pasos.map((p, i) => (
+          <li class="steps__item">
+            <span class="steps__num" aria-hidden="true">{i + 1}</span>
+            <div class="steps__body">
+              <p class="steps__tag">{p.tag}</p>
+              <h3 class="steps__name">{p.name}</h3>
+              <p class="steps__desc">{p.desc}</p>
+            </div>
           </li>
         ))
       }
-    </ul>
+    </ol>
+    <div class="steps__cta-row">
+      <a class="cta-primary" href="/diagnostico" data-open-contact data-contact-origin="reservar-diagnostico">Reservar diagnóstico</a>
+      <a class="cta-ghost" href="#proof">
+        Antes, pruébalo gratis
+        <span class="cta-ghost__arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
   </section>
 
   <!-- ── Radiografia GEO: preview fiel del resultado real ────────────
@@ -114,9 +138,10 @@ const services = [
    * (aria-hidden) porque la herramienta interactiva vive en /servicios, donde
    * pide el nombre real; aqui solo enseña como se ve para invitar a probarla.
    -->
-  <section class="proof" aria-labelledby="proof-title">
+  <section id="proof" class="proof" aria-labelledby="proof-title">
     <div class="proof__inner">
       <div class="proof__text">
+        <p class="proof__tag">Pre-diagnóstico gratis · lo hace una IA en 1 minuto</p>
         <h2 id="proof-title" class="display proof__title">
           Mira cómo te ve una IA hoy.
         </h2>
@@ -126,14 +151,14 @@ const services = [
           es exactamente lo primero que arreglamos.
         </p>
         <p class="proof__note">
-          Esto es lo que verías al hacer la prueba con tu negocio. La de verdad,
-          con tu nombre, está a un clic.
+          Esto es una orientación gratis e instantánea, no el diagnóstico. El de
+          verdad es humano y va a fondo. Pero te da un primer vistazo en un clic.
         </p>
         <a
           class="cta-primary"
           href="/servicios/diseno-desarrollo-web-geo"
         >
-          Hacer mi radiografía GEO
+          Probar gratis con mi negocio
         </a>
       </div>
 
@@ -198,16 +223,40 @@ const services = [
     </div>
   </section>
 
+  <!-- ── Acompañamiento mensual: la relación, sin candado ─────────────
+   * Encuadra el paso 4 del embudo. No es una página propia todavía: aquí se
+   * nombra como relación continua, sin precio y sin suscripción trampa.
+   -->
+  <section class="accomp" aria-labelledby="accomp-title">
+    <div class="accomp__inner">
+      <p class="accomp__tag">Después del trabajo</p>
+      <h2 id="accomp-title" class="display accomp__title">
+        Y si encaja, seguimos a tu lado.
+      </h2>
+      <p class="accomp__lede">
+        Lo que construimos no se entrega y se olvida. Si tiene sentido, te
+        acompañamos cada mes con una cuota fija: ajustes, mediciones y criterio
+        cuando lo necesites. Ingeniería pausada, no un proyecto que desaparece
+        en cuanto se firma.
+      </p>
+      <ul class="accomp__list">
+        <li class="accomp__item">Sin candado: te puedes ir cuando quieras.</li>
+        <li class="accomp__item">Sin suscripción trampa ni permanencias.</li>
+        <li class="accomp__item">Estamos cuando hace falta, no para facturar por estar.</li>
+      </ul>
+    </div>
+  </section>
+
   <!-- ── Handoff a contacto ──────────────────────────────────────── -->
   <section id="contacto" class="contact" aria-labelledby="contact-title">
     <h2 id="contact-title" class="display contact__title">
-      Cuando quieras, seguimos en una conversación.
+      ¿Empezamos por el diagnóstico?
     </h2>
     <p class="contact__lede">
-      Sin formularios eternos ni promesas grandes. Nos cuentas tu caso y te
-      decimos con honestidad si podemos ayudarte y cómo.
+      Sin formularios eternos ni promesas grandes. Nos cuentas tu caso,
+      acordamos el diagnóstico y, según lo que veamos, definimos ahí el coste.
     </p>
-    <a class="cta-primary" href="/contacto" data-open-contact data-contact-origin="home-cierre">Contar mi caso</a>
+    <a class="cta-primary" href="/diagnostico" data-open-contact data-contact-origin="reservar-diagnostico">Reservar diagnóstico</a>
     <p class="cta-fallback">
       Si lo prefieres, escríbenos directo a
       <a href="mailto:info@zanovix.com">info@zanovix.com</a>.
@@ -390,51 +439,66 @@ const services = [
     }
   }
 
-  /* ── Servicios ────────────────────────────────────────────────── */
-  .services {
+  /* ── Pasos del embudo (cómo trabajamos contigo) ─────────────────── */
+  .steps {
     max-width: var(--container-wide);
     margin: 0 auto;
     padding: var(--spacing-section-y) var(--spacing-section-x);
   }
-  .services__head {
+  .steps__head {
     max-width: 60ch;
     margin-bottom: clamp(2rem, 4vw, 3.5rem);
   }
-  .services__title {
+  .steps__title {
     font-size: var(--text-h1);
     color: var(--color-ink);
     margin: 0 0 0.75rem;
   }
-  .services__lede {
+  .steps__lede {
     font-size: var(--text-lede);
     line-height: 1.55;
     color: var(--ink-soft);
+    max-width: 56ch;
     margin: 0;
   }
-  .services__list {
+  .steps__list {
     list-style: none;
-    margin: 0;
+    margin: 0 0 clamp(2rem, 4vw, 3rem);
     padding: 0;
-    display: grid;
-    gap: 0;
+    counter-reset: step;
   }
-  .services__item {
+  .steps__item {
     display: grid;
-    gap: 0.4rem;
-    padding: clamp(1.25rem, 2.5vw, 2rem) 0;
+    grid-template-columns: auto 1fr;
+    gap: 1rem clamp(1rem, 3vw, 2rem);
+    align-items: start;
+    padding: clamp(1.5rem, 3vw, 2.25rem) 0;
     border-top: 1px solid var(--color-rule);
   }
-  .services__item:last-child {
+  .steps__item:last-child {
     border-bottom: 1px solid var(--color-rule);
   }
-  @media (min-width: 720px) {
-    .services__item {
-      grid-template-columns: minmax(0, 22rem) 1fr;
-      gap: clamp(1.5rem, 4vw, 4rem);
-      align-items: baseline;
-    }
+  .steps__num {
+    font-family: var(--font-mono);
+    font-size: var(--text-h3);
+    line-height: 1;
+    color: var(--color-teal-deep);
+    font-weight: 500;
   }
-  .services__name {
+  .steps__body {
+    display: grid;
+    gap: 0.4rem;
+    max-width: 60ch;
+  }
+  .steps__tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute-strong);
+    margin: 0;
+  }
+  .steps__name {
     font-family: var(--font-display);
     font-weight: 600;
     font-size: var(--text-h3);
@@ -442,12 +506,68 @@ const services = [
     color: var(--color-ink);
     margin: 0;
   }
-  .services__desc {
+  .steps__desc {
     font-size: var(--text-body);
     line-height: 1.6;
     color: var(--ink-soft);
     margin: 0;
-    max-width: 52ch;
+  }
+  .steps__cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+  }
+
+  /* ── Acompañamiento mensual (la relación, paso 4) ───────────────── */
+  .accomp {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .accomp__inner {
+    max-width: 62ch;
+  }
+  .accomp__tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute-strong);
+    margin: 0 0 0.75rem;
+  }
+  .accomp__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    max-width: 18ch;
+  }
+  .accomp__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0 0 1.5rem;
+  }
+  .accomp__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .accomp__item {
+    position: relative;
+    padding-left: 1.5rem;
+    font-size: var(--text-body);
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .accomp__item::before {
+    content: "·";
+    position: absolute;
+    left: 0.5rem;
+    color: var(--color-teal-deep);
+    font-weight: 700;
   }
 
   /* ── Prueba GEO (preview fiel del resultado real) ─────────────────── */
@@ -465,6 +585,26 @@ const services = [
     .proof__inner {
       grid-template-columns: 0.95fr 1.05fr;
     }
+  }
+  .proof__tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute-strong);
+    margin: 0 0 0.75rem;
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .proof__tag::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-teal-deep);
   }
   .proof__title {
     font-size: var(--text-h1);
