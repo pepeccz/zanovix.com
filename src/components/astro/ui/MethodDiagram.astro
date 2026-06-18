@@ -1,0 +1,321 @@
+---
+/**
+ * MethodDiagram.astro — diagrama a medida del metodo Zanovix
+ *
+ * Que es: una representacion visual de los cuatro pasos del metodo
+ * (discovery -> propuesta -> ejecucion medida -> entrega documentada) como
+ * SECUENCIA dirigida. No es decoracion: EXPLICA el orden (que el orden importa)
+ * y DIRIGE a /metodologia. La numeracion 01-04 es legitima aqui porque ES una
+ * secuencia real y ordenada, no scaffolding por reflejo.
+ *
+ * Por que un diagrama y no solo texto: el feedback es que la web es "muy
+ * tipografica". El metodo es justo lo que mejor se cuenta como flujo: nodos
+ * conectados con una linea que avanza. Da imagen sin stock y sin mentir.
+ *
+ * Construccion: HTML + un conector SVG/CSS a medida (linea de progreso con un
+ * nodo por paso). Nada rasterizado: texto real, nitido y responsive. En movil
+ * la secuencia es vertical (la linea baja); en escritorio es horizontal.
+ *
+ * Variantes:
+ *   - 'strip' (home): compacto, cada nodo lleva fase + una frase de que te
+ *     llevas. Enlaza a /metodologia.
+ *   - 'full' (metodologia): cada nodo lleva fase + el "por que" + "te llevas".
+ *
+ * Mundo: 'paper' (claro, default) o 'forest' (drenched). El acento teal marca
+ * el avance de la linea; el texto va en tintas AA (nunca teal en cuerpo).
+ *
+ * A11y: es informativo, asi que NO va aria-hidden. Lista ordenada semantica
+ * (<ol>): un lector lo lee como "paso 1 de 4...". El conector SVG si es
+ * decorativo (aria-hidden): la informacion vive en el texto y el orden del DOM.
+ */
+interface Props {
+  variant?: 'strip' | 'full'
+  tone?: 'paper' | 'forest'
+  /** Muestra el enlace de cierre a /metodologia (util en la home). */
+  withLink?: boolean
+  class?: string
+}
+
+const {
+  variant = 'strip',
+  tone = 'paper',
+  withLink = variant === 'strip',
+  class: className = '',
+} = Astro.props
+
+// La copia 'strip' (home) es condensada; la 'full' (metodologia) es la version
+// larga, identica en fondo a la que la pagina de metodologia ya firmaba.
+const isFull = variant === 'full'
+const steps = [
+  {
+    fase: 'Discovery',
+    titulo: 'Entender antes de proponer',
+    porque: isFull
+      ? 'La mayoría de los proyectos que salen mal empiezan resolviendo el problema equivocado. Antes de hablar de IA o de tecnología, miramos cómo trabajas hoy, dónde se te van las horas y dónde tus clientes dejan de encontrarte.'
+      : 'Miramos cómo trabajas hoy y dónde te dejan de encontrar, antes de hablar de tecnología.',
+    llevas: isFull
+      ? 'Un diagnóstico claro de tu situación y, si hace falta, la respuesta honesta de que todavía no toca meter IA por ningún lado.'
+      : 'Un diagnóstico claro, sin humo.',
+  },
+  {
+    fase: 'Propuesta',
+    titulo: 'Un plan que cabe en una hoja',
+    porque: isFull
+      ? 'Una propuesta que necesita veinte páginas suele esconder que no se ha entendido el problema. La nuestra dice qué haríamos primero, por qué empezamos por ahí y qué esperamos que cambie. Con lo que dejamos fuera escrito de antemano.'
+      : 'Qué haríamos primero, por qué empezamos por ahí y qué dejamos fuera, por escrito.',
+    llevas: isFull
+      ? 'Alcance, criterios de éxito y precio sobre la mesa, sin letra pequeña. Puedes leerla y decidir sin necesidad de fiarte de nuestra palabra.'
+      : 'Alcance y precio sobre la mesa.',
+  },
+  {
+    fase: 'Ejecución medida',
+    titulo: 'Construir y medir, no prometer',
+    porque: isFull
+      ? 'Si no sabes de dónde partías, cualquier resultado se puede maquillar. Levantamos la línea base antes de tocar nada, trabajamos en tramos cortos y comprobamos contra esa base, no contra una promesa de folleto.'
+      : 'Levantamos la línea base antes de tocar nada y comprobamos contra ella en tramos cortos.',
+    llevas: isFull
+      ? 'Avances visibles cada pocas semanas y la tranquilidad de poder seguir de cerca lo que se hace y por qué, sin sorpresas al final.'
+      : 'Avances visibles cada pocas semanas.',
+  },
+  {
+    fase: 'Entrega documentada',
+    titulo: 'Te queda el porqué, no solo el qué',
+    porque: isFull
+      ? 'Lo que no se documenta no se transmite ni se mantiene. Cuando cerramos un proyecto, no te dejamos solo con algo funcionando: te dejamos también el razonamiento por escrito.'
+      : 'Cerramos con la solución en marcha y el razonamiento escrito para tu equipo.',
+    llevas: isFull
+      ? 'La solución en marcha y un documento con qué decidimos, qué medimos y qué sigue. Lo puedes enseñar a tu equipo o a quien aprueba el gasto.'
+      : 'El qué decidimos y qué medimos.',
+  },
+]
+---
+
+<div class:list={['mdiagram', `mdiagram--${variant}`, `mdiagram--${tone}`, className]}>
+  <ol class="mdiagram__track">
+    {
+      steps.map((s, i) => (
+        <li class="mdiagram__step">
+          {/* Conector decorativo: punto + segmento hacia el siguiente nodo.
+              aria-hidden porque la secuencia ya la da el <ol> + el numero. */}
+          <span class="mdiagram__rail" aria-hidden="true">
+            <span class="mdiagram__node" />
+            {i < steps.length - 1 && <span class="mdiagram__line" />}
+          </span>
+          <div class="mdiagram__content">
+            <p class="mdiagram__marker">
+              <span class="mdiagram__num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="mdiagram__fase">{s.fase}</span>
+            </p>
+            <h3 class="mdiagram__title">{s.titulo}</h3>
+            {variant === 'full' && <p class="mdiagram__why">{s.porque}</p>}
+            <p class="mdiagram__take">
+              <span class="mdiagram__take-label">Te llevas</span>
+              {s.llevas}
+            </p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  {
+    withLink && (
+      <a class="mdiagram__link" href="/metodologia">
+        Ver el metodo completo
+        <span class="mdiagram__link-arrow" aria-hidden="true">
+          →
+        </span>
+      </a>
+    )
+  }
+</div>
+
+<style>
+  .mdiagram {
+    --md-ink: var(--color-ink);
+    --md-soft: var(--ink-soft);
+    --md-mute: var(--ink-mute-strong);
+    --md-rule: var(--color-rule);
+    --md-accent: var(--color-teal-deep);
+    --md-node-ring: var(--color-paper);
+  }
+  .mdiagram--forest {
+    --md-ink: var(--paper-on-dark);
+    --md-soft: var(--paper-on-dark-soft);
+    --md-mute: var(--paper-on-dark-soft);
+    --md-rule: var(--color-rule-invert);
+    --md-accent: var(--color-teal-bright);
+    --md-node-ring: var(--color-forest);
+  }
+
+  .mdiagram__track {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  /* Cada paso: rail (conector) + contenido. En movil la linea es vertical. */
+  .mdiagram__step {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0 clamp(0.9rem, 2vw, 1.25rem);
+  }
+
+  .mdiagram__rail {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 18px;
+  }
+  .mdiagram__node {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--md-accent);
+    box-shadow: 0 0 0 4px var(--md-node-ring), 0 0 0 5px var(--md-rule);
+    flex: none;
+    margin-top: 0.3rem;
+  }
+  .mdiagram__line {
+    flex: 1;
+    width: 2px;
+    margin: 0.35rem 0;
+    background: linear-gradient(
+      to bottom,
+      var(--md-accent),
+      var(--md-rule)
+    );
+    border-radius: 999px;
+    min-height: 1.5rem;
+  }
+
+  .mdiagram__content {
+    padding-bottom: 0.25rem;
+  }
+  .mdiagram__marker {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin: 0 0 0.35rem;
+  }
+  .mdiagram__num {
+    font-family: var(--font-mono);
+    font-size: var(--text-h3);
+    font-weight: 500;
+    line-height: 1;
+    color: var(--md-accent);
+  }
+  .mdiagram__fase {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--md-mute);
+  }
+  .mdiagram__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    color: var(--md-ink);
+    margin: 0 0 0.4rem;
+    text-wrap: balance;
+  }
+  .mdiagram__why {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--md-soft);
+    max-width: 56ch;
+    margin: 0 0 0.5rem;
+  }
+  .mdiagram__take {
+    font-size: var(--text-body);
+    line-height: 1.55;
+    color: var(--md-soft);
+    max-width: 52ch;
+    margin: 0;
+  }
+  .mdiagram__take-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--md-mute);
+    margin-right: 0.5rem;
+  }
+
+  .mdiagram__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--text-body);
+    color: var(--md-ink);
+    text-decoration: none;
+    padding: 0.25rem 0;
+    border-bottom: 2px solid var(--md-accent);
+    transition: border-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .mdiagram__link:hover {
+    border-color: var(--color-teal);
+  }
+  .mdiagram__link:focus-visible {
+    outline: 2px solid var(--md-ink);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  .mdiagram__link-arrow {
+    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mdiagram__link:hover .mdiagram__link-arrow {
+      transform: translateX(3px);
+    }
+  }
+
+  /* ── Escritorio: la variante 'strip' se vuelve un flujo HORIZONTAL ─────
+   * Cuatro nodos en fila con la linea avanzando de izquierda a derecha. Eso
+   * es lo que de verdad "explica" la secuencia: el ojo sigue la linea. */
+  @media (min-width: 880px) {
+    .mdiagram--strip .mdiagram__track {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+    }
+    .mdiagram--strip .mdiagram__step {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding-right: clamp(1rem, 2vw, 1.75rem);
+    }
+    .mdiagram--strip .mdiagram__rail {
+      flex-direction: row;
+      width: 100%;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .mdiagram--strip .mdiagram__node {
+      margin-top: 0;
+    }
+    .mdiagram--strip .mdiagram__line {
+      width: auto;
+      height: 2px;
+      flex: 1;
+      margin: 0 0 0 0.5rem;
+      background: linear-gradient(to right, var(--md-accent), var(--md-rule));
+      min-height: 0;
+    }
+  }
+
+  /* La variante 'full' mantiene el flujo vertical en todas las anchuras
+     (mas texto por paso), pero abre el contenido en dos columnas en ancho. */
+  @media (min-width: 760px) {
+    .mdiagram--full .mdiagram__step {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+  }
+</style>

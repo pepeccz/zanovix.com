@@ -1,0 +1,138 @@
+---
+/**
+ * BrandPetals.astro — motivo de marca sobrio e integrado
+ *
+ * NO es la FlorPersistente flotante (retirada): es el mismo motivo de 8 petalos
+ * del isotipo, pero usado con mesura como TEXTURA DE ACENTO integrada en una
+ * seccion. Da caracter de marca sin ruido: un solo trazo fino, casi al limite
+ * de lo perceptible, anclado a una esquina y recortado por el contenedor.
+ *
+ * Significado (no es relleno decorativo): es la FIRMA de marca. Aparece una vez
+ * por seccion-ancla para "sellar" que ese bloque es de Zanovix, igual que una
+ * marca de agua en papel. La geometria es la misma del isotipo (vesica piscis,
+ * 8 rotaciones de 45 grados), asi que el ojo la reconoce como la misma flor del
+ * header, no como un adorno generico.
+ *
+ * A11y: 100% decorativo, aria-hidden. No transmite informacion; el contenido
+ * de la seccion no depende de el. Sin movimiento por defecto (el sistema es
+ * calmado); solo una respiracion minima opt-in, anulada en reduced-motion.
+ *
+ * Props:
+ *   - tone:    'ink' (sobre claro) | 'paper' (sobre forest). Default 'ink'.
+ *   - corner:  esquina de anclaje. Default 'top-right'.
+ *   - size:    lado del motivo en px (se escala con clamp si se omite).
+ *   - breathe: respiracion minima opt-in (off por defecto, off en reduce).
+ */
+interface Props {
+  tone?: 'ink' | 'paper'
+  corner?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+  size?: number
+  breathe?: boolean
+  class?: string
+}
+
+const {
+  tone = 'ink',
+  corner = 'top-right',
+  size,
+  breathe = false,
+  class: className = '',
+} = Astro.props
+
+// Mismo petalo canonico que BrandMark (vesica piscis apuntando arriba).
+const petalPath = 'M 50,30 Q 38,17 50,4 Q 62,17 50,30 Z'
+const strokeVar = tone === 'paper' ? 'var(--color-rule-invert)' : 'var(--color-rule)'
+const accentVar = tone === 'paper' ? 'var(--color-teal-bright)' : 'var(--color-teal)'
+---
+
+<div
+  class:list={['brandpetals', `brandpetals--${corner}`, className, { 'brandpetals--breathe': breathe }]}
+  style={size ? `--bp-size:${size}px` : undefined}
+  aria-hidden="true"
+>
+  <svg
+    class="brandpetals__svg"
+    viewBox="0 0 100 100"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    focusable="false"
+  >
+    {
+      Array.from({ length: 8 }).map((_, i) => (
+        <path
+          d={petalPath}
+          transform={`rotate(${i * 45} 50 50)`}
+          fill="none"
+          stroke={strokeVar}
+          stroke-width={0.8}
+          stroke-linejoin="round"
+        />
+      ))
+    }
+    {/* Un solo petalo en acento teal: la firma, no el ruido. */}
+    <path
+      d={petalPath}
+      transform="rotate(0 50 50)"
+      fill="none"
+      stroke={accentVar}
+      stroke-width={1.1}
+      stroke-linejoin="round"
+      opacity="0.55"
+    />
+    <circle cx="50" cy="50" r="2.4" fill={accentVar} opacity="0.5" />
+  </svg>
+</div>
+
+<style>
+  /* Capa de marca de agua: ocupa la esquina, recortada por el contenedor
+     padre (que debe ser position:relative; overflow:hidden). pointer-events
+     ninguno: nunca intercepta clicks. */
+  .brandpetals {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+    width: var(--bp-size, clamp(180px, 26vw, 340px));
+    height: var(--bp-size, clamp(180px, 26vw, 340px));
+    opacity: 0.9;
+  }
+  .brandpetals__svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  /* Anclajes por esquina: el motivo sobresale ~40% fuera del borde para que
+     se lea como textura que entra, no como icono centrado. */
+  .brandpetals--top-right {
+    top: 0;
+    right: 0;
+    transform: translate(40%, -40%);
+  }
+  .brandpetals--top-left {
+    top: 0;
+    left: 0;
+    transform: translate(-40%, -40%);
+  }
+  .brandpetals--bottom-right {
+    bottom: 0;
+    right: 0;
+    transform: translate(40%, 40%);
+  }
+  .brandpetals--bottom-left {
+    bottom: 0;
+    left: 0;
+    transform: translate(-40%, 40%);
+  }
+
+  /* Respiracion minima opt-in. Off por defecto (sistema calmado) y SIEMPRE
+     off en reduced-motion. No anima layout: solo opacity/scale del SVG. */
+  @media (prefers-reduced-motion: no-preference) {
+    .brandpetals--breathe .brandpetals__svg {
+      animation: brandPetalsBreathe 9s ease-in-out infinite;
+      transform-origin: 50% 50%;
+    }
+  }
+  @keyframes brandPetalsBreathe {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.015); }
+  }
+</style>
