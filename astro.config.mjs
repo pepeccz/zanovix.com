@@ -11,6 +11,14 @@ export default defineConfig({
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   integrations: [react()],
+  // La antigua "Auditoría AI Readiness" se promueve a /diagnostico (la puerta
+  // del embudo). 301 permanente para preservar SEO y enlaces existentes.
+  redirects: {
+    '/servicios/auditoria-ai-readiness': {
+      status: 301,
+      destination: '/diagnostico',
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
   },

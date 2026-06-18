@@ -1,0 +1,260 @@
+---
+/**
+ * diagnostico/index.astro — la puerta del embudo
+ *
+ * El Diagnóstico de pago es la puerta única a todo lo que hacemos. Sustituye
+ * y eleva a la antigua "Auditoría AI Readiness" (que ahora redirige aquí con
+ * un 301). Mirada humana y a fondo al negocio frente a la IA. Honesta: puede
+ * concluir "no necesitas intervención" y aun así vale por sí misma. Se acredita
+ * contra la intervención si se procede, y abre la puerta a un acompañamiento
+ * mensual sin candado.
+ *
+ * Distinción tajante (anti-canibalización): el ReadinessCheck que vive en esta
+ * página es una ORIENTACIÓN gratis e instantánea hecha por una IA. NO es el
+ * diagnóstico. El diagnóstico de verdad es humano y a fondo.
+ *
+ * Sin precios: el coste se define en el propio diagnóstico, según el caso.
+ * Estilos compartidos en global.css (.svc*, .cta-*).
+ */
+import PageLayout from '../../layouts/PageLayout.astro'
+import ReadinessCheck from '../../components/react/ReadinessCheck.tsx'
+
+const queMiramos = [
+  'Visibilidad ante la IA: si apareces cuando tus clientes preguntan a un modelo por lo que tú haces, y qué te falta para que te citen.',
+  'Procesos y horas: dónde se te va el tiempo cada día y qué de eso puede hacer una máquina sin romper nada.',
+  'Datos y herramientas: qué tienes ya y qué te falta para que la IA sea útil de verdad, no un capricho.',
+  'Criterio para decidir: un orden de prioridades honesto, qué hacer primero para notarlo pronto y qué dejar para más adelante.',
+]
+---
+
+<PageLayout
+  title="Diagnóstico · Zanovix"
+  description="Una mirada humana y a fondo a tu negocio frente a la IA. La puerta de entrada a todo lo que hacemos. Honesta: puede concluir que no necesitas intervención. Se acredita contra el trabajo si decides seguir."
+  page="diagnostico"
+>
+  <article class="svc">
+    <header class="svc__head">
+      <h1 class="display svc__title">
+        Antes de tocar nada, entendemos tu negocio.
+      </h1>
+      <p class="svc__lede">
+        El diagnóstico es por donde empieza todo lo que hacemos. Una mirada
+        humana y a fondo a tu empresa frente a la IA: qué te aporta de verdad,
+        qué sería tirar el dinero y por dónde tiene sentido empezar. No es un
+        informe de relleno: es la conversación donde decidimos juntos, con la
+        cabeza, qué merece la pena hacer.
+      </p>
+    </header>
+
+    <!-- ── La puerta: cómo encaja en todo ───────────────────────────── -->
+    <section class="svc__block" aria-labelledby="puerta">
+      <h2 id="puerta" class="svc__h2">La puerta de entrada a todo</h2>
+      <p class="svc__body">
+        Cualquier trabajo que hagamos contigo, una web que aparezca ante la IA,
+        una herramienta a medida o criterio técnico para decidir, empieza aquí.
+        Primero entendemos, luego proponemos. Nunca al revés.
+      </p>
+      <p class="svc__body">
+        El diagnóstico vale por sí solo. Te llevas un orden de prioridades claro
+        que puedes enseñar a tu equipo o a quien aprueba el gasto, lo
+        contrates con nosotros o no.
+      </p>
+    </section>
+
+    <!-- ── Las tres promesas honestas ────────────────────────────────── -->
+    <section class="svc__block" aria-labelledby="honesto">
+      <h2 id="honesto" class="svc__h2">Qué te garantizamos</h2>
+      <ul class="dgn__pillars">
+        <li class="dgn__pillar">
+          <h3 class="dgn__pillar-title">Puede decir que no</h3>
+          <p class="dgn__pillar-text">
+            Si lo honesto es no hacer nada todavía, te lo diremos. Preferimos
+            eso a venderte un proyecto que no necesitas. El diagnóstico vale
+            igual: ya sabes a qué atenerte.
+          </p>
+        </li>
+        <li class="dgn__pillar">
+          <h3 class="dgn__pillar-title">Se acredita contra el trabajo</h3>
+          <p class="dgn__pillar-text">
+            Si decides seguir con nosotros, lo que pagas por el diagnóstico se
+            descuenta de la intervención. Lo que inviertes en entender no se
+            pierde: cuenta.
+          </p>
+        </li>
+        <li class="dgn__pillar">
+          <h3 class="dgn__pillar-title">Abre una relación, no un candado</h3>
+          <p class="dgn__pillar-text">
+            Si encaja, el diagnóstico lleva a un acompañamiento mensual sin
+            ataduras: estamos cuando hace falta y te puedes ir cuando quieras.
+            Sin suscripción trampa.
+          </p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ── Qué miramos ──────────────────────────────────────────────── -->
+    <section class="svc__block" aria-labelledby="que-miramos">
+      <h2 id="que-miramos" class="svc__h2">Qué miramos, sin letra pequeña</h2>
+      <ul class="svc__list">
+        {queMiramos.map((item) => <li class="svc__item">{item}</li>)}
+      </ul>
+    </section>
+
+    <!-- ── CTA primario: reservar el diagnóstico (humano, de pago) ───── -->
+    <section class="dgn__reserve" aria-labelledby="reserve">
+      <h2 id="reserve" class="display dgn__reserve-title">
+        ¿Empezamos por entenderte?
+      </h2>
+      <p class="dgn__reserve-lede">
+        Cuéntanos cómo trabajáis hoy y qué os gustaría quitaros de encima.
+        Acordamos el diagnóstico y, según tu caso, definimos ahí el coste.
+        Sin sorpresas y sin presupuestos a ciegas.
+      </p>
+      <a
+        class="cta-primary"
+        href="/contacto"
+        data-open-contact
+        data-contact-origin="reservar-diagnostico"
+      >
+        Reservar diagnóstico
+      </a>
+      <p class="cta-fallback">
+        Si lo prefieres, escríbenos directo a
+        <a href="mailto:info@zanovix.com">info@zanovix.com</a>.
+      </p>
+    </section>
+
+    <!-- ── Orientación gratis: el ReadinessCheck, CLARAMENTE distinto ──
+     * Separador honesto: esto NO es el diagnóstico. Es una orientación
+     * automática que hace una IA en un minuto. El de pago es humano y a fondo.
+     -->
+    <section class="dgn__free" aria-labelledby="free-title">
+      <p class="dgn__free-tag">Gratis · automático · 1 minuto</p>
+      <h2 id="free-title" class="display dgn__free-title">
+        Mientras tanto, hazte una idea tú mismo.
+      </h2>
+      <p class="dgn__free-lede">
+        Esto es una orientación instantánea: seis preguntas y una lectura
+        rápida de dónde la IA te encaja hoy. Lo hace una IA en un minuto, no
+        nosotros. No es el diagnóstico: ese es humano, va mucho más a fondo y
+        lo hacemos contigo. Tómatelo como un primer vistazo para llegar con
+        ideas más claras.
+      </p>
+      <ReadinessCheck client:visible />
+      <noscript>
+        <p class="svc__sim-noscript">
+          La orientación necesita JavaScript activado. Si lo prefieres,
+          cuéntanos cómo trabajáis hoy en <a href="/contacto">contacto</a> y lo
+          vemos contigo.
+        </p>
+      </noscript>
+    </section>
+  </article>
+</PageLayout>
+
+<style>
+  /* ── Las tres promesas (pilares del diagnóstico) ──────────────────
+   * No es un card-grid decorativo: son tres compromisos con jerarquía real.
+   * Lista plana con hairlines en móvil, columnas en escritorio. Sin iconos
+   * de relleno; el peso lo lleva el título.
+   */
+  .dgn__pillars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+  @media (min-width: 760px) {
+    .dgn__pillars {
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(1.5rem, 3vw, 2.5rem);
+    }
+  }
+  .dgn__pillar {
+    padding: clamp(1.25rem, 2.5vw, 1.75rem) 0;
+    border-top: 1px solid var(--color-rule);
+  }
+  .dgn__pillar:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  @media (min-width: 760px) {
+    .dgn__pillar {
+      padding: 0;
+      border: 0;
+      border-top: 2px solid var(--color-teal-deep);
+      padding-top: 1.25rem;
+    }
+    .dgn__pillar:last-child {
+      border-bottom: 0;
+    }
+  }
+  .dgn__pillar-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    margin: 0 0 0.6rem;
+  }
+  .dgn__pillar-text {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  /* ── Reserva del diagnóstico (CTA primario, de pago) ─────────────── */
+  .dgn__reserve {
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+    padding-top: clamp(2rem, 5vw, 3.5rem);
+    border-top: 1px solid var(--color-rule-strong);
+  }
+  .dgn__reserve-title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    max-width: 18ch;
+  }
+  .dgn__reserve-lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 54ch;
+    margin: 0 0 1.75rem;
+  }
+
+  /* ── Orientación gratis (separada del de pago a propósito) ─────────
+   * Bloque visualmente distinto del de pago: fondo forest sutil y etiqueta
+   * "gratis" para que nadie confunda la orientación instantánea con el
+   * diagnóstico humano. El teal solo como acento de la etiqueta.
+   */
+  .dgn__free {
+    margin-top: clamp(3rem, 7vw, 5rem);
+    padding: clamp(1.75rem, 4vw, 3rem);
+    border: 1px solid var(--color-rule);
+    border-radius: 16px;
+    background: var(--color-surface, var(--color-paper));
+  }
+  .dgn__free-tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-teal-deep);
+    margin: 0 0 0.75rem;
+  }
+  .dgn__free-title {
+    font-size: var(--text-h2);
+    color: var(--color-ink);
+    margin: 0 0 0.75rem;
+    max-width: 22ch;
+  }
+  .dgn__free-lede {
+    font-size: var(--text-body);
+    line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 60ch;
+    margin: 0 0 1.75rem;
+  }
+</style>
