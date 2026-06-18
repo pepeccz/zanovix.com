@@ -1,0 +1,377 @@
+---
+/**
+ * casos/[...slug].astro — Plantilla de detalle de un caso (portfolio)
+ *
+ * Cada caso de la colección `casos` (src/content/casos/*.md) renderiza su
+ * propia página: cabecera (title, sector/zona/year, services), el problema
+ * (por qué), el desarrollo (cómo/qué, render del markdown del fichero),
+ * resultados honestos si los hay, y el testimonio destacado si lo hay.
+ *
+ * Honestidad nº1: nada de esto se inventa. Lo que no existe (results,
+ * testimonial) simplemente no se renderiza.
+ *
+ * Filtro de borradores:
+ *   - En PRODUCCIÓN (build): getStaticPaths excluye `draft: true`. La página
+ *     del ejemplo NO se genera ni se enlaza.
+ *   - En DESARROLLO (astro dev, import.meta.env.DEV): se incluyen los drafts
+ *     para poder validar la plantilla con la entrada de ejemplo.
+ *
+ * Sistema visual v2: Hanken (display/body), JetBrains Mono (labels), tokens,
+ * plano + hairlines. El testimonio usa el mundo forest (drenched) como cambio
+ * de mundo deliberado. Compañero variant="dock" (lo monta PageLayout).
+ */
+import { getCollection, render } from 'astro:content'
+import type { CollectionEntry } from 'astro:content'
+import PageLayout from '../../layouts/PageLayout.astro'
+
+// Prerender estático: la web es SSR (output:server), pero los casos son
+// contenido estático. Con prerender=true, getStaticPaths SÍ controla qué rutas
+// existen, así el filtro de draft excluye de verdad el ejemplo en producción
+// (no se genera ni es alcanzable). Sin esto, en SSR la ruta resolvería en
+// runtime y un draft podría ser accesible.
+export const prerender = true
+
+export async function getStaticPaths() {
+  const casos = await getCollection('casos', ({ data }) =>
+    import.meta.env.DEV ? true : data.draft !== true,
+  )
+  return casos.map((caso) => ({
+    params: { slug: caso.data.slug ?? caso.id },
+    props: { caso },
+  }))
+}
+
+interface Props {
+  caso: CollectionEntry<'casos'>
+}
+
+const { caso } = Astro.props
+const { data } = caso
+const { Content } = await render(caso)
+
+// Metadata de cabecera: sector · zona · año, solo lo que exista.
+const meta = [data.sector, data.zona, data.year].filter(Boolean).join(' · ')
+---
+
+<PageLayout
+  title={`${data.title} · Casos · Zanovix`}
+  description={data.summary}
+  page="casos"
+>
+  {
+    data.draft && (
+      <p class="draft-flag" role="note">
+        Borrador (draft): esta entrada solo es visible en desarrollo. No se
+        publica en producción.
+      </p>
+    )
+  }
+
+  <!-- ── Cabecera ──────────────────────────────────────────────────── -->
+  <header class="case-head" aria-labelledby="case-title">
+    <p class="case-head__meta">{meta}</p>
+    <h1 id="case-title" class="display case-head__title">{data.title}</h1>
+    <p class="case-head__summary">{data.summary}</p>
+    {
+      data.services.length > 0 && (
+        <ul class="case-head__services" aria-label="Servicios implicados">
+          {data.services.map((s) => (
+            <li class="case-head__service">{s}</li>
+          ))}
+        </ul>
+      )
+    }
+  </header>
+
+  <!-- ── El problema (por qué) ─────────────────────────────────────── -->
+  <section class="case-block" aria-labelledby="problem-title">
+    <div class="case-block__inner">
+      <h2 id="problem-title" class="case-block__label">El problema</h2>
+      <p class="case-block__lead">{data.problem}</p>
+    </div>
+  </section>
+
+  <!-- ── El desarrollo (cómo / qué se hizo) ────────────────────────── -->
+  <section class="case-body" aria-labelledby="work-title">
+    <div class="case-body__inner">
+      <h2 id="work-title" class="case-body__label">Cómo lo hicimos</h2>
+      {data.approach && <p class="case-body__intro">{data.approach}</p>}
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Resultados honestos (solo si existen) ─────────────────────── -->
+  {
+    data.results && (
+      <section class="case-block" aria-labelledby="results-title">
+        <div class="case-block__inner">
+          <h2 id="results-title" class="case-block__label">Qué cambió</h2>
+          <p class="case-block__lead">{data.results}</p>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ── Testimonio destacado (solo si existe, mundo forest) ────────── -->
+  {
+    data.testimonial && (
+      <section class="quote" aria-label="Testimonio del cliente">
+        <div class="quote__inner">
+          <blockquote class="quote__text">{data.testimonial.quote}</blockquote>
+          <p class="quote__cite">
+            <span class="quote__author">{data.testimonial.author}</span>
+            {data.testimonial.role && (
+              <span class="quote__role">{data.testimonial.role}</span>
+            )}
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ── Cierre: a la conversación ─────────────────────────────────── -->
+  <section class="close" aria-labelledby="close-title">
+    <h2 id="close-title" class="display close__title">¿Tienes un caso parecido?</h2>
+    <p class="close__lede">
+      Si lo que cuenta este caso te suena a tu situación, hablemos. Levantamos la
+      línea base antes de prometer nada y trabajamos en tramos cortos.
+    </p>
+    <a class="cta-primary" href="/contacto">Contar mi caso</a>
+    <p class="close__back"><a href="/casos">Volver a casos</a></p>
+  </section>
+</PageLayout>
+
+<style>
+  /* ── Aviso de borrador (solo dev) ──────────────────────────────── */
+  .draft-flag {
+    max-width: var(--container-wide);
+    margin: 1rem auto 0;
+    padding: 0.75rem 1rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    color: var(--color-ink);
+    background: color-mix(in oklch, var(--color-teal) 14%, var(--color-paper));
+    border: 1px solid var(--color-rule-strong);
+    border-radius: 4px;
+  }
+
+  /* ── Cabecera ──────────────────────────────────────────────────── */
+  .case-head {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-hero-y) var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .case-head__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute-strong);
+    margin: 0 0 1.25rem;
+  }
+  .case-head__title {
+    font-size: var(--text-display);
+    color: var(--color-ink);
+    margin: 0 0 1.5rem;
+    max-width: 22ch;
+  }
+  .case-head__summary {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 56ch;
+    margin: 0 0 2rem;
+  }
+  .case-head__services {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    margin: 0;
+    padding: 0;
+  }
+  .case-head__service {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    color: var(--color-ink);
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--color-rule-strong);
+    border-radius: 999px;
+  }
+
+  /* ── Bloques de texto (problema / resultados) ──────────────────── */
+  .case-block {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: 0 var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .case-block__inner {
+    border-top: 1px solid var(--color-rule);
+    padding-top: clamp(1.75rem, 3vw, 3rem);
+    display: grid;
+    gap: 0.85rem;
+  }
+  .case-block__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    /* Etiqueta de sección: ink (no teal). El teal no llega a AA en texto. */
+    color: var(--ink-mute-strong);
+    margin: 0;
+  }
+  .case-block__lead {
+    font-size: var(--text-h3);
+    line-height: 1.5;
+    color: var(--color-ink);
+    max-width: 56ch;
+    margin: 0;
+    text-wrap: pretty;
+  }
+  @media (min-width: 720px) {
+    .case-block__inner {
+      grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+      column-gap: clamp(2rem, 5vw, 5rem);
+      align-items: start;
+    }
+  }
+
+  /* ── Cuerpo: desarrollo (markdown) ─────────────────────────────── */
+  .case-body {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: 0 var(--spacing-section-x) var(--spacing-section-y);
+  }
+  .case-body__inner {
+    border-top: 1px solid var(--color-rule);
+    padding-top: clamp(1.75rem, 3vw, 3rem);
+  }
+  .case-body__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute-strong);
+    margin: 0 0 1.25rem;
+  }
+  .case-body__intro {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 60ch;
+    margin: 0 0 2rem;
+  }
+
+  /* Prosa del markdown del caso */
+  .prose {
+    max-width: 65ch;
+    font-size: var(--text-body);
+    line-height: 1.7;
+    color: var(--color-ink);
+  }
+  .prose :global(h2) {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h2);
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin: 2.75rem 0 1rem;
+  }
+  .prose :global(h3) {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+    margin: 2rem 0 0.75rem;
+  }
+  .prose :global(p) {
+    margin: 0 0 1.5rem;
+    text-wrap: pretty;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: 1.5rem;
+    margin: 0 0 1.5rem;
+  }
+  .prose :global(li) {
+    margin-bottom: 0.6rem;
+  }
+  .prose :global(strong) {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  /* ── Testimonio (mundo forest, drenched) ───────────────────────── */
+  .quote {
+    background: var(--color-forest);
+    color: var(--color-paper);
+  }
+  .quote__inner {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .quote__text {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--text-h2);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--color-paper);
+    max-width: 40ch;
+    margin: 0 0 1.5rem;
+    text-wrap: balance;
+  }
+  .quote__cite {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin: 0;
+  }
+  .quote__author {
+    font-family: var(--font-mono);
+    font-size: var(--text-body);
+    color: var(--color-teal-bright);
+  }
+  .quote__role {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    color: color-mix(in oklab, var(--color-paper) 80%, transparent);
+  }
+
+  /* ── Cierre ────────────────────────────────────────────────────── */
+  .close {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  .close__title {
+    font-size: var(--text-h1);
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    max-width: 18ch;
+  }
+  .close__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 52ch;
+    margin: 0 0 2rem;
+  }
+  .close__back {
+    margin: 1.75rem 0 0;
+  }
+  .close__back a {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    /* ink para AA; el teal queda como subrayado (acento decorativo). */
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-teal-deep);
+    text-underline-offset: 0.25em;
+  }
+</style>
