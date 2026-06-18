@@ -7,6 +7,7 @@
  * prometidos. Estilos compartidos en global.css (.svc*).
  */
 import PageLayout from '../../layouts/PageLayout.astro'
+import ReadinessCheck from '../../components/react/ReadinessCheck.tsx'
 
 const incluye = [
   'Una mirada honesta a tus procesos: dónde se te van las horas y qué de eso puede hacer una máquina sin romper nada.',
@@ -36,6 +37,26 @@ const incluye = [
         honestidad dónde aporta algo real y dónde sería tirar el dinero.
       </p>
     </header>
+
+    <!-- ── Autodiagnóstico: la orientación honesta en vivo (pieza central) ── -->
+    <section class="svc__sim" aria-labelledby="diag-title">
+      <h2 id="diag-title" class="display svc__sim-title">
+        Antes de empezar, hazte una idea
+      </h2>
+      <p class="svc__sim-lede">
+        Seis preguntas y una lectura honesta de dónde la IA te aporta hoy, dónde
+        no todavía, y por dónde empezar. Es una orientación, no la auditoría: esa
+        va más a fondo y la hacemos contigo.
+      </p>
+      <ReadinessCheck client:visible />
+      <noscript>
+        <p class="svc__sim-noscript">
+          El autodiagnóstico necesita JavaScript activado. Si lo prefieres,
+          cuéntanos cómo trabajáis hoy en <a href="/contacto">contacto</a> y lo
+          vemos contigo.
+        </p>
+      </noscript>
+    </section>
 
     <section class="svc__block" aria-labelledby="que-es">
       <h2 id="que-es" class="svc__h2">Qué es y para quién</h2>
