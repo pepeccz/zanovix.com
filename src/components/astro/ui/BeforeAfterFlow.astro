@@ -1,0 +1,240 @@
+---
+/**
+ * BeforeAfterFlow.astro — el proceso, antes y después
+ *
+ * Qué es: un diagrama a medida que contrapone DOS flujos del mismo proceso. El
+ * de antes: pasos a mano encadenados, con horas que se pierden en cada salto.
+ * El de después: los pasos mecánicos los hace una máquina y la persona queda
+ * SOLO en el punto donde de verdad hace falta su criterio. No es decoración:
+ * EXPLICA qué cambia una automatización bien hecha y, sobre todo, que la
+ * persona no desaparece, se coloca donde aporta.
+ *
+ * Por qué un diagrama: la página de software ya tiene el AutomationSketch (la
+ * prueba en vivo a partir de tu tarea). Lo que falta es el modelo mental del
+ * antes/después. Dos carriles paralelos lo cuentan de un vistazo; el contraste
+ * de las "horas perdidas" tachadas frente al lazo humano único es el mensaje.
+ *
+ * Honestidad: no inventa cifras de horas concretas (vetos vigentes). Habla de
+ * "horas" en cualitativo, marcando dónde se pierden, no cuántas.
+ *
+ * Construcción: dos <ol> de pasos con conectores CSS. El paso humano del
+ * "después" se resalta (no se elimina la persona: se reubica). Mundo paper por
+ * defecto para contrastar con el AutomationSketch forest de la misma página.
+ *
+ * A11y: informativo, NO aria-hidden. Cada carril es una lista ordenada con su
+ * encabezado; los conectores son decorativos. "Horas perdidas" y "tú decides
+ * aquí" se nombran en texto, no solo por estilo visual.
+ */
+interface Props {
+  tone?: 'paper' | 'forest'
+  class?: string
+}
+
+const { tone = 'paper', class: className = '' } = Astro.props
+
+const antes = [
+  { paso: 'Llegan datos sueltos', perdida: true },
+  { paso: 'Los copias a mano de un sitio a otro', perdida: true },
+  { paso: 'Revisas y decides qué hacer' },
+  { paso: 'Redactas y avisas uno por uno', perdida: true },
+]
+const despues = [
+  { paso: 'Llegan datos sueltos' },
+  { paso: 'La herramienta los ordena y prepara', maquina: true },
+  { paso: 'Tú decides, con todo ya servido', humano: true },
+  { paso: 'Redacta y avisa sola', maquina: true },
+]
+---
+
+<div class:list={['baflow', `baflow--${tone}`, className]}>
+  {/* Carril ANTES: a mano, con las horas que se escapan marcadas. */}
+  <section class="baflow__lane baflow__lane--before" aria-labelledby="baflow-before">
+    <h3 id="baflow-before" class="baflow__lane-title">Hoy, a mano</h3>
+    <ol class="baflow__steps">
+      {
+        antes.map((s, i) => (
+          <li class="baflow__step">
+            <span class="baflow__rail" aria-hidden="true">
+              <span class="baflow__node" />
+              {i < antes.length - 1 && <span class="baflow__line" />}
+            </span>
+            <div class="baflow__cell">
+              <p class="baflow__paso">{s.paso}</p>
+              {s.perdida && <p class="baflow__lost">Aquí se te van horas</p>}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  {/* Carril DESPUÉS: la máquina hace lo mecánico, tú quedas en el lazo clave. */}
+  <section class="baflow__lane baflow__lane--after" aria-labelledby="baflow-after">
+    <h3 id="baflow-after" class="baflow__lane-title">Con una herramienta a medida</h3>
+    <ol class="baflow__steps">
+      {
+        despues.map((s, i) => (
+          <li
+            class:list={[
+              'baflow__step',
+              { 'baflow__step--machine': s.maquina, 'baflow__step--human': s.humano },
+            ]}
+          >
+            <span class="baflow__rail" aria-hidden="true">
+              <span class="baflow__node" />
+              {i < despues.length - 1 && <span class="baflow__line" />}
+            </span>
+            <div class="baflow__cell">
+              <p class="baflow__paso">{s.paso}</p>
+              {s.maquina && <p class="baflow__who">Lo hace la máquina</p>}
+              {s.humano && <p class="baflow__who baflow__who--human">Tú decides aquí</p>}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</div>
+
+<style>
+  .baflow {
+    --ba-ink: var(--color-ink);
+    --ba-soft: var(--ink-soft);
+    --ba-mute: var(--ink-mute-strong);
+    --ba-rule: var(--color-rule);
+    --ba-accent: var(--color-teal-deep);
+    --ba-node-ring: var(--color-paper);
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 2.5rem);
+  }
+  .baflow--forest {
+    --ba-ink: var(--paper-on-dark);
+    --ba-soft: var(--paper-on-dark-soft);
+    --ba-mute: var(--paper-on-dark-soft);
+    --ba-rule: var(--color-rule-invert);
+    --ba-accent: var(--color-teal-bright);
+    --ba-node-ring: var(--color-forest);
+  }
+  @media (min-width: 760px) {
+    .baflow {
+      grid-template-columns: 1fr 1fr;
+      column-gap: clamp(2rem, 5vw, 4rem);
+      align-items: start;
+    }
+  }
+
+  .baflow__lane {
+    min-width: 0;
+  }
+  .baflow__lane-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-h3);
+    letter-spacing: -0.01em;
+    color: var(--ba-ink);
+    margin: 0 0 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--ba-rule);
+  }
+  .baflow__lane--after .baflow__lane-title {
+    border-bottom-color: color-mix(in oklab, var(--ba-accent) 55%, transparent);
+  }
+
+  .baflow__steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .baflow__step {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0 clamp(0.8rem, 2vw, 1.1rem);
+  }
+  .baflow__rail {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 16px;
+  }
+  .baflow__node {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--ba-mute);
+    box-shadow: 0 0 0 3px var(--ba-node-ring), 0 0 0 4px var(--ba-rule);
+    flex: none;
+    margin-top: 0.3rem;
+  }
+  /* El "después" usa nodos teal para los pasos de máquina y un nodo mayor para
+     el humano: la persona no desaparece, se reubica como el punto clave. */
+  .baflow__step--machine .baflow__node {
+    background: var(--ba-accent);
+  }
+  .baflow__step--human .baflow__node {
+    width: 15px;
+    height: 15px;
+    background: var(--ba-accent);
+    box-shadow:
+      0 0 0 3px var(--ba-node-ring),
+      0 0 0 5px var(--ba-accent);
+  }
+  .baflow__line {
+    flex: 1;
+    width: 2px;
+    margin: 0.3rem 0;
+    background: var(--ba-rule);
+    border-radius: 999px;
+    min-height: 1.25rem;
+  }
+  .baflow__lane--after .baflow__line {
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--ba-accent) 55%, transparent),
+      var(--ba-rule)
+    );
+  }
+
+  .baflow__cell {
+    padding-bottom: clamp(1rem, 2.5vw, 1.5rem);
+    min-width: 0;
+  }
+  .baflow__step:last-child .baflow__cell {
+    padding-bottom: 0;
+  }
+  .baflow__paso {
+    font-size: var(--text-body);
+    line-height: 1.5;
+    color: var(--ba-ink);
+    margin: 0;
+    max-width: 36ch;
+  }
+  /* Horas perdidas: etiqueta honesta, sin cifra inventada. Tinta AA, no rojo. */
+  .baflow__lost {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.04em;
+    color: var(--ba-mute);
+    margin: 0.3rem 0 0;
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .baflow__lost::before {
+    content: "×";
+    position: absolute;
+    left: 0.1rem;
+    font-weight: 700;
+    color: var(--ba-mute);
+  }
+  .baflow__who {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.04em;
+    color: var(--ba-mute);
+    margin: 0.3rem 0 0;
+  }
+  .baflow__who--human {
+    color: var(--ba-ink);
+    font-weight: 500;
+  }
+</style>

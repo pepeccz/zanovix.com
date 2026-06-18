@@ -8,6 +8,7 @@
  */
 import PageLayout from '../../layouts/PageLayout.astro'
 import AutomationSketch from '../../components/react/AutomationSketch.tsx'
+import BeforeAfterFlow from '../../components/astro/ui/BeforeAfterFlow.astro'
 
 const incluye = [
   'Una herramienta hecha a la medida de tu proceso real, no una plantilla a la que te toque adaptarte tú.',
@@ -78,6 +79,22 @@ const incluye = [
         no se sostiene a mano. Si lo tuyo es muy concreto, mejor: cuanto más
         específico, más se nota la diferencia frente a una plantilla genérica.
       </p>
+    </section>
+
+    <!-- ── El proceso, antes y después ──────────────────────────────────
+     * El AutomationSketch de arriba esboza tu caso concreto. Este diagrama
+     * EXPLICA el modelo: lo mecánico lo hace la máquina y tú te quedas en el
+     * único punto donde de verdad hace falta tu criterio. La persona no
+     * desaparece, se reubica. Sin cifras de horas inventadas (vetos vigentes).
+     -->
+    <section class="svc__block" aria-labelledby="antes-despues">
+      <h2 id="antes-despues" class="svc__h2">El mismo proceso, antes y después</h2>
+      <p class="svc__body">
+        Automatizar bien no es quitar a la persona de en medio. Es quitarle el
+        trabajo mecánico y dejarla justo donde aporta: decidiendo, con todo ya
+        preparado.
+      </p>
+      <BeforeAfterFlow tone="paper" />
     </section>
 
     <section class="svc__block" aria-labelledby="incluye">

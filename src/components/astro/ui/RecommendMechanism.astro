@@ -1,0 +1,280 @@
+---
+/**
+ * RecommendMechanism.astro — cómo te recomienda (o no) una IA
+ *
+ * Qué es: un diagrama a medida del MECANISMO GEO. Dibuja qué pasa por dentro
+ * cuando alguien le pregunta a una IA por lo que tú haces: la pregunta entra,
+ * el modelo busca señales sobre los negocios que conoce, y reparte sus citas.
+ * Si de ti no hay señales, no te cita: te quedas fuera de la respuesta. Es lo
+ * que el GeoSimulator demuestra en vivo; este diagrama lo EXPLICA.
+ *
+ * Por qué un diagrama: el GeoSimulator ya prueba el resultado ("una IA no te
+ * conoce"). Lo que falta es el porqué del mecanismo, y un flujo de tres nodos
+ * (pregunta → señales → reparto de citas) lo cuenta sin stock y sin jerga. No
+ * duplica el demo: el demo es la prueba viva, esto es el modelo mental.
+ *
+ * Construcción: SVG/CSS a medida. Un nodo central (el modelo) recibe la
+ * pregunta y emite dos salidas: los negocios CON señales se citan (teal), el
+ * tuyo SIN señales queda fuera (atenuado, línea de puntos). El contraste de las
+ * dos salidas es justo el mensaje de venta.
+ *
+ * Mundo: forest (drenched) por defecto, para vivir junto al GeoSimulator que ya
+ * es forest. El teal marca la cita lograda; el texto en tintas AA.
+ *
+ * A11y: informativo, NO aria-hidden. Estructura semántica con encabezado y
+ * lista; el SVG conector es decorativo (aria-hidden). El resultado "fuera de la
+ * respuesta" se nombra en texto, no solo por el color/estilo de línea.
+ */
+interface Props {
+  tone?: 'forest' | 'paper'
+  class?: string
+}
+
+const { tone = 'forest', class: className = '' } = Astro.props
+---
+
+<figure class:list={['rmech', `rmech--${tone}`, className]}>
+  <figcaption class="rmech__caption">
+    Qué pasa por dentro cuando alguien pregunta a una IA por tu categoría.
+  </figcaption>
+
+  <div class="rmech__diagram">
+    {/* Etapa 1: la pregunta entra. */}
+    <div class="rmech__stage rmech__stage--ask">
+      <p class="rmech__kicker">Alguien pregunta</p>
+      <p class="rmech__ask">
+        “¿Qué <span class="rmech__mark">[tu categoría]</span> me recomiendas?”
+      </p>
+    </div>
+
+    {/* Conector decorativo entre la pregunta y el modelo. */}
+    <span class="rmech__connector" aria-hidden="true">
+      <svg viewBox="0 0 60 12" fill="none" focusable="false" preserveAspectRatio="none">
+        <path d="M0 6h54" class="rmech__conn-line" stroke-linecap="round" />
+        <path d="M50 2l6 4-6 4" class="rmech__conn-line" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </span>
+
+    {/* Etapa 2: el modelo busca señales. */}
+    <div class="rmech__stage rmech__stage--model">
+      <p class="rmech__kicker">El modelo busca señales</p>
+      <p class="rmech__model">
+        Quién está cerca, qué hace y qué se dice de él, allí donde la IA lo
+        puede leer.
+      </p>
+    </div>
+
+    {/* Conector que se bifurca hacia las dos salidas. */}
+    <span class="rmech__connector rmech__connector--split" aria-hidden="true">
+      <svg viewBox="0 0 60 60" fill="none" focusable="false" preserveAspectRatio="none">
+        <path d="M0 30h26" class="rmech__conn-line" stroke-linecap="round" />
+        <path d="M26 30C40 30 40 12 56 12" class="rmech__conn-line" />
+        <path d="M26 30C40 30 40 48 56 48" class="rmech__conn-dash" />
+      </svg>
+    </span>
+
+    {/* Etapa 3: las dos salidas. El contraste ES el mensaje. */}
+    <ol class="rmech__outcomes">
+      <li class="rmech__outcome rmech__outcome--cited">
+        <p class="rmech__outcome-tag">Con señales</p>
+        <p class="rmech__outcome-text">
+          A esos negocios los cita. Salen en la respuesta y se llevan al cliente.
+        </p>
+      </li>
+      <li class="rmech__outcome rmech__outcome--out">
+        <p class="rmech__outcome-tag">Sin señales: tú, hoy</p>
+        <p class="rmech__outcome-text">
+          Si de ti no hay señales claras, no te nombra. Te quedas fuera de la
+          respuesta, y ni te enteras.
+        </p>
+      </li>
+    </ol>
+  </div>
+
+  <p class="rmech__foot">
+    GEO es trabajar esas señales para entrar en la respuesta. Aquí es donde
+    entramos nosotros.
+  </p>
+</figure>
+
+<style>
+  .rmech {
+    --rm-ink: var(--paper-on-dark);
+    --rm-soft: var(--paper-on-dark-soft);
+    --rm-mute: var(--paper-on-dark-mute);
+    --rm-rule: var(--color-rule-invert);
+    --rm-accent: var(--color-teal-bright);
+    --rm-panel: var(--color-forest-deep);
+    background: var(--color-forest);
+    color: var(--rm-ink);
+    border: 1px solid var(--rm-rule);
+    border-radius: 16px;
+    padding: clamp(1.25rem, 2vw + 0.75rem, 2rem);
+    margin: 0;
+    font-family: var(--font-sans);
+  }
+  .rmech--paper {
+    --rm-ink: var(--color-ink);
+    --rm-soft: var(--ink-soft);
+    --rm-mute: var(--ink-mute-strong);
+    --rm-rule: var(--color-rule);
+    --rm-accent: var(--color-teal-deep);
+    --rm-panel: var(--color-surface);
+    background: var(--color-paper);
+  }
+
+  .rmech__caption {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+    color: var(--rm-mute);
+    margin: 0 0 1.25rem;
+    max-width: 48ch;
+  }
+
+  /* Vertical en móvil; en ancho la bifurcación se abre en horizontal. */
+  .rmech__diagram {
+    display: grid;
+    gap: 0;
+  }
+  .rmech__stage {
+    background: var(--rm-panel);
+    border: 1px solid var(--rm-rule);
+    border-radius: 10px;
+    padding: 0.95rem 1.1rem;
+  }
+  .rmech__kicker {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rm-mute);
+    margin: 0 0 0.35rem;
+  }
+  .rmech__ask {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--rm-ink);
+    margin: 0;
+    max-width: 24ch;
+  }
+  .rmech__mark {
+    color: var(--rm-accent);
+  }
+  .rmech__model {
+    font-size: var(--text-body);
+    line-height: 1.55;
+    color: var(--rm-soft);
+    margin: 0;
+    max-width: 44ch;
+  }
+
+  /* Conectores: verticales en móvil (alto fijo), con flecha hacia abajo. */
+  .rmech__connector {
+    display: block;
+    height: 28px;
+    width: 100%;
+    transform: rotate(90deg);
+    transform-origin: center;
+    margin: 0.15rem 0;
+  }
+  .rmech__connector svg {
+    width: 28px;
+    height: 12px;
+    display: block;
+    margin: 0 auto;
+  }
+  .rmech__connector--split svg {
+    width: 60px;
+    height: 60px;
+  }
+  .rmech__conn-line {
+    stroke: var(--rm-accent);
+    stroke-width: 2;
+    fill: none;
+  }
+  .rmech__conn-dash {
+    stroke: var(--rm-mute);
+    stroke-width: 2;
+    stroke-dasharray: 3 4;
+    fill: none;
+  }
+
+  .rmech__outcomes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .rmech__outcome {
+    border-radius: 10px;
+    padding: 0.95rem 1.1rem;
+    border: 1px solid var(--rm-rule);
+    background: var(--rm-panel);
+  }
+  .rmech__outcome--cited {
+    border-color: color-mix(in oklab, var(--rm-accent) 55%, transparent);
+  }
+  .rmech__outcome--out {
+    /* Atenuado a propósito: es el que se queda fuera. Aún AA en su texto. */
+    border-style: dashed;
+  }
+  .rmech__outcome-tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rm-mute);
+    margin: 0 0 0.3rem;
+  }
+  .rmech__outcome--cited .rmech__outcome-tag {
+    color: var(--rm-ink);
+  }
+  .rmech__outcome-text {
+    font-size: var(--text-body);
+    line-height: 1.55;
+    color: var(--rm-soft);
+    margin: 0;
+    max-width: 40ch;
+  }
+
+  .rmech__foot {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.04em;
+    line-height: 1.55;
+    color: var(--rm-accent);
+    margin: 1.25rem 0 0;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--rm-rule);
+    max-width: 50ch;
+  }
+
+  /* ── Escritorio: la pregunta arriba, el modelo en medio y las dos salidas
+   * en fila. La bifurcación se lee de izquierda a derecha. */
+  @media (min-width: 720px) {
+    .rmech__diagram {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .rmech__connector {
+      transform: none;
+      height: 22px;
+      margin: 0.35rem 0;
+    }
+    .rmech__connector svg {
+      width: 60px;
+    }
+    .rmech__connector--split {
+      height: 60px;
+    }
+    .rmech__outcomes {
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+  }
+</style>

@@ -1,0 +1,263 @@
+---
+/**
+ * DecisionPath.astro — opciones, criterio y decisión
+ *
+ * Qué es: un diagrama a medida del VALOR de la consultoría TIC: convierte un
+ * montón de opciones que tiran cada una para su lado en una decisión clara,
+ * pasándolas por un criterio honesto (riesgo, coste real, qué se puede
+ * esperar). No es decoración: EXPLICA qué hace un buen criterio, que es
+ * justo lo intangible que esta página, la más "plana", necesita mostrar.
+ *
+ * Por qué un diagrama: consultoría TIC no tiene demo ni producto que enseñar;
+ * su entregable es criterio. Un flujo de "varias opciones que entran → un
+ * filtro de criterio → una salida" dibuja ese valor sin stock y sin jerga, y
+ * deja claro el sesgo honesto: el criterio puede concluir "ninguna, todavía".
+ *
+ * Construcción: tres columnas en escritorio (entran las opciones, pasan por el
+ * criterio, sale la decisión), apiladas en móvil con conectores. El criterio
+ * es el nodo central destacado; sus ejes se nombran en texto.
+ *
+ * Mundo: paper por defecto (la página es clara). El teal marca el criterio y
+ * la salida; el texto en tintas AA, nunca teal en cuerpo.
+ *
+ * A11y: informativo, NO aria-hidden. Estructura con encabezados y listas; los
+ * conectores SVG/CSS son decorativos. La decisión honesta ("a veces, ninguna")
+ * se nombra en texto.
+ */
+interface Props {
+  tone?: 'paper' | 'forest'
+  class?: string
+}
+
+const { tone = 'paper', class: className = '' } = Astro.props
+
+const opciones = [
+  'El proveedor que ya tienes',
+  'La herramienta de moda',
+  'Lo que recomienda un conocido',
+  'Rehacerlo todo de cero',
+]
+const ejes = ['Qué riesgo hay', 'Cuánto cuesta de verdad', 'Qué se puede esperar']
+---
+
+<figure class:list={['dpath', `dpath--${tone}`, className]}>
+  <figcaption class="dpath__caption">
+    Qué hace el criterio: ordenar el ruido en una decisión que puedas defender.
+  </figcaption>
+
+  <div class="dpath__flow">
+    {/* Entrada: las opciones que llegan tirando cada una para su lado. */}
+    <section class="dpath__col dpath__col--in" aria-labelledby="dpath-in">
+      <h3 id="dpath-in" class="dpath__col-title">Lo que te llega</h3>
+      <ul class="dpath__options">
+        {opciones.map((o) => <li class="dpath__option">{o}</li>)}
+      </ul>
+    </section>
+
+    <span class="dpath__arrow" aria-hidden="true">
+      <svg viewBox="0 0 48 16" fill="none" focusable="false" preserveAspectRatio="none">
+        <path d="M2 8h40" class="dpath__arrow-line" stroke-linecap="round" />
+        <path d="M38 3l6 5-6 5" class="dpath__arrow-line" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </span>
+
+    {/* Centro: el criterio. Nodo destacado con sus ejes nombrados. */}
+    <section class="dpath__col dpath__col--criteria" aria-labelledby="dpath-crit">
+      <h3 id="dpath-crit" class="dpath__col-title dpath__col-title--accent">El criterio</h3>
+      <ul class="dpath__axes">
+        {ejes.map((e) => <li class="dpath__axis">{e}</li>)}
+      </ul>
+      <p class="dpath__neutral">Neutral: trabaja para ti, no para colocarte un producto.</p>
+    </section>
+
+    <span class="dpath__arrow" aria-hidden="true">
+      <svg viewBox="0 0 48 16" fill="none" focusable="false" preserveAspectRatio="none">
+        <path d="M2 8h40" class="dpath__arrow-line dpath__arrow-line--out" stroke-linecap="round" />
+        <path d="M38 3l6 5-6 5" class="dpath__arrow-line dpath__arrow-line--out" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </span>
+
+    {/* Salida: una decisión clara, con honestidad incluida. */}
+    <section class="dpath__col dpath__col--out" aria-labelledby="dpath-out">
+      <h3 id="dpath-out" class="dpath__col-title">La decisión</h3>
+      <p class="dpath__decision">Una opción clara, con sus motivos por escrito.</p>
+      <p class="dpath__honest">
+        Y si lo honesto es no hacer nada todavía, también es una decisión.
+      </p>
+    </section>
+  </div>
+</figure>
+
+<style>
+  .dpath {
+    --dp-ink: var(--color-ink);
+    --dp-soft: var(--ink-soft);
+    --dp-mute: var(--ink-mute-strong);
+    --dp-rule: var(--color-rule);
+    --dp-accent: var(--color-teal-deep);
+    --dp-panel: var(--color-surface);
+    margin: 0;
+    border: 1px solid var(--dp-rule);
+    border-radius: 16px;
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    background: var(--color-paper);
+    font-family: var(--font-sans);
+  }
+  .dpath--forest {
+    --dp-ink: var(--paper-on-dark);
+    --dp-soft: var(--paper-on-dark-soft);
+    --dp-mute: var(--paper-on-dark-soft);
+    --dp-rule: var(--color-rule-invert);
+    --dp-accent: var(--color-teal-bright);
+    --dp-panel: var(--color-forest-deep);
+    background: var(--color-forest);
+    color: var(--dp-ink);
+  }
+
+  .dpath__caption {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+    color: var(--dp-mute);
+    margin: 0 0 1.5rem;
+    max-width: 52ch;
+  }
+
+  /* Apilado en móvil (entrada → criterio → salida en columna). */
+  .dpath__flow {
+    display: grid;
+    gap: 0;
+    align-items: stretch;
+  }
+  .dpath__col {
+    min-width: 0;
+  }
+  .dpath__col-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--dp-mute);
+    margin: 0 0 0.75rem;
+  }
+  .dpath__col-title--accent {
+    color: var(--dp-ink);
+  }
+
+  .dpath__options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .dpath__option {
+    font-size: var(--text-body);
+    line-height: 1.45;
+    color: var(--dp-soft);
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--dp-rule);
+    border-radius: 8px;
+    background: var(--dp-panel);
+  }
+
+  /* El criterio: panel destacado con borde teal. El centro del diagrama. */
+  .dpath__col--criteria {
+    border: 1px solid color-mix(in oklab, var(--dp-accent) 55%, transparent);
+    border-radius: 12px;
+    padding: 1.1rem 1.2rem;
+    background: var(--dp-panel);
+  }
+  .dpath__axes {
+    list-style: none;
+    margin: 0 0 0.85rem;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+  .dpath__axis {
+    font-size: var(--text-body);
+    line-height: 1.4;
+    color: var(--dp-ink);
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .dpath__axis::before {
+    content: "·";
+    position: absolute;
+    left: 0.3rem;
+    color: var(--dp-accent);
+    font-weight: 700;
+  }
+  .dpath__neutral {
+    font-size: var(--text-eyebrow);
+    line-height: 1.5;
+    color: var(--dp-soft);
+    margin: 0;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--dp-rule);
+    max-width: 36ch;
+  }
+
+  .dpath__decision {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--dp-ink);
+    margin: 0 0 0.6rem;
+    max-width: 22ch;
+  }
+  .dpath__honest {
+    font-size: var(--text-body);
+    line-height: 1.55;
+    color: var(--dp-soft);
+    margin: 0;
+    max-width: 36ch;
+  }
+
+  /* Flecha conectora: vertical (hacia abajo) en móvil, horizontal en ancho. */
+  .dpath__arrow {
+    display: block;
+    width: 24px;
+    height: 28px;
+    margin: 0.9rem auto;
+  }
+  .dpath__arrow svg {
+    width: 16px;
+    height: 28px;
+    display: block;
+    margin: 0 auto;
+    transform: rotate(90deg);
+    transform-origin: center;
+  }
+  .dpath__arrow-line {
+    stroke: var(--dp-mute);
+    stroke-width: 2;
+    fill: none;
+  }
+  .dpath__arrow-line--out {
+    stroke: var(--dp-accent);
+  }
+
+  /* ── Escritorio: tres columnas, el flujo se lee de izquierda a derecha. */
+  @media (min-width: 760px) {
+    .dpath__flow {
+      grid-template-columns: 1fr auto 1.1fr auto 1fr;
+      gap: 0;
+      align-items: center;
+    }
+    .dpath__arrow {
+      width: 48px;
+      height: 16px;
+      margin: 0 clamp(0.5rem, 1.5vw, 1rem);
+    }
+    .dpath__arrow svg {
+      width: 48px;
+      height: 16px;
+      transform: none;
+    }
+  }
+</style>

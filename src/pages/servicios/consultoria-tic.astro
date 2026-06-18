@@ -7,6 +7,7 @@
  * compartidos en global.css (.svc*).
  */
 import PageLayout from '../../layouts/PageLayout.astro'
+import DecisionPath from '../../components/astro/ui/DecisionPath.astro'
 
 const incluye = [
   'Una segunda opinión técnica honesta antes de firmar, contratar o cambiar de proveedor.',
@@ -56,6 +57,22 @@ const incluye = [
         interesada. También cuando algo no cuadra con lo que te cuenta tu
         proveedor actual.
       </p>
+    </section>
+
+    <!-- ── El valor: opciones → criterio → decisión ─────────────────────
+     * La consultoría no tiene demo ni producto: su entregable es CRITERIO.
+     * Este diagrama dibuja justo eso: convierte el ruido de opciones en una
+     * decisión clara, pasándolas por un criterio honesto y neutral. Es lo que
+     * esta página, la más "plana", necesitaba para mostrar su valor.
+     -->
+    <section class="svc__block" aria-labelledby="criterio">
+      <h2 id="criterio" class="svc__h2">Qué hace, en realidad, un buen criterio</h2>
+      <p class="svc__body">
+        No es darte otra opinión más. Es ordenar todas las que ya te llegan,
+        pasarlas por lo que de verdad importa y dejarte una decisión que puedas
+        defender, aunque sea la de esperar.
+      </p>
+      <DecisionPath tone="paper" />
     </section>
 
     <section class="svc__block" aria-labelledby="incluye">

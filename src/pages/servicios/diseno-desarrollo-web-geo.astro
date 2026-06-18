@@ -11,6 +11,7 @@
  */
 import PageLayout from '../../layouts/PageLayout.astro'
 import GeoSimulator from '../../components/react/GeoSimulator.tsx'
+import RecommendMechanism from '../../components/astro/ui/RecommendMechanism.astro'
 
 const incluye = [
   'Diseño y desarrollo de la web, rápida y clara, hecha para que la entiendan tus clientes y una IA.',
@@ -81,6 +82,22 @@ const incluye = [
         por debajo de la calidad real de su negocio, y que han empezado a notar
         que la gente busca de otra manera.
       </p>
+    </section>
+
+    <!-- ── El mecanismo GEO: cómo te recomienda (o no) una IA ───────────
+     * El GeoSimulator de arriba PRUEBA el resultado ("una IA no te conoce").
+     * Este diagrama EXPLICA el porqué: la pregunta entra, el modelo busca
+     * señales y reparte sus citas. Sin señales tuyas, te quedas fuera. No
+     * duplica el demo: el demo es la prueba viva, esto es el modelo mental.
+     -->
+    <section class="svc__block" aria-labelledby="mecanismo">
+      <h2 id="mecanismo" class="svc__h2">Cómo te recomienda, o no, una IA</h2>
+      <p class="svc__body">
+        No es magia ni un ranking secreto. Es un mecanismo: la IA reparte sus
+        recomendaciones entre los negocios de los que tiene señales claras. GEO
+        es trabajar esas señales para que tú entres en la respuesta.
+      </p>
+      <RecommendMechanism tone="forest" />
     </section>
 
     <section class="svc__block" aria-labelledby="incluye">
