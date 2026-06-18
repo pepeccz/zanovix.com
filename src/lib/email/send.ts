@@ -8,13 +8,13 @@
  * QUE DEBE MONTAR EL USUARIO (una de estas dos vias):
  *
  *   Via A (recomendada, sin tocar el admin del Workspace): App Password.
- *     1. La cuenta del Workspace que envia (p.ej. hola@zanovix.com) debe
+ *     1. La cuenta del Workspace que envia (p.ej. info@zanovix.com) debe
  *        tener la verificacion en dos pasos (2FA) ACTIVADA.
  *     2. Crear una App Password en
  *        https://myaccount.google.com/apppasswords
  *        (16 caracteres, sin espacios).
  *     3. Definir las env vars:
- *          SMTP_USER = hola@zanovix.com
+ *          SMTP_USER = info@zanovix.com
  *          SMTP_PASS = <la app password de 16 caracteres>
  *        SMTP_HOST y SMTP_PORT usan los defaults (smtp.gmail.com:465, SSL).
  *
@@ -27,7 +27,7 @@
  *          SMTP_USER / SMTP_PASS segun la politica de auth elegida.
  *
  *   Opcional en ambas vias:
- *     LEAD_TO_EMAIL   destino de los leads (default hola@zanovix.com)
+ *     LEAD_TO_EMAIL   destino de los leads (default info@zanovix.com)
  *     LEAD_FROM_EMAIL remitente; si no se define, usa SMTP_USER.
  *                     Con Gmail SMTP el remitente debe ser la propia cuenta
  *                     (o un alias "send as" verificado), no un dominio ajeno.
@@ -39,15 +39,17 @@
  * formulario muestren el fallback al email directo (nunca un callejon sin
  * salida).
  *
- * SERVER-ONLY: lee import.meta.env (claves de servidor) e importa
- * nodemailer (modulo de Node). No debe importarse jamas desde codigo de
- * cliente. Se usa solo dentro de rutas SSR (prerender = false).
+ * SERVER-ONLY: lee las variables sensibles con runtimeEnv (process.env en
+ * runtime, no import.meta.env inlineado en build) e importa nodemailer (modulo
+ * de Node). No debe importarse jamas desde codigo de cliente. Se usa solo
+ * dentro de rutas SSR (prerender = false).
  */
 
 import nodemailer from 'nodemailer'
+import { runtimeEnv } from '../runtime-env'
 
 /** Email directo de fallback, visible cuando el envio no esta disponible. */
-export const FALLBACK_EMAIL = 'hola@zanovix.com'
+export const FALLBACK_EMAIL = 'info@zanovix.com'
 
 /** Host SMTP por defecto: Gmail / Google Workspace. */
 const DEFAULT_SMTP_HOST = 'smtp.gmail.com'
@@ -159,14 +161,16 @@ function buildHtml(lead: LeadPayload): string {
  * un fallo de conexion/timeout, reason='network-error'.
  */
 export async function sendLead(lead: LeadPayload): Promise<SendResult> {
-  const host = (import.meta.env.SMTP_HOST as string | undefined) || DEFAULT_SMTP_HOST
-  const port = Number(import.meta.env.SMTP_PORT) || DEFAULT_SMTP_PORT
-  const user = import.meta.env.SMTP_USER as string | undefined
-  const pass = import.meta.env.SMTP_PASS as string | undefined
-  const to = (import.meta.env.LEAD_TO_EMAIL as string | undefined) || FALLBACK_EMAIL
+  // Leidas en RUNTIME (process.env primero) para funcionar en produccion con
+  // el entorno del servidor sin rebuild; ver runtime-env.ts.
+  const host = runtimeEnv('SMTP_HOST') || DEFAULT_SMTP_HOST
+  const port = Number(runtimeEnv('SMTP_PORT')) || DEFAULT_SMTP_PORT
+  const user = runtimeEnv('SMTP_USER')
+  const pass = runtimeEnv('SMTP_PASS')
+  const to = runtimeEnv('LEAD_TO_EMAIL') || FALLBACK_EMAIL
   // Con Gmail SMTP el remitente debe ser la propia cuenta autenticada (o un
   // alias "send as" verificado). Por defecto, el propio SMTP_USER.
-  const from = (import.meta.env.LEAD_FROM_EMAIL as string | undefined) || user
+  const from = runtimeEnv('LEAD_FROM_EMAIL') || user
 
   if (!user || !pass) {
     return { delivered: false, reason: 'not-configured', fallbackEmail: to }

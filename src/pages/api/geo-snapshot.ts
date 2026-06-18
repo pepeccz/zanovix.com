@@ -30,6 +30,7 @@
  */
 
 import type { APIRoute } from 'astro'
+import { runtimeEnv } from '../../lib/runtime-env'
 import {
   GEO_MODEL_ID,
   GEO_INPUT_MAX,
@@ -145,9 +146,11 @@ export const POST: APIRoute = async ({ request, clientAddress, site }) => {
     input.description = input.description.slice(0, GEO_INPUT_MAX)
   }
 
-  const apiKey = import.meta.env.OPENROUTER_API_KEY as string | undefined
+  // Clave leida en RUNTIME (process.env primero), no inlineada en build; asi
+  // en produccion funciona con el entorno del servidor sin rebuild.
+  const apiKey = runtimeEnv('OPENROUTER_API_KEY')
   if (!apiKey) {
-    // Caso actual (sin clave): degradacion honesta al modo determinista.
+    // Sin clave: degradacion honesta al modo determinista.
     return fallback()
   }
 

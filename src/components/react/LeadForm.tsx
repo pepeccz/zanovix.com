@@ -45,7 +45,7 @@ interface LeadResponse {
   error?: string
 }
 
-const FALLBACK_EMAIL = 'hola@zanovix.com'
+const FALLBACK_EMAIL = 'info@zanovix.com'
 
 export default function LeadForm() {
   const [name, setName] = useState('')

@@ -76,7 +76,7 @@ export interface ContactDialogContext {
 /** Nombre del evento global que abre el dialogo. */
 export const OPEN_CONTACT_EVENT = 'zx:open-contact'
 
-const FALLBACK_EMAIL = 'hola@zanovix.com'
+const FALLBACK_EMAIL = 'info@zanovix.com'
 
 /**
  * Compone el texto inicial del mensaje a partir del contexto del CTA. El
