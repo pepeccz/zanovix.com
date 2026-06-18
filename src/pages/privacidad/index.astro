@@ -28,8 +28,8 @@ const datos = [
     como: 'Si abres el panel del asistente y le escribes, lo que escribes se envía a una IA externa (OpenRouter) para poder responderte. No se abre solo: solo si tú lo abres. Te lo decimos en el propio panel antes de que escribas.',
   },
   {
-    dato: 'La radiografía GEO',
-    como: 'En la página del servicio de web y GEO, si rellenas el nombre de tu negocio y marcas la casilla de consentimiento, ese texto se envía a la misma IA externa para enseñarte qué sabe de ti. Sin marcar la casilla, no se envía nada.',
+    dato: 'Las pruebas en vivo de los servicios',
+    como: 'En las páginas de servicio hay pruebas en vivo (la radiografía GEO y el esbozo de automatización). Si rellenas el campo y marcas la casilla de consentimiento, ese texto se envía a la misma IA externa para enseñarte el resultado al momento. Sin marcar la casilla, no se envía nada.',
   },
   {
     dato: 'El formulario de contacto',
@@ -88,13 +88,15 @@ const datos = [
     </ul>
   </section>
 
-  <!-- ── La radiografía (IA externa, con consentimiento) ─────────── -->
+  <!-- ── Las pruebas en vivo (IA externa, con consentimiento) ────── -->
   <section class="block" aria-labelledby="geo-title">
-    <h2 id="geo-title" class="display block__title">La radiografía y la IA externa</h2>
+    <h2 id="geo-title" class="display block__title">Las pruebas en vivo y la IA externa</h2>
     <p class="block__body">
-      La radiografía es el paso en el que le preguntamos a una IA qué sabe hoy
-      de tu negocio y si te recomendaría cuando alguien pregunta por lo tuyo.
-      Para eso hace falta enviar el texto que has escrito a un proveedor de IA
+      En las páginas de servicio hay pruebas en vivo: la radiografía GEO, donde
+      le preguntamos a una IA qué sabe hoy de tu negocio, y el esbozo de
+      automatización, donde describes una tarea repetitiva y te dibujamos qué
+      parte se podría automatizar. Las dos funcionan igual: para enseñarte el
+      resultado hace falta enviar el texto que has escrito a un proveedor de IA
       fuera de Zanovix. Por eso te pedimos permiso antes, con una casilla clara.
       Si no la marcas, no se envía nada.
     </p>
@@ -102,8 +104,9 @@ const datos = [
       <li class="data__row">
         <h3 class="data__name">Qué se envía</h3>
         <p class="data__how">
-          El nombre de tu negocio y lo que escribas sobre él (y, si los rellenas,
-          el sector y la zona). No enviamos tu nombre, tu email ni datos de
+          En la radiografía, el nombre de tu negocio y lo que escribas sobre él
+          (y, si los rellenas, el sector y la zona). En el esbozo, la tarea
+          repetitiva que describas. No enviamos tu nombre, tu email ni datos de
           contacto: eso solo viaja si rellenas el formulario.
         </p>
       </li>
@@ -119,8 +122,9 @@ const datos = [
       <li class="data__row">
         <h3 class="data__name">Para qué</h3>
         <p class="data__how">
-          Solo para generar esa radiografía y enseñártela al momento. No la
-          usamos para perfilarte ni para publicidad.
+          Solo para generar esa prueba (la radiografía o el esbozo) y
+          enseñártela al momento. No la usamos para perfilarte ni para
+          publicidad.
         </p>
       </li>
       <li class="data__row">
@@ -133,10 +137,12 @@ const datos = [
       </li>
     </ul>
     <p class="block__body">
-      Una cosa importante por honestidad: la radiografía refleja lo que esa IA
-      aprendió en su entrenamiento, no una auditoría en vivo de tu web. Es una
-      aproximación, no un rastreador que entra en tu sitio. Y no existe ser el
-      número uno en ChatGPT: hablamos de si te menciona o no, no de rankings.
+      Una cosa importante por honestidad: estas pruebas son orientativas. La
+      radiografía refleja lo que esa IA aprendió en su entrenamiento, no una
+      auditoría en vivo de tu web. El esbozo de automatización es eso, un
+      esbozo a partir de lo que cuentas, no una propuesta ni un presupuesto: no
+      te damos plazos ni precios ahí, eso sale hablando contigo. Y no existe ser
+      el número uno en ChatGPT: hablamos de si te menciona o no, no de rankings.
     </p>
   </section>
 

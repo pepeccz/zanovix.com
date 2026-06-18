@@ -462,6 +462,564 @@ h1, h2, h3, blockquote {
   outline-offset: 2px;
 }
 
+/* ── Autodiagnóstico AI Readiness (ReadinessCheck.tsx) ──────────────── */
+/* Mundo forest, como la radiografía GEO: panel drenched sobre claro. */
+.rcheck {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 16px;
+  padding: clamp(1.25rem, 2vw + 0.75rem, 2rem);
+  font-family: var(--font-sans);
+}
+.rcheck__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper-on-dark-mute);
+  margin: 0 0 1.1rem;
+}
+.rcheck__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-teal-bright);
+  flex: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rcheck__dot {
+    animation: companionPulse 2.4s ease-in-out infinite;
+  }
+}
+
+/* Progreso */
+.rcheck__progress {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+}
+.rcheck__count {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.06em;
+  color: var(--paper-on-dark-mute);
+  flex: none;
+}
+.rcheck__bar {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-forest-deep);
+  overflow: hidden;
+}
+.rcheck__bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--color-teal-bright);
+  border-radius: 999px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rcheck__bar-fill {
+    transition: width 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+/* Pregunta */
+.rcheck__fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.rcheck__legend {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: var(--paper-on-dark);
+  padding: 0;
+  margin: 0 0 0.4rem;
+  max-width: 28ch;
+  text-wrap: balance;
+}
+.rcheck__legend:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.rcheck__hint {
+  margin: 0 0 1rem;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+  max-width: 50ch;
+}
+.rcheck__options {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+.rcheck__option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  background: var(--color-forest-deep);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 10px;
+  padding: 0.8rem 0.95rem;
+  cursor: pointer;
+  color: var(--paper-on-dark-soft);
+  line-height: 1.5;
+}
+.rcheck__option:hover {
+  border-color: color-mix(in oklab, var(--color-teal-bright) 55%, transparent);
+}
+.rcheck__option.is-selected {
+  border-color: var(--color-teal-bright);
+  color: var(--paper-on-dark);
+  background: color-mix(in oklab, var(--color-teal-bright) 14%, var(--color-forest-deep));
+}
+.rcheck__option:has(.rcheck__radio:focus-visible) {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+}
+.rcheck__radio {
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.12rem;
+  accent-color: var(--color-teal-bright);
+  cursor: pointer;
+}
+.rcheck__option-text {
+  font-size: var(--text-body);
+  min-width: 0;
+}
+
+/* Navegación */
+.rcheck__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+.rcheck__back {
+  background: transparent;
+  border: 0;
+  color: var(--paper-on-dark-soft);
+  font: inherit;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0.5rem 0;
+}
+.rcheck__back:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+.rcheck__back:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.rcheck__next {
+  margin-left: auto;
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 10px;
+  padding: 0.8rem 1.3rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.rcheck__next:hover { background: var(--color-teal); }
+.rcheck__next:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.rcheck__next:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.rcheck__note {
+  margin: 1.1rem 0 0;
+  font-size: var(--text-eyebrow);
+  color: var(--paper-on-dark-mute);
+  line-height: 1.55;
+  max-width: 54ch;
+}
+
+/* Resultado */
+.rcheck__result:focus-visible {
+  outline: none;
+}
+.rcheck__tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  margin: 0 0 1rem;
+  border: 1px solid var(--color-rule-invert);
+  color: var(--paper-on-dark);
+}
+.rcheck__tag--listo {
+  background: color-mix(in oklab, var(--color-teal-bright) 22%, var(--color-forest-deep));
+  border-color: color-mix(in oklab, var(--color-teal-bright) 55%, transparent);
+}
+.rcheck__tag--parcial {
+  background: var(--color-forest-deep);
+}
+.rcheck__tag--cimientos {
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark-soft);
+}
+.rcheck__verdict {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--color-teal-bright);
+  margin: 0 0 1.25rem;
+  max-width: 26ch;
+  text-wrap: balance;
+}
+.rcheck__dl {
+  margin: 0;
+  display: grid;
+  gap: 0.875rem;
+}
+.rcheck__item {
+  display: grid;
+  gap: 0.3rem;
+  background: var(--color-forest-deep);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 10px;
+  padding: 0.95rem 1rem;
+}
+.rcheck__item--step {
+  border-color: color-mix(in oklab, var(--color-teal-bright) 50%, transparent);
+}
+.rcheck__item dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--paper-on-dark-mute);
+}
+.rcheck__item dd {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.55;
+  color: var(--paper-on-dark);
+  max-width: 62ch;
+}
+.rcheck__actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.rcheck__cta {
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 10px;
+  padding: 0.8rem 1.3rem;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.rcheck__cta:hover { background: var(--color-teal); }
+.rcheck__cta:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.rcheck__service {
+  color: var(--paper-on-dark);
+  font: inherit;
+  font-size: var(--text-eyebrow);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rcheck__service:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.rcheck__restart {
+  background: transparent;
+  border: 0;
+  color: var(--paper-on-dark-soft);
+  font: inherit;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0.25rem 0;
+}
+.rcheck__restart:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+
+/* ── Esbozo de automatización (AutomationSketch.tsx) ────────────────── */
+/* Mismo mundo forest que la radiografía GEO: panel drenched sobre claro.   */
+/* El teal NO se usa para texto de cuerpo: solo acento (dot, foco, req) y    */
+/* el veredicto, que es display grande (large text, contraste AA holgado).  */
+.asketch {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 16px;
+  padding: clamp(1.25rem, 2vw + 0.75rem, 2rem);
+  font-family: var(--font-sans);
+}
+.asketch__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper-on-dark-mute);
+  margin: 0 0 1.1rem;
+}
+.asketch__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-teal-bright);
+  flex: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .asketch__dot {
+    animation: companionPulse 2.4s ease-in-out infinite;
+  }
+}
+.asketch__form {
+  display: grid;
+  gap: 1rem;
+}
+.asketch__lede {
+  font-size: var(--text-body);
+  line-height: 1.55;
+  color: var(--paper-on-dark-soft);
+  margin: 0;
+  max-width: 54ch;
+}
+.asketch__field {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.asketch__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--paper-on-dark-soft);
+}
+.asketch__req {
+  color: var(--color-teal-bright);
+  letter-spacing: 0.04em;
+}
+.asketch__textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 10px;
+  padding: 0.75rem 0.875rem;
+  font: inherit;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 5.5rem;
+}
+.asketch__textarea::placeholder { color: var(--paper-on-dark-mute); }
+.asketch__textarea:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+  border-color: transparent;
+}
+.asketch__textarea[aria-invalid='true'] {
+  border-color: var(--color-teal-bright);
+}
+.asketch__error {
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark);
+  margin: 0;
+}
+.asketch__consent {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-soft);
+  max-width: 54ch;
+  margin: 0.25rem 0 0;
+  cursor: pointer;
+}
+.asketch__consent-box {
+  flex: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.1rem;
+  accent-color: var(--color-teal-bright);
+  cursor: pointer;
+}
+.asketch__consent-box:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+}
+.asketch__link {
+  color: var(--paper-on-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.asketch__submit {
+  justify-self: start;
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 10px;
+  padding: 0.8rem 1.3rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.asketch__submit:hover { background: var(--color-teal); }
+.asketch__submit:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.asketch__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.asketch__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  color: var(--paper-on-dark-mute);
+  line-height: 1.5;
+  max-width: 54ch;
+}
+.asketch__asking {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  color: var(--paper-on-dark-soft);
+  margin: 0.25rem 0;
+}
+.asketch__verdict {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--color-teal-bright);
+  margin: 0 0 1.25rem;
+  max-width: 24ch;
+}
+.asketch__dl {
+  margin: 0;
+  display: grid;
+  gap: 0.875rem;
+}
+.asketch__item {
+  display: grid;
+  gap: 0.25rem;
+  background: var(--color-forest-deep);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+}
+.asketch__item dt {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--paper-on-dark-mute);
+}
+.asketch__item dd {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.55;
+  color: var(--paper-on-dark);
+}
+.asketch__fallback {
+  font-size: var(--text-body);
+  line-height: 1.55;
+  color: var(--paper-on-dark-soft);
+  margin: 0;
+  max-width: 54ch;
+}
+.asketch__actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.asketch__cta {
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 10px;
+  padding: 0.8rem 1.3rem;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.asketch__cta:hover { background: var(--color-teal); }
+.asketch__cta:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.asketch__reset {
+  background: transparent;
+  border: 0;
+  color: var(--paper-on-dark-soft);
+  font: inherit;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0.25rem 0;
+}
+.asketch__reset:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+
 /* ── Detalle de servicio (compartido por las 4 páginas de detalle) ──── */
 .svc {
   max-width: var(--container-narrow);

@@ -7,6 +7,7 @@
  * inventados. Estilos compartidos en global.css (.svc*).
  */
 import PageLayout from '../../layouts/PageLayout.astro'
+import AutomationSketch from '../../components/react/AutomationSketch.tsx'
 
 const incluye = [
   'Una herramienta hecha a la medida de tu proceso real, no una plantilla a la que te toque adaptarte tú.',
@@ -34,9 +35,29 @@ const incluye = [
         Cada día se te van horas en copiar datos, repetir tareas y apagar
         fuegos que una herramienta bien hecha resolvería sola. No te hace falta
         un programa enorme, te hace falta uno que encaje con tu manera de
-        trabajar.
+        trabajar. Cuéntanos una tarea repetitiva y mira el esbozo aquí mismo.
       </p>
     </header>
+
+    <!-- ── Esbozo de automatización: la prueba en vivo (pieza central) ── -->
+    <section class="svc__sim" aria-labelledby="sim-title">
+      <h2 id="sim-title" class="display svc__sim-title">
+        ¿Qué se podría automatizar?
+      </h2>
+      <p class="svc__sim-lede">
+        Describe una tarea que repites cada día. Le preguntamos en vivo a una IA
+        qué parte se podría automatizar y qué parte no. Es un esbozo a partir de
+        lo que cuentas, no una propuesta ni un presupuesto.
+      </p>
+      <AutomationSketch client:visible />
+      <noscript>
+        <p class="svc__sim-noscript">
+          El esbozo en vivo necesita JavaScript activado. Si lo prefieres,
+          cuéntanos la tarea en <a href="/contacto">contacto</a> y la miramos
+          contigo.
+        </p>
+      </noscript>
+    </section>
 
     <section class="svc__block" aria-labelledby="que-es">
       <h2 id="que-es" class="svc__h2">Qué es y para quién</h2>
