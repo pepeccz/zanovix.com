@@ -33,6 +33,7 @@ import type { APIRoute } from 'astro'
 import {
   GEO_MODEL_ID,
   GEO_INPUT_MAX,
+  GEO_NAME_MIN,
   GEO_MAX_TOKENS,
   GEO_TIMEOUT_MS,
   GEO_SYSTEM_PROMPT,
@@ -127,16 +128,20 @@ export const POST: APIRoute = async ({ request, clientAddress, site }) => {
   }
 
   const input = sanitizeGeoInput({
+    name: body.name as string,
     description: body.description as string,
     sector: body.sector as string,
     zone: body.zone as string,
   })
 
-  // Sin descripcion util no hay nada que preguntar: que el cliente use reglas.
-  if (input.description.length < 3) {
-    return fallback()
+  // Sin un nombre util no hay nada que preguntar: el nombre real es el eje de
+  // la radiografia (sin el, "que sabes de este negocio" no significa nada).
+  if (input.name.length < GEO_NAME_MIN) {
+    return fallback(
+      'Necesito el nombre real de tu negocio para preguntarle a una IA por el. Mientras, te muestro lo que deduzco con reglas.',
+    )
   }
-  if (input.description.length > GEO_INPUT_MAX) {
+  if (input.description && input.description.length > GEO_INPUT_MAX) {
     input.description = input.description.slice(0, GEO_INPUT_MAX)
   }
 

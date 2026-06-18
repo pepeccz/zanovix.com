@@ -40,8 +40,11 @@ export const GEO_MODEL_ID = 'anthropic/claude-haiku-4.5'
 /** Longitud maxima del texto del negocio que aceptamos (anti-abuso/coste). */
 export const GEO_INPUT_MAX = 600
 
-/** Longitud maxima de los campos opcionales (sector/zona). */
+/** Longitud maxima de los campos cortos (nombre/sector/zona). */
 export const GEO_FIELD_MAX = 80
+
+/** Longitud minima util del nombre del negocio para preguntar a la IA. */
+export const GEO_NAME_MIN = 2
 
 /** Tope de tokens de la respuesta del modelo (acota coste y verbosidad). */
 export const GEO_MAX_TOKENS = 600
@@ -53,11 +56,17 @@ export const GEO_TIMEOUT_MS = 15_000
 
 /** Lo que el visitante aporta para la radiografia. */
 export interface GeoInput {
-  /** Descripcion libre del negocio (obligatoria). */
-  description: string
-  /** Sector/categoria, opcional (si el companion ya lo infirio). */
+  /**
+   * Nombre real del negocio (OBLIGATORIO). Sin un nombre concreto, preguntarle
+   * a una IA "que sabes de este negocio" no significa nada: el valor de la
+   * radiografia es justo comprobar si la IA reconoce ESTE negocio por su nombre.
+   */
+  name: string
+  /** Descripcion libre del negocio (opcional pero recomendada). */
+  description?: string
+  /** Sector/categoria, opcional pero recomendado. */
   sector?: string
-  /** Zona/ciudad, opcional. */
+  /** Zona/ciudad, opcional pero recomendada. */
   zone?: string
 }
 
@@ -105,7 +114,8 @@ export function sanitizeGeoInput(raw: Partial<GeoInput>): GeoInput {
       .trim()
       .slice(0, max)
   return {
-    description: clip(raw.description, GEO_INPUT_MAX),
+    name: clip(raw.name, GEO_FIELD_MAX),
+    description: clip(raw.description, GEO_INPUT_MAX) || undefined,
     sector: clip(raw.sector, GEO_FIELD_MAX) || undefined,
     zone: clip(raw.zone, GEO_FIELD_MAX) || undefined,
   }
@@ -122,9 +132,11 @@ export const GEO_SYSTEM_PROMPT = [
   'Eres un evaluador honesto de visibilidad en asistentes de IA (GEO) para Zanovix.',
   'Tu unica fuente es lo que TU sabes por tu entrenamiento. NO navegas, NO accedes a la web en vivo, NO consultas datos externos.',
   '',
+  'Te dan el NOMBRE REAL de un negocio (y a veces su sector y su zona). Tu tarea es responder con honestidad brutal: ¿reconoces TU un negocio que se llame asi? Lo normal con una pyme local no indexada es que NO lo conozcas, y ese es justo el dato valioso.',
+  '',
   'Reglas innegociables:',
-  '1. Si NO conoces el negocio concreto que te describen (lo normal en una pyme local no indexada), dilo con total claridad. No es un fallo: es el dato honesto y el mas valioso.',
-  '2. PROHIBIDO inventar: nada de competidores por su nombre, ni datos, cifras, premios, reseñas, ubicaciones exactas o rankings que no conozcas con certeza. Ante la duda, di que no lo sabes.',
+  '1. Razona SOLO sobre el nombre concreto que te dan. Si no reconoces un negocio con ese nombre (lo habitual), dilo sin rodeos: "no". No es un fallo, es la verdad y el dato mas util.',
+  '2. PROHIBIDO inventar: nada de competidores por su nombre, ni datos, cifras, premios, reseñas, direcciones o rankings que no conozcas con certeza. Ante la duda, di que no lo sabes. NUNCA finjas conocer un negocio solo porque el nombre suene plausible.',
   '3. PROHIBIDO prometer posiciones ("seras el numero 1 en ChatGPT" no existe). Habla de probabilidad de ser mencionado, no de rankings.',
   '4. Habla en castellano de España, trato de tu, sin tecnicismos, sin marketing hueco (nada de "transformacion digital", "disruptivo", "10x", "potenciar", "revolucionar"). Sin guiones largos.',
   '5. Se breve y concreto. Frases cortas. Sin relleno.',
@@ -132,21 +144,24 @@ export const GEO_SYSTEM_PROMPT = [
   'Devuelve UNICAMENTE un objeto JSON valido, sin texto antes ni despues, con esta forma exacta:',
   '{',
   '  "known": "yes" | "no" | "unclear",',
-  '  "describes": "1-2 frases: como describiria una IA este negocio o su categoria hoy, con lo que de verdad sabes.",',
-  '  "recommend": "1-2 frases: si alguien preguntara por esta categoria en esta zona, lo mencionarias o nombrarias a otros, y por que. Sin inventar nombres.",',
-  '  "gap": "1-2 frases: que le falta a este negocio para que una IA lo conozca y lo recomiende. Acciones honestas, no promesas."',
+  '  "describes": "1-2 frases: lo que sabes (o no) de un negocio llamado asi. Si no lo conoces, dilo claramente y describe como mucho su categoria en general.",',
+  '  "recommend": "1-2 frases: si alguien te preguntara por esta categoria en esta zona, mencionarias a este negocio por su nombre, y por que si o por que no. Sin inventar otros nombres.",',
+  '  "gap": "1-2 frases: que le falta a este negocio para que una IA lo conozca por su nombre y lo recomiende. Acciones honestas, no promesas."',
   '}',
-  '"known" = "no" cuando no reconoces el negocio concreto; "unclear" si solo conoces la categoria general pero no el negocio; "yes" solo si reconoces el negocio especifico.',
+  '"known" = "no" cuando no reconoces ningun negocio con ese nombre; "unclear" si conoces la categoria general pero no este negocio concreto; "yes" solo si reconoces de verdad el negocio especifico por su nombre.',
 ].join('\n')
 
 /** Construye el mensaje de usuario con el negocio concreto del visitante. */
 export function buildGeoUserPrompt(input: GeoInput): string {
-  const lines = [`Negocio (en palabras del propio dueño): ${input.description}`]
+  const lines = [`Nombre del negocio: ${input.name}`]
   if (input.sector) lines.push(`Categoria/sector: ${input.sector}`)
   if (input.zone) lines.push(`Zona: ${input.zone}`)
+  if (input.description) {
+    lines.push(`Lo que cuenta el dueño: ${input.description}`)
+  }
   lines.push(
     '',
-    'Responde solo con el JSON pedido. Recuerda: si no conoces este negocio concreto, "known" debe ser "no" y debes decirlo sin rodeos.',
+    'Responde solo con el JSON pedido. Recuerda: si no reconoces un negocio que se llame asi, "known" debe ser "no" y debes decirlo sin rodeos. No inventes datos para rellenar.',
   )
   return lines.join('\n')
 }

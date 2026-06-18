@@ -10,6 +10,7 @@
  * Veto explícito: no usar "+31,8% impresiones" ni el caso "80.000 €".
  */
 import PageLayout from '../../layouts/PageLayout.astro'
+import GeoSimulator from '../../components/react/GeoSimulator.tsx'
 
 const incluye = [
   'Diseño y desarrollo de la web, rápida y clara, hecha para que la entiendan tus clientes y una IA.',
@@ -36,9 +37,28 @@ const incluye = [
       <p class="svc__lede">
         Cada vez más gente busca preguntando a ChatGPT en vez de teclear en
         Google. Si ahí no apareces, para ese cliente no existes, y ni te
-        enteras. Lo primero que hacemos es ponerte donde te buscan ahora.
+        enteras. Pruébalo aquí mismo con el nombre de tu negocio.
       </p>
     </header>
+
+    <!-- ── Radiografia GEO: la prueba en vivo (pieza central) ───────── -->
+    <section class="svc__sim" aria-labelledby="sim-title">
+      <h2 id="sim-title" class="display svc__sim-title">
+        Mira cómo te ve una IA hoy
+      </h2>
+      <p class="svc__sim-lede">
+        Escribe el nombre real de tu negocio. Le preguntamos en vivo a una IA y
+        te enseñamos su respuesta tal cual, sin maquillar.
+      </p>
+      <GeoSimulator client:visible />
+      <noscript>
+        <p class="svc__sim-noscript">
+          La prueba en vivo necesita JavaScript activado. Si lo prefieres,
+          cuéntanos tu caso en <a href="/contacto">contacto</a> y la hacemos
+          contigo.
+        </p>
+      </noscript>
+    </section>
 
     <section class="svc__block" aria-labelledby="que-es">
       <h2 id="que-es" class="svc__h2">Qué es y para quién</h2>
@@ -71,8 +91,8 @@ const incluye = [
     <section class="svc__cta" aria-labelledby="cta">
       <h2 id="cta" class="display svc__cta-title">¿Lo vemos con tu caso?</h2>
       <p class="svc__cta-lede">
-        Cuéntanos qué haces y dónde estás hoy. Si has hablado ya con el
-        asistente, llegas con el contexto a mano y lo puedes corregir.
+        Cuéntanos qué haces y dónde estás hoy. Si ya has probado la radiografia
+        de aquí arriba, llegas con el contexto a mano y lo afinamos juntos.
       </p>
       <a class="cta-primary" href="/contacto">Contar mi caso</a>
       <p class="cta-fallback">
