@@ -18,6 +18,7 @@
 
 import Base from './Base.astro'
 import Companion from '../components/react/Companion.tsx'
+import ContactDialog from '../components/react/ContactDialog.tsx'
 
 interface Props {
   title?: string
@@ -223,6 +224,49 @@ const { title, description, page = '', showCompanion = true } = Astro.props
   {page !== 'home' && showCompanion && (
     <Companion variant="dock" client:load />
   )}
+
+  {/*
+    Dialogo de captacion en contexto. Montado UNA vez aqui para estar
+    disponible en todas las paginas. client:idle: no es critico para el
+    primer paint y solo reacciona a una accion explicita del visitante.
+    Escucha el CustomEvent global `zx:open-contact` (ver script delegado).
+  */}
+  <ContactDialog client:idle />
+
+  <script is:inline>
+    // Captacion como dialogo en contexto: progressive enhancement.
+    // Listener delegado en clicks de [data-open-contact]. Con JS, intercepta
+    // el CTA, evita la navegacion y dispara el evento global que abre el
+    // <dialog>. SIN JS, el CTA sigue siendo <a href="/contacto"> y navega.
+    // El contexto (nombre/sector/zona/veredicto/origen) viaja en data-* y/o
+    // en el detail que pueda inyectar otra isla (p.ej. el simulador GEO).
+    (function setupContactDialogTriggers() {
+      document.addEventListener('click', function (e) {
+        var target = e.target;
+        if (!target || typeof target.closest !== 'function') return;
+        var trigger = target.closest('[data-open-contact]');
+        if (!trigger) return;
+        // Respeta abrir en nueva pestana / con modificadores.
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+          return;
+        }
+        e.preventDefault();
+        var d = trigger.dataset || {};
+        window.dispatchEvent(
+          new CustomEvent('zx:open-contact', {
+            detail: {
+              name: d.contactName || undefined,
+              sector: d.contactSector || undefined,
+              zone: d.contactZone || undefined,
+              geoVerdict: d.contactVerdict || undefined,
+              origin: d.contactOrigin || trigger.getAttribute('href') || undefined,
+              trigger: trigger,
+            },
+          })
+        );
+      });
+    })();
+  </script>
 
   <script is:inline>
     // Sticky nav scroll-state: toggle .nav--scrolled cuando hero >50% fuera del viewport.

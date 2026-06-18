@@ -24,6 +24,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { GEO_FIELD_MAX, GEO_NAME_MIN } from '../../lib/companion/geo'
 import type { GeoSnapshot } from '../../lib/companion/geo'
+import { OPEN_CONTACT_EVENT } from './ContactDialog'
+import type { ContactDialogContext } from './ContactDialog'
 
 type Phase = 'form' | 'asking' | 'done'
 
@@ -108,6 +110,38 @@ export default function GeoSimulator() {
       setNotice(FALLBACK_NOTICE)
       setPhase('done')
     }
+  }
+
+  /**
+   * Abre el dialogo de captacion en contexto pasando nombre/sector/zona y el
+   * veredicto GEO como contexto. Progressive enhancement: si por lo que sea no
+   * hay dialogo montado, el href="/contacto" del <a> sigue navegando (no
+   * llamamos preventDefault hasta confirmar que vamos a abrir).
+   */
+  function openContact(e: React.MouseEvent<HTMLAnchorElement>) {
+    // Respeta nueva pestana / modificadores: deja navegar a /contacto.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+    if (typeof window === 'undefined') return
+
+    // Veredicto honesto en lenguaje natural para el correo y el lede.
+    let verdict: string | undefined
+    if (snapshot) {
+      verdict = `${KNOWN_LABEL[snapshot.known]}. Que le falta: ${snapshot.gap}`
+    } else if (notice) {
+      verdict = 'No se pudo preguntar a la IA en vivo (degradado).'
+    }
+
+    const detail: ContactDialogContext & { trigger?: HTMLElement } = {
+      name: name.trim() || undefined,
+      sector: sector.trim() || undefined,
+      zone: zone.trim() || undefined,
+      geoVerdict: verdict,
+      origin: 'simulador-geo',
+      trigger: e.currentTarget,
+    }
+
+    e.preventDefault()
+    window.dispatchEvent(new CustomEvent(OPEN_CONTACT_EVENT, { detail }))
   }
 
   function reset() {
@@ -265,7 +299,12 @@ export default function GeoSimulator() {
           )}
 
           <div className="geosim__actions">
-            <a className="geosim__cta" href="/contacto">
+            <a
+              className="geosim__cta"
+              href="/contacto"
+              data-open-contact
+              onClick={openContact}
+            >
               Contar mi caso
             </a>
             <button className="geosim__reset" type="button" onClick={reset}>

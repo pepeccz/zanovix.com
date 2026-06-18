@@ -1218,3 +1218,297 @@ h1, h2, h3, blockquote {
 .leadform__mail:hover {
   text-decoration-color: var(--color-teal);
 }
+
+/* ── Dialogo de captacion en contexto (ContactDialog) ──────────────────────
+ * <dialog> nativo: el navegador lo pone en el top layer (por encima de todo,
+ * sin pelear z-index) y nos da focus trap + Esc + inert del fondo gratis.
+ * El panel reutiliza el aesthetic claro del leadform.
+ */
+.cdialog {
+  width: min(34rem, calc(100vw - 2rem));
+  max-height: min(90dvh, 48rem);
+  margin: auto; /* centrado en el top layer */
+  padding: 0;
+  border: 1px solid var(--color-rule-strong);
+  border-radius: 16px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  overflow: hidden;
+}
+.cdialog::backdrop {
+  background: color-mix(in oklab, #14201B 55%, transparent);
+}
+.cdialog__panel {
+  position: relative;
+  max-height: inherit;
+  overflow-y: auto;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+.cdialog__close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.cdialog__close:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+.cdialog__close-bar {
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: var(--color-ink);
+}
+.cdialog__close-bar:first-child {
+  transform: rotate(45deg);
+}
+.cdialog__close-bar:last-child {
+  transform: rotate(-45deg);
+}
+.cdialog__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  /* Regla de marca: el teal NO sirve para texto pequeno (contraste < 4.5:1).
+     El eyebrow usa la tinta de label (AA holgado); el teal queda como acento. */
+  color: var(--ink-mute-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 0.75rem;
+}
+.cdialog__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-h2);
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
+  margin: 0 0 0.6rem;
+  max-width: 18ch;
+}
+.cdialog__lede {
+  font-size: var(--text-body);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 46ch;
+  margin: 0 0 1.5rem;
+}
+.cdialog__form {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.35rem);
+}
+.cdialog__global {
+  margin: 0;
+}
+.cdialog__global-msg {
+  margin: 0;
+  padding: 0.75rem 0.9rem;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--color-ink);
+  background: var(--teal-faint);
+  border: 1px solid var(--color-rule-strong);
+  border-radius: 10px;
+}
+.cdialog__hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.cdialog__field {
+  display: grid;
+  gap: 0.4rem;
+}
+.cdialog__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute-strong);
+}
+.cdialog__input,
+.cdialog__textarea {
+  width: 100%;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  border: 1px solid var(--color-rule-strong);
+  border-radius: 10px;
+  padding: 0.75rem 0.875rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.5;
+}
+.cdialog__textarea {
+  resize: vertical;
+  min-height: 6rem;
+}
+.cdialog__input::placeholder,
+.cdialog__textarea::placeholder {
+  color: var(--ink-mute);
+}
+.cdialog__input:focus-visible,
+.cdialog__textarea:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+  border-color: transparent;
+}
+.cdialog__input[aria-invalid='true'],
+.cdialog__textarea[aria-invalid='true'] {
+  border-color: var(--color-ink);
+  border-width: 2px;
+}
+.cdialog__error {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--color-ink);
+}
+.cdialog__error::before {
+  content: "! ";
+  color: var(--color-teal-deep);
+}
+.cdialog__consent {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.6rem;
+  align-items: start;
+}
+.cdialog__check {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.15rem;
+  accent-color: var(--color-teal-deep);
+  flex: none;
+}
+.cdialog__check:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+.cdialog__consent-label {
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.cdialog__inline-link {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-teal-deep);
+  text-underline-offset: 3px;
+}
+.cdialog__inline-link:hover {
+  text-decoration-color: var(--color-teal);
+}
+.cdialog__submit {
+  justify-self: start;
+  background: var(--color-ink);
+  color: var(--paper-on-dark);
+  border: 0;
+  border-radius: 10px;
+  padding: 0.85rem 1.5rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-body);
+  cursor: pointer;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cdialog__submit:hover {
+  background: var(--color-forest);
+}
+.cdialog__submit:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+.cdialog__submit:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+.cdialog__fallback-note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--ink-mute);
+}
+.cdialog__result {
+  padding: 0.25rem 0 0;
+}
+.cdialog__result-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-h2);
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
+  margin: 0 0 0.75rem;
+}
+.cdialog__result-body {
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0 0 1.5rem;
+  max-width: 46ch;
+}
+.cdialog__mail {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-teal-deep);
+  text-underline-offset: 3px;
+}
+.cdialog__mail:hover {
+  text-decoration-color: var(--color-teal);
+}
+.cdialog__done {
+  justify-self: start;
+  background: var(--color-ink);
+  color: var(--paper-on-dark);
+  border: 0;
+  border-radius: 10px;
+  padding: 0.75rem 1.4rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-body);
+  cursor: pointer;
+}
+.cdialog__done:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+/* Entrada suave del dialogo (respeta reduced-motion). */
+@media (prefers-reduced-motion: no-preference) {
+  .cdialog[open] {
+    animation: cdialogIn 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .cdialog[open]::backdrop {
+    animation: cdialogBackdropIn 220ms ease both;
+  }
+}
+@keyframes cdialogIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes cdialogBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
