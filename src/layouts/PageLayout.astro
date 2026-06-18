@@ -17,7 +17,8 @@
  */
 
 import Base from './Base.astro'
-import Companion from '../components/react/Companion.tsx'
+import ContactDialog from '../components/react/ContactDialog.tsx'
+import Assistant from '../components/react/Assistant.tsx'
 
 interface Props {
   title?: string
@@ -26,13 +27,12 @@ interface Props {
    *  Valores canonicos: 'home' | 'manifiesto' | 'contacto'. Default: ''.
    */
   page?: string
-  /** Controla si el dock del Companion se muestra en esta pagina.
-   *  Default: true. Pasar false en paginas como /privacidad.
-   */
+  /** Compat: prop historica del dock del Companion (ya retirado). Se acepta
+   *  para no romper paginas que aun la pasan; no tiene efecto. */
   showCompanion?: boolean
 }
 
-const { title, description, page = '', showCompanion = true } = Astro.props
+const { title, description, page = '' } = Astro.props
 ---
 
 <Base title={title} description={description} page={page}>
@@ -215,14 +215,57 @@ const { title, description, page = '', showCompanion = true } = Astro.props
   </footer>
 
   {/*
-    Dock del Companion en páginas internas. client:load (no client:visible):
-    el dock es position:fixed y solo se renderiza tras leer sessionStorage en
-    el cliente, así que su placeholder SSR mide 0px y client:visible nunca
-    intersecaría. client:load garantiza la hidratación; el componente es mínimo.
+    Asistente global discreto. Montado UNA vez aqui para estar disponible en
+    todas las paginas. client:idle: no es critico para el primer paint y solo
+    reacciona a una accion explicita del visitante (NUNCA se abre solo). El
+    lanzador es position:fixed y discreto; al abrir muestra un panel calmado.
+    Reemplaza al dock y al hero del antiguo Companion.
   */}
-  {page !== 'home' && showCompanion && (
-    <Companion variant="dock" client:load />
-  )}
+  <Assistant client:idle />
+
+  {/*
+    Dialogo de captacion en contexto. Montado UNA vez aqui para estar
+    disponible en todas las paginas. client:idle: no es critico para el
+    primer paint y solo reacciona a una accion explicita del visitante.
+    Escucha el CustomEvent global `zx:open-contact` (ver script delegado),
+    que dispara tanto un CTA [data-open-contact] como el handoff del asistente.
+  */}
+  <ContactDialog client:idle />
+
+  <script is:inline>
+    // Captacion como dialogo en contexto: progressive enhancement.
+    // Listener delegado en clicks de [data-open-contact]. Con JS, intercepta
+    // el CTA, evita la navegacion y dispara el evento global que abre el
+    // <dialog>. SIN JS, el CTA sigue siendo <a href="/contacto"> y navega.
+    // El contexto (nombre/sector/zona/veredicto/origen) viaja en data-* y/o
+    // en el detail que pueda inyectar otra isla (p.ej. el simulador GEO).
+    (function setupContactDialogTriggers() {
+      document.addEventListener('click', function (e) {
+        var target = e.target;
+        if (!target || typeof target.closest !== 'function') return;
+        var trigger = target.closest('[data-open-contact]');
+        if (!trigger) return;
+        // Respeta abrir en nueva pestana / con modificadores.
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+          return;
+        }
+        e.preventDefault();
+        var d = trigger.dataset || {};
+        window.dispatchEvent(
+          new CustomEvent('zx:open-contact', {
+            detail: {
+              name: d.contactName || undefined,
+              sector: d.contactSector || undefined,
+              zone: d.contactZone || undefined,
+              geoVerdict: d.contactVerdict || undefined,
+              origin: d.contactOrigin || trigger.getAttribute('href') || undefined,
+              trigger: trigger,
+            },
+          })
+        );
+      });
+    })();
+  </script>
 
   <script is:inline>
     // Sticky nav scroll-state: toggle .nav--scrolled cuando hero >50% fuera del viewport.

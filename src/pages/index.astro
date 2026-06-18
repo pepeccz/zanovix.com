@@ -2,16 +2,15 @@
 /**
  * index.astro — home (rediseño "herramienta honesta cálida")
  *
- * Eje: el asistente que piensa en voz alta (Companion island). La home se
- * organiza para llevar a un lead cualificado, sin scroll secuestrado ni
- * ceremonia. Los capítulos editoriales antiguos quedan en el repo, fuera
+ * Eje: el mensaje firmado en una frase + CTAs claros. El demo incrustado
+ * (Companion hero) se retiró: la radiografia GEO vive ahora en su sitio,
+ * la pagina de servicio GEO, donde pide el nombre real del negocio. El hero
+ * se sostiene solo con el mensaje y una escena visual sobria (no un demo)
+ * que dramatiza el momento GEO. CTAs: primario a /contacto, secundario a la
+ * prueba GEO. Los capítulos editoriales antiguos quedan en el repo, fuera
  * de uso, hasta decidir su salvado.
- *
- * Slice 1: fundación visual + hero + compañero + servicios + handoff.
- * Pendiente: páginas de servicios, casos, metodología, sobre, privacidad.
  */
 import PageLayout from '../layouts/PageLayout.astro'
-import Companion from '../components/react/Companion.tsx'
 
 const services = [
   {
@@ -38,7 +37,7 @@ const services = [
   description="IA aplicada con ingeniería pausada. Aparece cuando tus clientes preguntan a una IA y deja de contestar a mano lo de siempre. Pruébalo aquí mismo."
   page="home"
 >
-  <!-- ── Hero: el problema + el asistente como eje ───────────────── -->
+  <!-- ── Hero: el mensaje firmado + CTAs claros ──────────────────── -->
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero__text">
       <h1 id="hero-title" class="display hero__title">
@@ -49,11 +48,36 @@ const services = [
         que hacemos es ponerte donde te buscan; lo segundo, que dejes de
         contestar a mano lo de siempre.
       </p>
+      <div class="hero__cta-row">
+        <a class="cta-primary" href="/contacto" data-open-contact data-contact-origin="home-hero">Cuéntanos tu caso</a>
+        <a class="cta-ghost" href="/servicios/diseno-desarrollo-web-geo">
+          Mira cómo te ve una IA hoy
+          <span class="cta-ghost__arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
       <p class="hero__sign">IA aplicada, con ingeniería pausada.</p>
     </div>
 
-    <div class="hero__tool">
-      <Companion variant="hero" client:load />
+    <!-- Apoyo visual sobrio: la escena que nombra el hero, no un demo.
+         Markup decorativo (aria-hidden), construido con el sistema v2.
+         No es stock ni la herramienta interactiva: esa vive en /servicios. -->
+    <div class="hero__scene" aria-hidden="true">
+      <p class="hero__scene-head">
+        <span class="hero__scene-dot"></span>
+        Una IA, ahora mismo
+      </p>
+      <p class="hero__scene-ask">
+        “¿Qué <span class="hero__scene-mark">restaurante</span> me recomiendas
+        en <span class="hero__scene-mark">Málaga</span>?”
+      </p>
+      <ul class="hero__scene-list">
+        <li class="hero__scene-item">Te nombra a otros tres del barrio.</li>
+        <li class="hero__scene-item">A ti no te menciona.</li>
+        <li class="hero__scene-item hero__scene-item--quiet">
+          Y el cliente nunca sabrá que existías.
+        </li>
+      </ul>
+      <p class="hero__scene-foot">Eso es lo primero que arreglamos.</p>
     </div>
   </section>
 
@@ -87,7 +111,11 @@ const services = [
       Sin formularios eternos ni promesas grandes. Nos cuentas tu caso y te
       decimos con honestidad si podemos ayudarte y cómo.
     </p>
-    <a class="contact__mail" href="mailto:hola@zanovix.com">hola@zanovix.com</a>
+    <a class="cta-primary" href="/contacto" data-open-contact data-contact-origin="home-cierre">Contar mi caso</a>
+    <p class="cta-fallback">
+      Si lo prefieres, escríbenos directo a
+      <a href="mailto:info@zanovix.com">info@zanovix.com</a>.
+    </p>
     <p class="contact__meta">Málaga · ES · respondemos en menos de 24h hábiles</p>
   </section>
 </PageLayout>
@@ -118,7 +146,14 @@ const services = [
     line-height: 1.55;
     color: var(--ink-soft);
     max-width: 52ch;
-    margin: 0 0 1.5rem;
+    margin: 0 0 1.75rem;
+  }
+  .hero__cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    margin: 0 0 1.75rem;
   }
   .hero__sign {
     font-family: var(--font-mono);
@@ -126,6 +161,130 @@ const services = [
     letter-spacing: 0.06em;
     color: var(--ink-mute);
     margin: 0;
+  }
+
+  /* ── Apoyo visual del hero (escena GEO, decorativa) ───────────────
+   * No es la herramienta interactiva: es una escena estatica que dramatiza
+   * el mensaje. Mundo "drenched" forest, coherente con el sistema. Texto
+   * paper sobre forest (tintas AA en :root). El teal solo como acento.
+   */
+  .hero__scene {
+    background: var(--color-forest);
+    color: var(--paper-on-dark);
+    border: 1px solid var(--color-rule-invert);
+    border-radius: 16px;
+    padding: clamp(1.5rem, 2vw + 1rem, 2.25rem);
+    font-family: var(--font-sans);
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .hero__scene-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--paper-on-dark-mute);
+    margin: 0 0 1.25rem;
+  }
+  .hero__scene-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-teal-bright);
+    flex: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__scene-dot {
+      animation: heroSceneDot 2.4s ease-in-out infinite;
+    }
+  }
+  @keyframes heroSceneDot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+  .hero__scene-ask {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--paper-on-dark);
+    margin: 0 0 1.5rem;
+    max-width: 26ch;
+  }
+  .hero__scene-mark {
+    color: var(--color-teal-bright);
+  }
+  .hero__scene-list {
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .hero__scene-item {
+    position: relative;
+    padding-left: 1.4rem;
+    font-size: var(--text-body);
+    line-height: 1.5;
+    color: var(--paper-on-dark-soft);
+  }
+  .hero__scene-item::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--color-teal-bright);
+  }
+  .hero__scene-item--quiet {
+    color: var(--paper-on-dark-mute);
+  }
+  .hero__scene-item--quiet::before {
+    color: var(--paper-on-dark-mute);
+  }
+  .hero__scene-foot {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.04em;
+    color: var(--color-teal-bright);
+    margin: 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-rule-invert);
+  }
+
+  /* CTA secundario "fantasma": claro, subrayado teal, sin competir con
+     el primario ink. */
+  .cta-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--text-body);
+    color: var(--color-ink);
+    text-decoration: none;
+    padding: 0.25rem 0;
+    border-bottom: 2px solid var(--color-teal-deep);
+    transition: border-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .cta-ghost:hover {
+    border-color: var(--color-teal);
+  }
+  .cta-ghost:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  .cta-ghost__arrow {
+    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cta-ghost:hover .cta-ghost__arrow {
+      transform: translateX(3px);
+    }
   }
 
   /* ── Servicios ────────────────────────────────────────────────── */
@@ -227,6 +386,6 @@ const services = [
     font-size: var(--text-eyebrow);
     letter-spacing: 0.05em;
     color: var(--ink-mute);
-    margin: 0;
+    margin: 1.75rem 0 0;
   }
 </style>
