@@ -47,7 +47,7 @@ const servicios = [
   page="servicios"
 >
   <!-- ── Intro: intervenciones POST-diagnóstico ─────────────────────── -->
-  <section class="intro" aria-labelledby="intro-title">
+  <section class="intro" aria-labelledby="intro-title" data-reveal>
     <p class="intro__from">Esto empieza con un <a href="/diagnostico" data-open-contact data-contact-origin="servicios-intro-diagnostico">diagnóstico</a></p>
     <h1 id="intro-title" class="display intro__title">
       Esto es lo que hacemos si el diagnóstico lo recomienda.
@@ -64,8 +64,8 @@ const servicios = [
   <section class="list" aria-label="Servicios de Zanovix">
     <ul class="list__items">
       {
-        servicios.map((s) => (
-          <li class="list__item">
+        servicios.map((s, i) => (
+          <li class="list__item" data-reveal data-reveal-i={i}>
             <a class="list__link" href={`/servicios/${s.slug}`}>
               <h2 class="list__name">{s.name}</h2>
               <p class="list__lede">{s.lede}</p>
@@ -86,7 +86,7 @@ const servicios = [
    * relleno: marca el cambio de fase (de elegir intervención a la relación).
    -->
   <section class="accomp" aria-labelledby="accomp-title">
-    <div class="accomp__inner">
+    <div class="accomp__inner" data-reveal>
       <BrandPetals tone="paper" corner="top-right" size={260} />
       <h2 id="accomp-title" class="display accomp__title">
         Lo que hacemos no se entrega y se olvida.
@@ -100,7 +100,7 @@ const servicios = [
   </section>
 
   <!-- ── Cierre: a la puerta del embudo ─────────────────────────────── -->
-  <section class="close" aria-labelledby="close-title">
+  <section class="close" aria-labelledby="close-title" data-reveal>
     <h2 id="close-title" class="display close__title">
       ¿No tienes claro por dónde empezar?
     </h2>

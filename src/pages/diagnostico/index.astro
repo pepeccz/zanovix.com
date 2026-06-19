@@ -58,12 +58,12 @@ const embudo = [
   description="Una mirada humana y a fondo a tu negocio frente a la IA. La puerta de entrada a todo lo que hacemos. Honesta: puede concluir que no necesitas intervención. Se acredita contra el trabajo si decides seguir."
   page="diagnostico"
 >
-  <article class="svc">
-    <header class="svc__head">
-      <h1 class="display svc__title">
+  <article class="svc dgn">
+    <header class="svc__head dgn__head" data-reveal>
+      <h1 class="display svc__title dgn__head-title">
         Antes de tocar nada, entendemos tu negocio.
       </h1>
-      <p class="svc__lede">
+      <p class="svc__lede dgn__head-lede">
         El diagnóstico es por donde empieza todo lo que hacemos. Una mirada
         humana y a fondo a tu empresa frente a la IA: qué te aporta de verdad,
         qué sería tirar el dinero y por dónde tiene sentido empezar. No es un
@@ -79,49 +79,65 @@ const embudo = [
      -->
     <section class="svc__block dgn__puerta" aria-labelledby="puerta">
       <BrandPetals tone="ink" corner="top-right" size={200} />
-      <div class="dgn__puerta-inner">
-        <h2 id="puerta" class="svc__h2">La puerta de entrada a todo</h2>
-        <p class="svc__body">
-          Cualquier trabajo que hagamos contigo, una web que aparezca ante la
-          IA, una herramienta a medida o criterio técnico para decidir, empieza
-          aquí. Primero entendemos, luego proponemos. Nunca al revés.
-        </p>
-        <p class="svc__body dgn__puerta-body">
-          El diagnóstico vale por sí solo. Te llevas un orden de prioridades
-          claro que puedes enseñar a tu equipo o a quien aprueba el gasto, lo
-          contrates con nosotros o no.
-        </p>
-        <FlowSteps steps={embudo} tone="paper" class="dgn__flow" />
+      <div class="dgn__puerta-inner dgn__cols">
+        <div class="dgn__cols-aside" data-reveal>
+          <h2 id="puerta" class="svc__h2">La puerta de entrada a todo</h2>
+          <p class="svc__body">
+            Cualquier trabajo que hagamos contigo, una web que aparezca ante la
+            IA, una herramienta a medida o criterio técnico para decidir, empieza
+            aquí. Primero entendemos, luego proponemos. Nunca al revés.
+          </p>
+          <p class="svc__body dgn__puerta-body">
+            El diagnóstico vale por sí solo. Te llevas un orden de prioridades
+            claro que puedes enseñar a tu equipo o a quien aprueba el gasto, lo
+            contrates con nosotros o no.
+          </p>
+        </div>
+        <div class="dgn__cols-main" data-reveal data-reveal-i="1">
+          <FlowSteps steps={embudo} tone="paper" class="dgn__flow" />
+        </div>
       </div>
     </section>
 
     <!-- ── Las tres promesas honestas ────────────────────────────────── -->
-    <section class="svc__block" aria-labelledby="honesto">
-      <h2 id="honesto" class="svc__h2">Qué te garantizamos</h2>
-      <ul class="dgn__pillars">
-        <li class="dgn__pillar">
-          <h3 class="dgn__pillar-title">Puede decir que no</h3>
-          <p class="dgn__pillar-text">
-            Si lo honesto es no hacer nada todavía, te lo diremos. Preferimos
-            eso a venderte un proyecto que no necesitas. El diagnóstico vale
-            igual: ya sabes a qué atenerte.
-          </p>
+    <section class="svc__block dgn__cols" aria-labelledby="honesto">
+      <div class="dgn__cols-aside" data-reveal>
+        <p class="dgn__cols-eyebrow">Tres compromisos</p>
+        <h2 id="honesto" class="svc__h2">Qué te garantizamos</h2>
+      </div>
+      <ul class="dgn__pillars dgn__cols-main">
+        <li class="dgn__pillar" data-reveal data-reveal-i="0">
+          <span class="dgn__pillar-num" aria-hidden="true">01</span>
+          <div class="dgn__pillar-body">
+            <h3 class="dgn__pillar-title">Puede decir que no</h3>
+            <p class="dgn__pillar-text">
+              Si lo honesto es no hacer nada todavía, te lo diremos. Preferimos
+              eso a venderte un proyecto que no necesitas. El diagnóstico vale
+              igual: ya sabes a qué atenerte.
+            </p>
+          </div>
         </li>
-        <li class="dgn__pillar">
-          <h3 class="dgn__pillar-title">Se acredita contra el trabajo</h3>
-          <p class="dgn__pillar-text">
-            Si decides seguir con nosotros, lo que pagas por el diagnóstico se
-            descuenta de la intervención. Lo que inviertes en entender no se
-            pierde: cuenta.
-          </p>
+        <li class="dgn__pillar" data-reveal data-reveal-i="1">
+          <span class="dgn__pillar-num" aria-hidden="true">02</span>
+          <div class="dgn__pillar-body">
+            <h3 class="dgn__pillar-title">Se acredita contra el trabajo</h3>
+            <p class="dgn__pillar-text">
+              Si decides seguir con nosotros, lo que pagas por el diagnóstico se
+              descuenta de la intervención. Lo que inviertes en entender no se
+              pierde: cuenta.
+            </p>
+          </div>
         </li>
-        <li class="dgn__pillar">
-          <h3 class="dgn__pillar-title">Abre una relación, no un candado</h3>
-          <p class="dgn__pillar-text">
-            Si encaja, el diagnóstico lleva a un acompañamiento mensual sin
-            ataduras: estamos cuando hace falta y te puedes ir cuando quieras.
-            Sin suscripción trampa.
-          </p>
+        <li class="dgn__pillar" data-reveal data-reveal-i="2">
+          <span class="dgn__pillar-num" aria-hidden="true">03</span>
+          <div class="dgn__pillar-body">
+            <h3 class="dgn__pillar-title">Abre una relación, no un candado</h3>
+            <p class="dgn__pillar-text">
+              Si encaja, el diagnóstico lleva a un acompañamiento mensual sin
+              ataduras: estamos cuando hace falta y te puedes ir cuando quieras.
+              Sin suscripción trampa.
+            </p>
+          </div>
         </li>
       </ul>
     </section>
@@ -131,13 +147,18 @@ const embudo = [
      * una. No es un card-grid de iconos: comunica "mirada de 360°" de un
      * vistazo, justo lo que necesita la página clave para sentirse sólida.
      -->
-    <section class="svc__block" aria-labelledby="que-miramos">
-      <h2 id="que-miramos" class="svc__h2">Qué miramos, sin letra pequeña</h2>
-      <DimensionGrid tone="paper" />
+    <section class="svc__block dgn__cols" aria-labelledby="que-miramos">
+      <div class="dgn__cols-aside" data-reveal>
+        <p class="dgn__cols-eyebrow">Mirada de 360°</p>
+        <h2 id="que-miramos" class="svc__h2">Qué miramos, sin letra pequeña</h2>
+      </div>
+      <div class="dgn__cols-main" data-reveal data-reveal-i="1">
+        <DimensionGrid tone="paper" />
+      </div>
     </section>
 
     <!-- ── CTA primario: reservar el diagnóstico (humano, de pago) ───── -->
-    <section class="dgn__reserve" aria-labelledby="reserve">
+    <section class="dgn__reserve" aria-labelledby="reserve" data-reveal>
       <h2 id="reserve" class="display dgn__reserve-title">
         ¿Empezamos por entenderte?
       </h2>
@@ -164,7 +185,7 @@ const embudo = [
      * Separador honesto: esto NO es el diagnóstico. Es una orientación
      * automática que hace una IA en un minuto. El de pago es humano y a fondo.
      -->
-    <section class="dgn__free" aria-labelledby="free-title">
+    <section class="dgn__free" aria-labelledby="free-title" data-reveal>
       <p class="dgn__free-tag">Gratis · automático · 1 minuto</p>
       <h2 id="free-title" class="display dgn__free-title">
         Mientras tanto, hazte una idea tú mismo.
@@ -189,6 +210,78 @@ const embudo = [
 </PageLayout>
 
 <style>
+  /* ── Ancho editorial ──────────────────────────────────────────────
+   * La página entra por .svc (columna estrecha de 720px, pensada para
+   * detalles de servicio). Aquí, la página clave del embudo, la abrimos al
+   * contenedor ancho para poder romper la columna única en bloques de dos
+   * columnas (cabecera a un lado, contenido al otro), igual que la home.
+   */
+  .dgn {
+    max-width: var(--container-wide);
+  }
+
+  /* ── Cabecera editorial (título + lede a dos columnas) ────────────── */
+  .dgn__head {
+    display: grid;
+    gap: clamp(1rem, 3vw, 2.5rem);
+  }
+  @media (min-width: 880px) {
+    .dgn__head {
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: end;
+      column-gap: clamp(2.5rem, 5vw, 5rem);
+    }
+  }
+  .dgn__head-title {
+    max-width: 18ch;
+    margin-bottom: 0;
+  }
+  .dgn__head-lede {
+    max-width: 52ch;
+  }
+
+  /* ── Patrón de dos columnas editoriales (cabecera | contenido) ─────
+   * Mismo lenguaje que .steps/.accomp de la home: cabecera a un lado,
+   * contenido ocupando su columna al otro. En móvil apila. La cabecera es
+   * sticky en escritorio para acompañar listas largas sin atrapar foco.
+   */
+  .dgn__cols {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+  @media (min-width: 880px) {
+    .dgn__cols {
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: clamp(2.5rem, 5vw, 5rem);
+      align-items: start;
+    }
+    .dgn__cols-aside {
+      position: sticky;
+      top: 6rem;
+      align-self: start;
+    }
+  }
+  .dgn__cols-eyebrow {
+    font-family: var(--font-brand);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute-strong);
+    margin: 0 0 0.75rem;
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .dgn__cols-eyebrow::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-teal-deep);
+  }
+
   /* ── La puerta: bloque con el flujo del embudo + motivo de marca ──────
    * El bloque es el contexto de recorte del BrandPetals (relative + overflow);
    * el contenido va por encima de la marca de agua (z-index). */
@@ -200,8 +293,15 @@ const embudo = [
     position: relative;
     z-index: 1;
   }
+  /* En "La puerta" la cabecera no es sticky: el flujo es corto y la sticky
+     dejaría hueco muerto. Se sobreescribe el sticky del patrón general. */
+  @media (min-width: 880px) {
+    .dgn__puerta .dgn__cols-aside {
+      position: static;
+    }
+  }
   .dgn__puerta-body {
-    margin-bottom: var(--spacing-stack);
+    margin-bottom: 0;
   }
   .dgn__flow {
     max-width: 60ch;
@@ -219,29 +319,41 @@ const embudo = [
     display: grid;
     gap: 0;
   }
-  @media (min-width: 760px) {
-    .dgn__pillars {
-      grid-template-columns: repeat(3, 1fr);
-      gap: clamp(1.5rem, 3vw, 2.5rem);
-    }
-  }
+  /* Lista numerada con hairlines, mismo lenguaje que .steps de la home:
+     número grande display, filete de 1px entre ítems. */
   .dgn__pillar {
-    padding: clamp(1.25rem, 2.5vw, 1.75rem) 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem clamp(1.25rem, 3vw, 2.25rem);
+    align-items: baseline;
+    padding: clamp(1.5rem, 3vw, 2.25rem) 0;
     border-top: 1px solid var(--color-rule);
+  }
+  .dgn__pillar:first-child {
+    padding-top: 0;
+    border-top: none;
+  }
+  @media (min-width: 880px) {
+    .dgn__pillar:first-child {
+      padding-top: clamp(1.5rem, 3vw, 2.25rem);
+      border-top: 1px solid var(--color-rule);
+    }
   }
   .dgn__pillar:last-child {
     border-bottom: 1px solid var(--color-rule);
   }
-  @media (min-width: 760px) {
-    .dgn__pillar {
-      padding: 0;
-      border: 0;
-      border-top: 2px solid var(--color-teal-deep);
-      padding-top: 1.25rem;
-    }
-    .dgn__pillar:last-child {
-      border-bottom: 0;
-    }
+  .dgn__pillar-num {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 1.2vw + 1.4rem, 2.5rem);
+    line-height: 0.9;
+    color: var(--color-teal-deep);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .dgn__pillar-body {
+    display: grid;
+    gap: 0.5rem;
   }
   .dgn__pillar-title {
     font-family: var(--font-display);

@@ -27,7 +27,7 @@ import PageLayout from '../../layouts/PageLayout.astro'
   page="sobre"
 >
   <!-- ── Intro: hay personas detrás ─────────────────────────────── -->
-  <section class="lead" aria-labelledby="lead-title">
+  <section class="lead" aria-labelledby="lead-title" data-reveal>
     <h1 id="lead-title" class="display lead__title">
       Detrás de Zanovix hay personas, no una máquina que vende IA.
     </h1>
@@ -42,9 +42,9 @@ import PageLayout from '../../layouts/PageLayout.astro'
 
   <!-- ── La persona / el equipo ─────────────────────────────────── -->
   <section class="person" aria-labelledby="person-title">
-    <h2 id="person-title" class="display person__title">Quién está al frente</h2>
+    <h2 id="person-title" class="display person__title" data-reveal>Quién está al frente</h2>
 
-    <div class="person__grid">
+    <div class="person__grid" data-reveal>
       <!--
         ┌─────────────────────────────────────────────────────────────┐
         │ BIO_PLACEHOLDER — RELLENAR CON CONTENIDO REAL                 │
@@ -81,31 +81,35 @@ import PageLayout from '../../layouts/PageLayout.astro'
 
   <!-- ── Posicionamiento honesto (mundo forest) ─────────────────── -->
   <section class="honest" aria-labelledby="honest-title">
-    <div class="honest__inner">
-      <h2 id="honest-title" class="honest__title">
-        Seamos honestos sobre dónde estamos hoy
-      </h2>
-      <p class="honest__body">
-        Zanovix está empezando. Hoy todavía es, en gran parte, una persona. No lo
-        escondemos: lo decimos porque es la verdad y porque es justo lo que
-        estamos cambiando.
-      </p>
-      <p class="honest__body">
-        Construimos cada día para dejar de serlo: método documentado para que
-        cualquiera del equipo pueda continuar un proyecto, formación de personas
-        con talento que quieren aprender IA aplicada de verdad y procesos que no
-        dependan de un solo nombre. La meta no es ser la empresa más grande. Es
-        ser la que mejor atiende a quien atiende.
-      </p>
-      <p class="honest__quote">
-        No somos solo Pepe. Hoy todavía sí, en gran parte. Trabajamos cada día
-        para que dejemos de serlo.
-      </p>
+    <div class="honest__inner honest__cols">
+      <div class="honest__aside" data-reveal>
+        <h2 id="honest-title" class="honest__title">
+          Seamos honestos sobre dónde estamos hoy
+        </h2>
+      </div>
+      <div class="honest__main" data-reveal data-reveal-i="1">
+        <p class="honest__body">
+          Zanovix está empezando. Hoy todavía es, en gran parte, una persona. No lo
+          escondemos: lo decimos porque es la verdad y porque es justo lo que
+          estamos cambiando.
+        </p>
+        <p class="honest__body">
+          Construimos cada día para dejar de serlo: método documentado para que
+          cualquiera del equipo pueda continuar un proyecto, formación de personas
+          con talento que quieren aprender IA aplicada de verdad y procesos que no
+          dependan de un solo nombre. La meta no es ser la empresa más grande. Es
+          ser la que mejor atiende a quien atiende.
+        </p>
+        <p class="honest__quote">
+          No somos solo Pepe. Hoy todavía sí, en gran parte. Trabajamos cada día
+          para que dejemos de serlo.
+        </p>
+      </div>
     </div>
   </section>
 
   <!-- ── Cierre: a la conversación ──────────────────────────────── -->
-  <section class="close" aria-labelledby="close-title">
+  <section class="close" aria-labelledby="close-title" data-reveal>
     <h2 id="close-title" class="display close__title">
       ¿Hablamos?
     </h2>
@@ -237,6 +241,24 @@ import PageLayout from '../../layouts/PageLayout.astro'
     max-width: var(--container-wide);
     margin: 0 auto;
     padding: var(--spacing-section-y) var(--spacing-section-x);
+  }
+  /* Dos columnas editoriales: el titular a un lado, el desarrollo al otro.
+     Rompe el aire muerto del lado derecho sin tocar el copy. En móvil apila. */
+  .honest__cols {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+  @media (min-width: 880px) {
+    .honest__cols {
+      grid-template-columns: 0.85fr 1.15fr;
+      column-gap: clamp(2.5rem, 6vw, 5rem);
+      align-items: start;
+    }
+    .honest__aside {
+      position: sticky;
+      top: 6rem;
+      align-self: start;
+    }
   }
   .honest__title {
     font-family: var(--font-display);
