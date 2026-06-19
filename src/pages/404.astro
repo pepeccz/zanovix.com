@@ -1,0 +1,88 @@
+---
+/**
+ * 404.astro — Página no encontrada
+ *
+ * En Astro SSR este archivo se sirve automáticamente para cualquier ruta que
+ * no exista. No requiere configuración adicional.
+ *
+ * Tono: honesto y calmado, coherente con el empty-state de /casos.
+ * Salidas útiles: / (inicio) y /diagnostico (puerta del embudo), con el
+ * CTA principal apuntando a diagnóstico (data-open-contact para abrir el
+ * dialog de captación con JS; href de fallback sin JS).
+ *
+ * Accesibilidad: texto en color-ink / ink-soft (no teal en cuerpo).
+ * Marca: teal solo como acento de subrayado en el enlace de inicio.
+ */
+import PageLayout from '../layouts/PageLayout.astro'
+---
+
+<PageLayout
+  title="Página no encontrada · Zanovix"
+  description="La página que buscas no existe. Vuelve al inicio o empieza por el diagnóstico gratuito."
+  page=""
+>
+  <section class="not-found" aria-labelledby="not-found-title">
+    <p class="not-found__code" aria-hidden="true">404</p>
+    <h1 id="not-found-title" class="not-found__title">
+      Esta página no está aquí.
+    </h1>
+    <p class="not-found__body">
+      La dirección no existe o ya no está disponible. Puede que hayas seguido un
+      enlace antiguo o que el nombre de la ruta haya cambiado. En cualquier caso,
+      no hay nada que hayas hecho mal.
+    </p>
+
+    <div class="not-found__actions">
+      <a
+        class="cta-primary"
+        href="/diagnostico"
+        data-open-contact
+        data-contact-origin="404"
+      >
+        Empezar el diagnóstico
+      </a>
+      <p class="cta-fallback">
+        O vuelve a la <a href="/">página de inicio</a>.
+      </p>
+    </div>
+  </section>
+</PageLayout>
+
+<style>
+  .not-found {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-hero-y) var(--spacing-section-x) var(--spacing-section-y);
+  }
+
+  .not-found__code {
+    font-family: var(--font-brand);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-mute-strong);
+    margin: 0 0 1.25rem;
+  }
+
+  .not-found__title {
+    font-size: var(--text-display);
+    color: var(--color-ink);
+    margin: 0 0 1.5rem;
+    max-width: 18ch;
+  }
+
+  .not-found__body {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 52ch;
+    margin: 0 0 2.5rem;
+  }
+
+  .not-found__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+</style>
