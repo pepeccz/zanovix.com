@@ -98,34 +98,38 @@ const pasos = [
    * opciones a elegir a ciegas. Numeración deliberada porque ES una secuencia.
    -->
   <section class="steps" aria-labelledby="steps-title">
-    <div class="steps__head">
-      <h2 id="steps-title" class="display steps__title">Cómo trabajamos contigo</h2>
-      <p class="steps__lede">
-        No es un catálogo para que elijas a ciegas. Es un camino con un orden:
-        primero entender, luego intervenir, después acompañar. El diagnóstico es
-        la puerta por la que pasa todo.
-      </p>
-    </div>
-    <ol class="steps__list">
-      {
-        pasos.map((p, i) => (
-          <li class="steps__item">
-            <span class="steps__num" aria-hidden="true">{i + 1}</span>
-            <div class="steps__body">
-              <p class="steps__tag">{p.tag}</p>
-              <h3 class="steps__name">{p.name}</h3>
-              <p class="steps__desc">{p.desc}</p>
-            </div>
-          </li>
-        ))
-      }
-    </ol>
-    <div class="steps__cta-row">
-      <a class="cta-primary" href="/diagnostico" data-open-contact data-contact-origin="reservar-diagnostico">Reservar diagnóstico</a>
-      <a class="cta-ghost" href="#proof">
-        Antes, pruébalo gratis
-        <span class="cta-ghost__arrow" aria-hidden="true">→</span>
-      </a>
+    <div class="steps__inner">
+      <div class="steps__aside" data-reveal>
+        <div class="steps__head">
+          <h2 id="steps-title" class="display steps__title">Cómo trabajamos contigo</h2>
+          <p class="steps__lede">
+            No es un catálogo para que elijas a ciegas. Es un camino con un orden:
+            primero entender, luego intervenir, después acompañar. El diagnóstico es
+            la puerta por la que pasa todo.
+          </p>
+        </div>
+        <div class="steps__cta-row">
+          <a class="cta-primary" href="/diagnostico" data-open-contact data-contact-origin="reservar-diagnostico">Reservar diagnóstico</a>
+          <a class="cta-ghost" href="#proof">
+            Antes, pruébalo gratis
+            <span class="cta-ghost__arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+      <ol class="steps__list">
+        {
+          pasos.map((p, i) => (
+            <li class="steps__item" data-reveal data-reveal-i={i}>
+              <span class="steps__num" aria-hidden="true">{i + 1}</span>
+              <div class="steps__body">
+                <p class="steps__tag">{p.tag}</p>
+                <h3 class="steps__name">{p.name}</h3>
+                <p class="steps__desc">{p.desc}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </section>
 
@@ -140,7 +144,7 @@ const pasos = [
    -->
   <section id="proof" class="proof" aria-labelledby="proof-title">
     <div class="proof__inner">
-      <div class="proof__text">
+      <div class="proof__text" data-reveal>
         <p class="proof__tag">Pre-diagnóstico gratis · lo hace una IA en 1 minuto</p>
         <h2 id="proof-title" class="display proof__title">
           Mira cómo te ve una IA hoy.
@@ -210,7 +214,7 @@ const pasos = [
   <section class="method" aria-labelledby="method-title">
     <div class="method__inner">
       <BrandPetals tone="paper" corner="top-left" size={300} />
-      <header class="method__head">
+      <header class="method__head" data-reveal>
         <h2 id="method-title" class="display method__title">
           Cómo trabajamos, en cuatro pasos.
         </h2>
@@ -229,19 +233,30 @@ const pasos = [
    -->
   <section class="accomp" aria-labelledby="accomp-title">
     <div class="accomp__inner">
-      <h2 id="accomp-title" class="display accomp__title">
-        Y si encaja, seguimos a tu lado.
-      </h2>
-      <p class="accomp__lede">
-        Lo que construimos no se entrega y se olvida. Si tiene sentido, te
-        acompañamos cada mes con una cuota fija: ajustes, mediciones y criterio
-        cuando lo necesites. Ingeniería pausada, no un proyecto que desaparece
-        en cuanto se firma.
-      </p>
+      <div class="accomp__intro" data-reveal>
+        <h2 id="accomp-title" class="display accomp__title">
+          Y si encaja, seguimos a tu lado.
+        </h2>
+        <p class="accomp__lede">
+          Lo que construimos no se entrega y se olvida. Si tiene sentido, te
+          acompañamos cada mes con una cuota fija: ajustes, mediciones y criterio
+          cuando lo necesites. Ingeniería pausada, no un proyecto que desaparece
+          en cuanto se firma.
+        </p>
+      </div>
       <ul class="accomp__list">
-        <li class="accomp__item">Sin candado: te puedes ir cuando quieras.</li>
-        <li class="accomp__item">Sin suscripción trampa ni permanencias.</li>
-        <li class="accomp__item">Estamos cuando hace falta, no para facturar por estar.</li>
+        <li class="accomp__item" data-reveal data-reveal-i="0">
+          <span class="accomp__item-mark" aria-hidden="true"></span>
+          <span class="accomp__item-text">Sin candado: te puedes ir cuando quieras.</span>
+        </li>
+        <li class="accomp__item" data-reveal data-reveal-i="1">
+          <span class="accomp__item-mark" aria-hidden="true"></span>
+          <span class="accomp__item-text">Sin suscripción trampa ni permanencias.</span>
+        </li>
+        <li class="accomp__item" data-reveal data-reveal-i="2">
+          <span class="accomp__item-mark" aria-hidden="true"></span>
+          <span class="accomp__item-text">Estamos cuando hace falta, no para facturar por estar.</span>
+        </li>
       </ul>
     </div>
   </section>
@@ -438,15 +453,35 @@ const pasos = [
     }
   }
 
-  /* ── Pasos del embudo (cómo trabajamos contigo) ─────────────────── */
+  /* ── Pasos del embudo (cómo trabajamos contigo) ─────────────────────
+   * Layout editorial de dos columnas: cabecera sticky a la izquierda,
+   * lista numerada ocupando su columna entera a la derecha. En móvil
+   * apila (cabecera arriba, lista abajo) sin sticky.
+   */
   .steps {
     max-width: var(--container-wide);
     margin: 0 auto;
     padding: var(--spacing-section-y) var(--spacing-section-x);
   }
+  .steps__inner {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+  @media (min-width: 880px) {
+    .steps__inner {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: clamp(2.5rem, 5vw, 5rem);
+      align-items: start;
+    }
+    .steps__aside {
+      position: sticky;
+      top: 6rem;
+      align-self: start;
+    }
+  }
   .steps__head {
-    max-width: 60ch;
-    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+    max-width: 42ch;
+    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
   }
   .steps__title {
     font-size: var(--text-h1);
@@ -457,37 +492,48 @@ const pasos = [
     font-size: var(--text-lede);
     line-height: 1.55;
     color: var(--ink-soft);
-    max-width: 56ch;
+    max-width: 42ch;
     margin: 0;
   }
   .steps__list {
     list-style: none;
-    margin: 0 0 clamp(2rem, 4vw, 3rem);
+    margin: 0;
     padding: 0;
     counter-reset: step;
   }
   .steps__item {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 1rem clamp(1rem, 3vw, 2rem);
-    align-items: start;
-    padding: clamp(1.5rem, 3vw, 2.25rem) 0;
+    gap: 0.5rem clamp(1.25rem, 3vw, 2.25rem);
+    align-items: baseline;
+    padding: clamp(1.75rem, 3.5vw, 2.5rem) 0;
     border-top: 1px solid var(--color-rule);
+  }
+  .steps__item:first-child {
+    padding-top: 0;
+    border-top: none;
+  }
+  @media (min-width: 880px) {
+    .steps__item:first-child {
+      padding-top: clamp(1.75rem, 3.5vw, 2.5rem);
+      border-top: 1px solid var(--color-rule);
+    }
   }
   .steps__item:last-child {
     border-bottom: 1px solid var(--color-rule);
   }
   .steps__num {
-    font-family: var(--font-mono);
-    font-size: var(--text-h3);
-    line-height: 1;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.5vw + 1.5rem, 2.75rem);
+    line-height: 0.9;
     color: var(--color-teal-deep);
     font-weight: 500;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
   }
   .steps__body {
     display: grid;
-    gap: 0.4rem;
-    max-width: 60ch;
+    gap: 0.45rem;
   }
   .steps__tag {
     font-family: var(--font-brand);
@@ -510,22 +556,39 @@ const pasos = [
     line-height: 1.6;
     color: var(--ink-soft);
     margin: 0;
+    max-width: 52ch;
   }
   .steps__cta-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 1rem 1.5rem;
+    margin-top: clamp(1.5rem, 3vw, 2rem);
   }
 
-  /* ── Acompañamiento mensual (la relación, paso 4) ───────────────── */
+  /* ── Acompañamiento mensual (la relación, paso 4) ───────────────────
+   * Dos columnas: título + lede a la izquierda, la lista de tres puntos
+   * con presencia propia a la derecha (cada punto con su filete y marca
+   * teal). En móvil apila. Rompe el aire muerto sin gritar.
+   */
   .accomp {
     max-width: var(--container-wide);
     margin: 0 auto;
     padding: var(--spacing-section-y) var(--spacing-section-x);
   }
   .accomp__inner {
-    max-width: 62ch;
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+  @media (min-width: 880px) {
+    .accomp__inner {
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2.5rem, 5vw, 5rem);
+      align-items: start;
+    }
+  }
+  .accomp__intro {
+    max-width: 44ch;
   }
   .accomp__title {
     font-size: var(--text-h1);
@@ -537,28 +600,51 @@ const pasos = [
     font-size: var(--text-lede);
     line-height: 1.55;
     color: var(--ink-soft);
-    margin: 0 0 1.5rem;
+    margin: 0;
   }
   .accomp__list {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 0.6rem;
+    gap: 0;
   }
   .accomp__item {
-    position: relative;
-    padding-left: 1.5rem;
-    font-size: var(--text-body);
-    line-height: 1.55;
-    color: var(--ink-soft);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: 0.85rem;
+    padding: clamp(1rem, 2.5vw, 1.5rem) 0;
+    font-size: var(--text-lede);
+    line-height: 1.5;
+    color: var(--color-ink);
+    border-top: 1px solid var(--color-rule);
   }
-  .accomp__item::before {
-    content: "·";
-    position: absolute;
-    left: 0.5rem;
-    color: var(--color-teal-deep);
-    font-weight: 700;
+  .accomp__item:first-child {
+    padding-top: 0;
+    border-top: none;
+  }
+  @media (min-width: 880px) {
+    .accomp__item:first-child {
+      padding-top: clamp(1rem, 2.5vw, 1.5rem);
+      border-top: 1px solid var(--color-rule);
+    }
+  }
+  .accomp__item:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .accomp__item-mark {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--color-teal-deep);
+    flex: none;
+    align-self: center;
+  }
+  .accomp__item-text {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.015em;
   }
 
   /* ── Prueba GEO (preview fiel del resultado real) ─────────────────── */
@@ -703,4 +789,86 @@ const pasos = [
     color: var(--ink-mute);
     margin: 1.75rem 0 0;
   }
+
+  /* ── Reveals fade-up sobrios ──────────────────────────────────────
+   * Contenido visible por defecto. El estado oculto SOLO se aplica
+   * cuando el JS está activo (html.js-reveal lo activa antes de
+   * observar). Si el JS no corre, el contenido queda en su sitio.
+   * Stagger por --reveal-i (60ms/ítem). Curva expo-out. translateY 12px.
+   */
+  :global(html.js-reveal) [data-reveal] {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 460ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 460ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--reveal-i, 0) * 60ms);
+    will-change: opacity, transform;
+  }
+  /* La regla revelada debe igualar la especificidad de la oculta
+     (que incluye el tipo html), por eso se ancla bajo html.js-reveal. */
+  :global(html.js-reveal) [data-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js-reveal) [data-reveal] {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
 </style>
+
+<script>
+  // Reveal inline mínimo (IntersectionObserver puro, 0KB de lib).
+  // Garantía contenido-visible-por-defecto: marcamos html.js-reveal SOLO
+  // cuando el observer va a correr; el CSS oculta [data-reveal] sólo bajo
+  // esa clase. Sin JS o con reduced-motion, el contenido queda en su sitio.
+  function initHomeReveals() {
+    const items = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-reveal]:not([data-reveal-init])')
+    )
+    if (items.length === 0) return
+
+    const reduced =
+      document.documentElement.dataset.motion === 'reduced' ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reduced || !('IntersectionObserver' in window)) {
+      // Estado final directo, sin ocultar nada.
+      items.forEach((el) => el.setAttribute('data-reveal-init', 'true'))
+      return
+    }
+
+    // Activamos el modo oculto sólo ahora que vamos a animar.
+    document.documentElement.classList.add('js-reveal')
+
+    const io = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement
+            const i = el.dataset.revealI
+            if (i != null) el.style.setProperty('--reveal-i', i)
+            el.classList.add('is-revealed')
+            obs.unobserve(el)
+          }
+        })
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    )
+
+    items.forEach((el) => {
+      el.setAttribute('data-reveal-init', 'true')
+      io.observe(el)
+    })
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHomeReveals)
+  } else {
+    initHomeReveals()
+  }
+  document.addEventListener('astro:page-load', initHomeReveals)
+</script>
