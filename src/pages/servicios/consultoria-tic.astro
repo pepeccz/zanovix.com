@@ -7,6 +7,7 @@
  * compartidos en global.css (.svc*).
  */
 import PageLayout from '../../layouts/PageLayout.astro'
+import BrandPetals from '../../components/astro/ui/BrandPetals.astro'
 import DecisionPath from '../../components/astro/ui/DecisionPath.astro'
 
 const incluye = [
@@ -74,6 +75,26 @@ const incluye = [
       </p>
       <DecisionPath tone="paper" />
     </section>
+
+    <!-- ── Pausa de marca (forest): la postura, no un servicio mas ──────
+     * Rompe el tramo largo de ink-sobre-paper antes de "Qué incluye" y da el
+     * mismo ritmo paper↔forest que home y el hub. El petalo sella el bloque
+     * como firma. La copia es la postura honesta que vertebra esta pagina.
+     -->
+    <aside class="svc__pause" aria-labelledby="pausa" data-reveal>
+      <div class="svc__pause-inner">
+        <BrandPetals tone="paper" corner="top-right" size={260} />
+        <p class="svc__pause-eyebrow">Nuestra postura</p>
+        <h2 id="pausa" class="display svc__pause-title">
+          Trabajamos para ti, no para colocarte un proyecto.
+        </h2>
+        <p class="svc__pause-body">
+          La consultoría solo vale si el criterio es neutral. Por eso, si la
+          mejor decisión es esperar, cambiar de idea o no contratar a nadie,
+          también te lo decimos. Lo que compras es una opinión sin dueño.
+        </p>
+      </div>
+    </aside>
 
     <section class="svc__block svc__incluye-wide" aria-labelledby="incluye">
       <div class="svc__incluye-2col">

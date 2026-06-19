@@ -7,6 +7,7 @@
  * inventados. Estilos compartidos en global.css (.svc*).
  */
 import PageLayout from '../../layouts/PageLayout.astro'
+import BrandPetals from '../../components/astro/ui/BrandPetals.astro'
 import AutomationSketch from '../../components/react/AutomationSketch.tsx'
 import BeforeAfterFlow from '../../components/astro/ui/BeforeAfterFlow.astro'
 
@@ -96,6 +97,27 @@ const incluye = [
       </p>
       <BeforeAfterFlow tone="paper" />
     </section>
+
+    <!-- ── Pausa de marca (forest): cómo construimos ───────────────────
+     * Rompe el tramo largo de ink-sobre-paper antes de "Qué incluye" y da el
+     * mismo ritmo paper↔forest que home y el hub. El petalo sella el bloque
+     * como firma. La copia es la postura artesana, sin cifras inventadas.
+     -->
+    <aside class="svc__pause" aria-labelledby="pausa" data-reveal>
+      <div class="svc__pause-inner">
+        <BrandPetals tone="paper" corner="top-right" size={260} />
+        <p class="svc__pause-eyebrow">Cómo lo construimos</p>
+        <h2 id="pausa" class="display svc__pause-title">
+          Solo construimos lo que se gana su sitio.
+        </h2>
+        <p class="svc__pause-body">
+          Nada de plataformas enormes que tardan un año y no ves funcionar hasta
+          el final. Empezamos por la pieza que más te duele, la ponemos en marcha
+          y la usas de verdad antes de seguir. La IA entra donde ahorra trabajo,
+          no donde queda bien en una demo.
+        </p>
+      </div>
+    </aside>
 
     <section class="svc__block svc__incluye-wide" aria-labelledby="incluye">
       <div class="svc__incluye-2col">

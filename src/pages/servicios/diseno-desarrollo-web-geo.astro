@@ -10,6 +10,7 @@
  * Veto explícito: no usar "+31,8% impresiones" ni el caso "80.000 €".
  */
 import PageLayout from '../../layouts/PageLayout.astro'
+import BrandPetals from '../../components/astro/ui/BrandPetals.astro'
 import GeoSimulator from '../../components/react/GeoSimulator.tsx'
 import RecommendMechanism from '../../components/astro/ui/RecommendMechanism.astro'
 
@@ -83,6 +84,27 @@ const incluye = [
         que la gente busca de otra manera.
       </p>
     </section>
+
+    <!-- ── Pausa de marca (forest): la honestidad como postura ─────────
+     * Rompe el tramo largo de ink-sobre-paper como bisagra entre "para quién"
+     * y el mecanismo. Mismo ritmo paper↔forest que home y el hub; el petalo
+     * sella el bloque como firma. Copia fiel al veto: ningún número prometido.
+     -->
+    <aside class="svc__pause" aria-labelledby="pausa" data-reveal>
+      <div class="svc__pause-inner">
+        <BrandPetals tone="paper" corner="top-right" size={260} />
+        <p class="svc__pause-eyebrow">Sin humo</p>
+        <h2 id="pausa" class="display svc__pause-title">
+          Nadie te puede prometer ser el número uno en ChatGPT.
+        </h2>
+        <p class="svc__pause-body">
+          Quien te lo venda, te está mintiendo. No hay un ranking secreto ni un
+          truco. Hay señales que se trabajan y mediciones que se enseñan tal
+          cual: citas, posición, recomendaciones. Te contamos qué se puede medir
+          de verdad, y lo ves sin maquillar.
+        </p>
+      </div>
+    </aside>
 
     <!-- ── El mecanismo GEO: cómo te recomienda (o no) una IA ───────────
      * El GeoSimulator de arriba PRUEBA el resultado ("una IA no te conoce").

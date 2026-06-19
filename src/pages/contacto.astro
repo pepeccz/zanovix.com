@@ -57,6 +57,16 @@ import LeadForm from '../components/react/LeadForm.tsx'
     margin: 0 auto;
     padding: var(--spacing-hero-y) var(--spacing-section-x) var(--spacing-section-y);
   }
+  /* El lanzador del asistente flota fijo abajo-derecha. En movil el formulario
+   * es de una columna y su submit cae justo en esa esquina: reservamos una zona
+   * inferior segura para que el boton "Enviar mensaje" se pueda desplazar SIEMPRE
+   * por encima del lanzador y quede plenamente pulsable en el punto de conversion.
+   * Alto del lanzador (~2.4rem) + su offset inferior (hasta 1.75rem) + holgura. */
+  @media (max-width: 879px) {
+    .ctc {
+      padding-bottom: calc(var(--spacing-section-y) + 5.5rem);
+    }
+  }
   .ctc__inner {
     display: grid;
     gap: clamp(2rem, 4vw, 3.5rem);
