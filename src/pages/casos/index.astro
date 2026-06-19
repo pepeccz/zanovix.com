@@ -66,10 +66,10 @@ const metricas = [
 >
   <!-- ── Intro: estado honesto, tono confiado ───────────────────── -->
   <section class="lead" aria-labelledby="lead-title">
-    <h1 id="lead-title" class="display lead__title">
+    <h1 id="lead-title" class="display lead__title" data-reveal>
       Aún no llenamos esta página de cifras. Y preferimos contarte por qué.
     </h1>
-    <p class="lead__body">
+    <p class="lead__body" data-reveal>
       Zanovix está empezando. Podríamos pegar aquí logos y porcentajes
       prestados, pero entonces esta página no valdría nada para ti. Así que
       hacemos lo contrario: te enseñamos cómo trabajamos y qué verás en un
@@ -88,7 +88,7 @@ const metricas = [
   <section class="proceso" aria-labelledby="proceso-title">
     <div class="proceso__inner">
       <BrandPetals tone="paper" corner="top-left" size={300} />
-      <header class="proceso__head">
+      <header class="proceso__head" data-reveal>
         <h2 id="proceso-title" class="proceso__title">Cómo trabajamos un caso</h2>
         <p class="proceso__lede">
           Cuatro pasos, siempre los mismos. No es magia: es un método que se
@@ -102,26 +102,31 @@ const metricas = [
 
   <!-- ── Qué medimos: métricas honestas (lista hairline) ─────────── -->
   <section class="metrics" aria-labelledby="metrics-title">
-    <div class="metrics__head">
-      <h2 id="metrics-title" class="display metrics__title">
-        Qué publicaremos cuando exista
-      </h2>
-      <p class="metrics__lede">
-        No prometemos un puesto en ningún ranking, porque ese ranking no
-        existe. Medimos cosas que sí se pueden medir y que te importan de
-        verdad. Cuando tengamos cifras propias, irán aquí, con su contexto.
-      </p>
+    <div class="metrics__2col">
+      <aside class="metrics__aside" data-reveal>
+        <p class="metrics__eyebrow">Lo que medimos</p>
+        <h2 id="metrics-title" class="display metrics__title">
+          Qué publicaremos cuando exista
+        </h2>
+        <p class="metrics__lede">
+          No prometemos un puesto en ningún ranking, porque ese ranking no
+          existe. Medimos cosas que sí se pueden medir y que te importan de
+          verdad. Cuando tengamos cifras propias, irán aquí, con su contexto.
+        </p>
+      </aside>
+      <div>
+        <ul class="metrics__hairline-list">
+          {
+            metricas.map((m, i) => (
+              <li class="metrics__hairline-item" data-reveal data-reveal-i={i}>
+                <h3 class="metric__name">{m.nombre}</h3>
+                <p class="metric__desc">{m.desc}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
     </div>
-    <ul class="metrics__list">
-      {
-        metricas.map((m) => (
-          <li class="metric">
-            <h3 class="metric__name">{m.nombre}</h3>
-            <p class="metric__desc">{m.desc}</p>
-          </li>
-        ))
-      }
-    </ul>
   </section>
 
   <!-- ── Lista de casos publicados (solo si los hay) ─────────────── -->
@@ -159,7 +164,7 @@ const metricas = [
   {
     !hayCasos && (
       <section class="slot" aria-labelledby="slot-title">
-        <div class="slot__panel">
+        <div class="slot__panel" data-reveal>
           <p class="slot__tag">Reservado</p>
           <h2 id="slot-title" class="slot__title">
             Aquí irá el primer caso, con nombre y cifras propias.
@@ -177,7 +182,7 @@ const metricas = [
 
   <!-- ── Cierre: a la conversación ───────────────────────────────── -->
   <section class="close" aria-labelledby="close-title">
-    <h2 id="close-title" class="display close__title">
+    <h2 id="close-title" class="display close__title" data-reveal>
       ¿Quieres ser de los primeros?
     </h2>
     <p class="close__lede">
@@ -479,5 +484,63 @@ const metricas = [
     letter-spacing: 0.08em;
     color: var(--ink-mute);
     margin: 0;
+  }
+
+  /* ── Metricas 2-col ──────────────────────────────────────────── */
+  .metrics__2col {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+  @media (min-width: 880px) {
+    .metrics__2col {
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: clamp(2.5rem, 5vw, 5rem);
+      align-items: start;
+    }
+    .metrics__aside {
+      position: sticky;
+      top: 6rem;
+      align-self: start;
+    }
+  }
+  .metrics__eyebrow {
+    font-family: var(--font-brand);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute-strong);
+    margin: 0 0 0.75rem;
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .metrics__eyebrow::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-teal-deep);
+  }
+  .metrics__hairline-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .metrics__hairline-item {
+    border-top: 1px solid var(--color-rule);
+    padding: clamp(1rem, 2.5vw, 1.5rem) 0;
+  }
+  .metrics__hairline-item:first-child {
+    border-top: none;
+  }
+  .metrics__hairline-item:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  @media (min-width: 880px) {
+    .metrics__hairline-item:first-child {
+      border-top: 1px solid var(--color-rule);
+    }
   }
 </style>

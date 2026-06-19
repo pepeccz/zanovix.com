@@ -32,7 +32,7 @@ const incluye = [
       <a href="/diagnostico" data-open-contact data-contact-origin="servicio-consultoria-diagnostico">diagnóstico</a>.
     </p>
 
-    <header class="svc__head">
+    <header class="svc__head" data-reveal>
       <h1 class="display svc__title">
         Tienes que decidir y no sabes en quién fiarte.
       </h1>
@@ -43,7 +43,7 @@ const incluye = [
       </p>
     </header>
 
-    <section class="svc__block" aria-labelledby="que-es">
+    <section class="svc__block" aria-labelledby="que-es" data-reveal>
       <h2 id="que-es" class="svc__h2">Qué es y para quién</h2>
       <p class="svc__body">
         Criterio técnico de tu lado: alguien que entiende la tecnología pero
@@ -65,7 +65,7 @@ const incluye = [
      * decisión clara, pasándolas por un criterio honesto y neutral. Es lo que
      * esta página, la más "plana", necesitaba para mostrar su valor.
      -->
-    <section class="svc__block" aria-labelledby="criterio">
+    <section class="svc__block" aria-labelledby="criterio" data-reveal>
       <h2 id="criterio" class="svc__h2">Qué hace, en realidad, un buen criterio</h2>
       <p class="svc__body">
         No es darte otra opinión más. Es ordenar todas las que ya te llegan,
@@ -75,15 +75,24 @@ const incluye = [
       <DecisionPath tone="paper" />
     </section>
 
-    <section class="svc__block" aria-labelledby="incluye">
-      <h2 id="incluye" class="svc__h2">Qué incluye, sin letra pequeña</h2>
-      <ul class="svc__list">
-        {incluye.map((item) => <li class="svc__item">{item}</li>)}
-      </ul>
-      <p class="svc__note">
-        Si la mejor opción no pasa por contratarnos a nosotros, te lo diremos
-        igual. El valor está en el criterio, no en colocarte un proyecto.
-      </p>
+    <section class="svc__block svc__incluye-wide" aria-labelledby="incluye">
+      <div class="svc__incluye-2col">
+        <aside class="svc__incluye-aside" data-reveal>
+          <p class="svc__eyebrow">Qué incluye</p>
+          <h2 id="incluye" class="svc__h2">Qué incluye, sin letra pequeña</h2>
+        </aside>
+        <div>
+          <ul class="svc__incluye-list">
+            {incluye.map((item, i) => (
+              <li class="svc__incluye-item" data-reveal data-reveal-i={i}>{item}</li>
+            ))}
+          </ul>
+          <p class="svc__note">
+            Si la mejor opción no pasa por contratarnos a nosotros, te lo diremos
+            igual. El valor está en el criterio, no en colocarte un proyecto.
+          </p>
+        </div>
+      </div>
     </section>
 
     <section class="svc__cta" aria-labelledby="cta">
@@ -101,3 +110,73 @@ const incluye = [
     </section>
   </article>
 </PageLayout>
+
+<style>
+  /* Break the "Qué incluye" section out to the wide container width while
+   * keeping the rest of the article at the narrow container (~720px).
+   * Classic full-bleed breakout: center on viewport, cap at wide container. */
+  .svc__incluye-wide {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(var(--container-wide), 100vw);
+    padding-left: var(--spacing-section-x);
+    padding-right: var(--spacing-section-x);
+  }
+  .svc__incluye-2col {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+  @media (min-width: 880px) {
+    .svc__incluye-2col {
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: clamp(2.5rem, 5vw, 5rem);
+      align-items: start;
+    }
+    .svc__incluye-aside {
+      position: sticky;
+      top: 6rem;
+      align-self: start;
+    }
+  }
+  .svc__eyebrow {
+    font-family: var(--font-brand);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute-strong);
+    margin: 0 0 0.75rem;
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .svc__eyebrow::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-teal-deep);
+  }
+  .svc__incluye-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .svc__incluye-item {
+    border-top: 1px solid var(--color-rule);
+    padding: clamp(1rem, 2.5vw, 1.5rem) 0;
+  }
+  .svc__incluye-item:first-child {
+    border-top: none;
+  }
+  .svc__incluye-item:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  @media (min-width: 880px) {
+    .svc__incluye-item:first-child {
+      border-top: 1px solid var(--color-rule);
+    }
+  }
+</style>
