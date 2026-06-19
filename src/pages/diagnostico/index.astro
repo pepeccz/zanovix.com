@@ -201,7 +201,7 @@ const embudo = [
     z-index: 1;
   }
   .dgn__puerta-body {
-    margin-bottom: clamp(2rem, 4vw, 3rem);
+    margin-bottom: var(--spacing-stack);
   }
   .dgn__flow {
     max-width: 60ch;
@@ -245,9 +245,9 @@ const embudo = [
   }
   .dgn__pillar-title {
     font-family: var(--font-display);
-    font-weight: 600;
+    font-weight: 540;
     font-size: var(--text-h3);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.025em;
     color: var(--color-ink);
     margin: 0 0 0.6rem;
   }
@@ -260,8 +260,8 @@ const embudo = [
 
   /* ── Reserva del diagnóstico (CTA primario, de pago) ─────────────── */
   .dgn__reserve {
-    margin-top: clamp(2rem, 5vw, 3.5rem);
-    padding-top: clamp(2rem, 5vw, 3.5rem);
+    margin-top: var(--spacing-section-y);
+    padding-top: var(--spacing-section-y);
     border-top: 1px solid var(--color-rule-strong);
   }
   .dgn__reserve-title {
@@ -284,14 +284,14 @@ const embudo = [
    * diagnóstico humano. El teal solo como acento de la etiqueta.
    */
   .dgn__free {
-    margin-top: clamp(3rem, 7vw, 5rem);
-    padding: clamp(1.75rem, 4vw, 3rem);
+    margin-top: var(--spacing-section-y);
+    padding: var(--spacing-section-x);
     border: 1px solid var(--color-rule);
     border-radius: 16px;
     background: var(--color-surface, var(--color-paper));
   }
   .dgn__free-tag {
-    font-family: var(--font-mono);
+    font-family: var(--font-brand);
     font-size: var(--text-eyebrow);
     letter-spacing: 0.08em;
     text-transform: uppercase;

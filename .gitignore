@@ -23,3 +23,6 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 .atl/.skill-registry.cache.json
+
+# impeccable critique snapshots (local tooling)
+.impeccable/
