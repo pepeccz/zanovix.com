@@ -52,7 +52,7 @@ const principios = [
   page="metodologia"
 >
   <!-- ── Intro: el método como prueba ───────────────────────────── -->
-  <section class="lead" aria-labelledby="lead-title">
+  <section class="lead" aria-labelledby="lead-title" data-reveal>
     <h1 id="lead-title" class="display lead__title">
       No te pedimos que confíes en nosotros. Te enseñamos cómo trabajamos.
     </h1>
@@ -67,7 +67,7 @@ const principios = [
 
   <!-- ── Los cuatro pasos ───────────────────────────────────────── -->
   <section class="flow" aria-labelledby="flow-title">
-    <header class="flow__head">
+    <header class="flow__head" data-reveal>
       <h2 id="flow-title" class="display flow__title">Cómo trabajamos un proyecto</h2>
       <p class="flow__lede">
         Siempre el mismo orden, porque el orden importa. No se propone sin
@@ -81,7 +81,7 @@ const principios = [
   <!-- ── Principios (mundo forest: cambio de mundo deliberado) ──── -->
   <section class="principles" aria-labelledby="principles-title">
     <div class="principles__inner">
-      <header class="principles__head">
+      <header class="principles__head" data-reveal>
         <h2 id="principles-title" class="principles__title">
           Lo que no se negocia
         </h2>
@@ -93,8 +93,8 @@ const principios = [
       </header>
       <ul class="principles__list">
         {
-          principios.map((p) => (
-            <li class="principle">
+          principios.map((p, i) => (
+            <li class="principle" data-reveal data-reveal-i={i}>
               <h3 class="principle__name">{p.nombre}</h3>
               <p class="principle__desc">{p.desc}</p>
             </li>
@@ -105,7 +105,7 @@ const principios = [
   </section>
 
   <!-- ── Cierre: a la conversación ──────────────────────────────── -->
-  <section class="close" aria-labelledby="close-title">
+  <section class="close" aria-labelledby="close-title" data-reveal>
     <h2 id="close-title" class="display close__title">
       ¿Te encaja cómo trabajamos?
     </h2>
@@ -144,9 +144,9 @@ const principios = [
     margin: 0 0 1.5rem;
   }
   .lead__sign {
-    font-family: var(--font-mono);
+    font-family: var(--font-brand);
     font-size: var(--text-eyebrow);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     color: var(--ink-mute);
     margin: 0;
   }
@@ -190,9 +190,9 @@ const principios = [
   }
   .principles__title {
     font-family: var(--font-display);
-    font-weight: 600;
+    font-weight: 540;
     font-size: var(--text-h1);
-    letter-spacing: -0.015em;
+    letter-spacing: -0.03em;
     color: var(--color-paper);
     margin: 0 0 0.85rem;
   }
@@ -225,9 +225,9 @@ const principios = [
   }
   .principle__name {
     font-family: var(--font-display);
-    font-weight: 600;
+    font-weight: 540;
     font-size: var(--text-h3);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.025em;
     color: var(--color-paper);
     margin: 0;
   }
@@ -274,9 +274,9 @@ const principios = [
     text-decoration-color: var(--color-teal);
   }
   .close__meta {
-    font-family: var(--font-mono);
+    font-family: var(--font-brand);
     font-size: var(--text-eyebrow);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     color: var(--ink-mute);
     margin: 0;
   }

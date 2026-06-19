@@ -48,10 +48,10 @@ const {
 
     <!--
       Fuentes importadas en global.css vía @fontsource (self-hosted, no CDN).
-      @fontsource-variable/newsreader — Newsreader Variable
-      @fontsource-variable/inter     — Inter Variable
-      @fontsource/jetbrains-mono     — JetBrains Mono 400/500
-      @fontsource-variable/cormorant-garamond — Cormorant Garamond Variable (display companion)
+      @fontsource-variable/league-spartan — League Spartan Variable (display de marca:
+                                            titulares + nav + etiquetas; la tipo del logo)
+      @fontsource-variable/hanken-grotesk — Hanken Grotesk Variable (cuerpo)
+      @fontsource/jetbrains-mono          — JetBrains Mono 400/500 (técnico puntual)
     -->
 
     <!-- Slot para preloads e inyecciones de head desde layouts hijos -->
@@ -77,4 +77,7 @@ const {
 -->
 <script>
   import '../lib/motion/motion-bootstrap.ts'
+  // Reveals fade-up globales (IntersectionObserver, 0KB de lib). Mecanismo
+  // compartido por todas las páginas; el CSS asociado vive en motion.css.
+  import '../lib/motion/reveal.ts'
 </script>

@@ -26,22 +26,29 @@ colors:
   rule-invert: "color-mix(in oklch, #F4F1EA 16%, transparent)"
 typography:
   display:
-    fontFamily: "'Hanken Grotesk Variable', system-ui, sans-serif"
+    fontFamily: "'League Spartan Variable', 'League Spartan', system-ui, sans-serif"
     fontSize: "clamp(2.5rem, 3.5vw + 1rem, 4rem)"
-    fontWeight: 600
-    lineHeight: 1.04
-    letterSpacing: "-0.02em"
+    fontWeight: 560
+    lineHeight: 1.02
+    letterSpacing: "-0.035em"
   title:
-    fontFamily: "'Hanken Grotesk Variable', system-ui, sans-serif"
+    fontFamily: "'League Spartan Variable', 'League Spartan', system-ui, sans-serif"
     fontSize: "clamp(1.25rem, 0.6vw + 1rem, 1.5rem)"
-    fontWeight: 600
+    fontWeight: 540
     lineHeight: 1.3
+    letterSpacing: "-0.025em"
   body:
     fontFamily: "'Hanken Grotesk Variable', system-ui, sans-serif"
     fontSize: "clamp(1rem, 0.2vw + 0.95rem, 1.125rem)"
     fontWeight: 400
     lineHeight: 1.6
-  label:
+  brandLabel:
+    fontFamily: "'League Spartan Variable', 'League Spartan', system-ui, sans-serif"
+    fontSize: "clamp(0.75rem, 0.1vw + 0.72rem, 0.8125rem)"
+    fontWeight: 500
+    textTransform: "uppercase"
+    letterSpacing: "0.08em"
+  monoLabel:
     fontFamily: "'JetBrains Mono', ui-monospace, monospace"
     fontSize: "clamp(0.75rem, 0.1vw + 0.72rem, 0.8125rem)"
     fontWeight: 400
@@ -91,7 +98,7 @@ reveals sobrios via IntersectionObserver. Sin scroll secuestrado, sin pins de 20
 sin reveals palabra a palabra. `prefers-reduced-motion` salta siempre al estado final.
 
 **Caracteristicas clave:**
-- Dos familias tipograficas: una grotesca humanista (display→cuerpo por peso) + mono funcional.
+- Tres roles tipograficos: League Spartan (display de marca: titulares + nav + etiquetas, la tipo del logo) + Hanken Grotesk (cuerpo) + JetBrains Mono (tecnico puntual).
 - Paleta OKLCH tintada al verde de marca (~hue 165), no crema. Un acento (teal) con intencion.
 - WCAG 2.2 AA como requisito medido, no aspiracion.
 - Plano absoluto: sin box-shadow. Hairlines de 1px como unico separador superficial.
@@ -146,40 +153,57 @@ mas bajos no pasan. Medir antes de bajar la opacidad.
 
 ## 3. Typography
 
-**Display + cuerpo:** Hanken Grotesk Variable (una sola grotesca humanista que cubre
-de display a cuerpo por contraste de PESO y tamano, no por familias separadas).
-**Mono funcional:** JetBrains Mono (UI real: estado del asistente, mailto, metadatos
-funcionales). No es eyebrow-disfraz.
+**Display de marca:** League Spartan Variable (la tipo del logo ZAN✿VIX). Cubre TODOS
+los titulares (h1/h2/display, clase `.display` y bloques `var(--font-display)`), los
+links del nav y las etiquetas cortas uppercase (eyebrows / kickers / tags de paso /
+metadatos). El objetivo es que el sitio "hable" el mismo idioma que el logo. Token
+`--font-brand` para etiquetas uppercase que no son titulares pero sí marca.
+**Cuerpo:** Hanken Grotesk Variable (lectura larga: parrafos, lede, texto corrido).
+League Spartan NO va en el cuerpo: es display geometrico y cansa en bloques largos.
+**Mono tecnico:** JetBrains Mono SOLO en contextos genuinamente tecnicos: lecturas
+numericas (contadores, numeros de paso), mailto mostrado como dato, labels de
+formulario y UI del asistente/simuladores. No es eyebrow-disfraz.
 
 **Fuentes retiradas:** Cormorant Garamond, Newsreader e Inter quedan fuera del sistema;
 eran el lane editorial-IA que el rediseno abandona. JetBrains Mono se mantiene porque
-no esta en la lista de reflex-reject y su uso aqui es funcional, no decorativo.
+su uso aqui es funcional (dato tecnico real), no decorativo.
 
-**Caracter:** dos familias, no cuatro. La jerarquia se construye con peso y escala,
-no con multiples tipografias. El token `--font-serif` apunta temporalmente a la
-grotesca para no romper paginas aun sin migrar; se retirara al rediseno completo.
+**Pesos y tracking de League Spartan:** geometrica, lee mas pesada que la grotesca, asi
+que en display grande sentence-case pide menos peso (540-560, no 600) y un tracking
+ligeramente NEGATIVO (-0.025em a -0.035em) para que las geometricas no se abran de mas.
+En uppercase de nav/etiquetas pide tracking POSITIVO (~0.08em, como el logo).
+
+**Caracter:** tres roles, no cuatro familias. La jerarquia se construye con peso, escala
+y el cambio display(marca)→cuerpo. El token `--font-serif` apunta temporalmente a la
+grotesca de cuerpo para no romper paginas aun sin migrar; se retirara al rediseno completo.
 
 **Wordmark:** el logotipo es un asset SVG vectorizado (no se carga como fuente web):
 estable, sin dependencia de carga ni degradacion por fallback. El isotipo SVG real
 (header/footer/favicon) es la marca persistente del sitio.
 
 ### Escala fluid (display ≤4rem, ratio ≥1.25)
-- **display** `clamp(2.5rem, 3.5vw + 1rem, 4rem)`: titulares de hero y seccion. Peso 600, line-height 1.04, letter-spacing -0.02em (clase `.display`). La herramienta no grita: techo 4rem.
+- **display** `clamp(2.5rem, 3.5vw + 1rem, 4rem)`: titulares de hero y seccion en League Spartan. Peso 560, line-height 1.02, letter-spacing -0.035em (clase `.display`). La herramienta no grita: techo 4rem.
 - **h1** `clamp(2rem, 2.2vw + 1rem, 3rem)`: titulos de pagina interna.
 - **h2** `clamp(1.5rem, 1.2vw + 1rem, 2.25rem)`: subtitulos de seccion.
 - **h3** `clamp(1.25rem, 0.6vw + 1rem, 1.5rem)`: titulos de componente.
 - **lede** `clamp(1.125rem, 0.4vw + 1rem, 1.375rem)`: parrafo introductorio.
 - **body** `clamp(1rem, 0.2vw + 0.95rem, 1.125rem)`: cuerpo, line-height 1.6, max 65-75ch.
-- **eyebrow** `clamp(0.75rem, 0.1vw + 0.72rem, 0.8125rem)`: etiqueta mono FUNCIONAL, uppercase, tracking 0.08em.
+- **eyebrow / etiqueta de marca** `clamp(0.75rem, 0.1vw + 0.72rem, 0.8125rem)`: etiqueta uppercase en League Spartan (`--font-brand`), peso 500, tracking 0.08em. El mono solo donde es dato tecnico real (`--font-mono`).
 
 ### Reglas nombradas
-**La Regla de las Dos Familias.** Una grotesca + una mono. No anadir una tercera
-familia. La jerarquia viene del peso y la escala. (Deroga la "Regla de los Cuatro
+**La Regla de los Tres Roles.** League Spartan (display de marca: titulares + nav +
+etiquetas) + Hanken Grotesk (cuerpo) + JetBrains Mono (tecnico puntual). No anadir una
+cuarta familia. La jerarquia viene del peso, la escala y el cambio display→cuerpo.
+(Deroga la "Regla de las Dos Familias" de la v2 temprana y la "Regla de los Cuatro
 Roles" de la v1.)
 
-**La Regla del Mono Funcional.** El monospace marca herramienta real (estado del
-asistente, mailto, metadatos de UI), nunca un eyebrow decorativo encima de cada
-seccion. Mono como disfraz de "tecnico" es un tell de IA.
+**La Regla del Logo como Voz.** League Spartan es la tipo del wordmark ZAN✿VIX; los
+titulares, el nav y las etiquetas la usan para que el sitio hable el idioma del logo.
+League Spartan NO va en el cuerpo (es display: cansa en lectura larga).
+
+**La Regla del Mono Funcional.** El monospace marca dato tecnico real (lecturas
+numericas, mailto, labels de formulario, UI del asistente/simuladores), nunca un
+eyebrow decorativo encima de cada seccion. Mono como disfraz de "tecnico" es un tell de IA.
 
 **La Regla de la Escala Fluid.** Todos los tamanos son clamp(). Sin breakpoints fijos.
 
@@ -261,7 +285,7 @@ sobre forest) por ser una herramienta. No inventar botones con sombra sobre pape
 
 ### Do
 - **Do** usar `paper` (oklch 0.976 0.005 165) como fondo base. Nunca `#FFFFFF` ni el viejo crema `#F4F1EA` como fondo de pagina.
-- **Do** llevar la jerarquia con peso/escala de Hanken Grotesk; mono solo funcional.
+- **Do** llevar los titulares, el nav y las etiquetas en League Spartan (la tipo del logo); el cuerpo en Hanken Grotesk; el mono solo para dato tecnico real.
 - **Do** medir contraste: teal NO en texto de cuerpo; tintas ink-* en 85-88% sobre el nuevo paper.
 - **Do** usar forest/forest-deep para el Companion y superficies de prueba drenched.
 - **Do** preferir listados con hairline a card-grids repetidos.
@@ -269,10 +293,10 @@ sobre forest) por ser una herramienta. No inventar botones con sombra sobre pape
 - **Do** preservar la distincion logo SVG real (identidad) vs cualquier mark de animacion.
 
 ### Don't
-- **Don't** volver al lane editorial: sin Cormorant/Newsreader/Inter, sin eyebrow mono encima de cada seccion, sin monocromo crema.
+- **Don't** volver al lane editorial: sin Cormorant/Newsreader/Inter, sin monocromo crema.
 - **Don't** usar scroll secuestrado, pins de 200vh, reveals palabra a palabra ni mascaras de scroll-jacking.
 - **Don't** usar numeros no atribuibles (caso 80.000€, +31,8% impresiones). Honestidad de marca.
 - **Don't** usar box-shadow como elevacion ni `border-width` >1px decorativo (salvo el subrayado teal de acento).
-- **Don't** anadir una tercera familia tipografica ni usar mono como disfraz "tecnico".
+- **Don't** anadir una cuarta familia tipografica, usar League Spartan en el cuerpo, ni usar mono como disfraz "tecnico".
 - **Don't** usar `night` en produccion hasta que el dark mode este disenado.
 - **Don't** reintroducir la flor flotante ni los capitulos editoriales.

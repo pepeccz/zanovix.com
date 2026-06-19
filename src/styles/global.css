@@ -1,10 +1,17 @@
 /* ── Fuentes self-hosted (no Google Fonts CDN) ─────────────────── */
 /**
- * Sistema "herramienta honesta": una grotesca humanista (Hanken Grotesk)
- * cubre display→cuerpo por contraste de peso, + JetBrains Mono FUNCIONAL
- * (es una herramienta real, no eyebrow decorativo). Cormorant/Newsreader/
- * Inter retirados: eran el lane editorial-IA que el rediseño abandona.
+ * Tres roles tipográficos:
+ *   - DISPLAY DE MARCA: League Spartan (la tipo del logo ZAN✿VIX). Cubre
+ *     TODOS los titulares (h1/h2/display), los links del nav y las etiquetas
+ *     cortas uppercase (eyebrows/kickers/tags de paso). El sitio "habla" el
+ *     mismo idioma que el logo.
+ *   - CUERPO: Hanken Grotesk (lectura larga: párrafos, lede, texto corrido).
+ *     League Spartan NO va en el cuerpo (es display; cansa en bloques largos).
+ *   - MONO TÉCNICO: JetBrains Mono SOLO en contextos genuinamente técnicos
+ *     (lecturas numéricas, emails como dato, labels de formulario y UI del
+ *     asistente/simuladores). Cormorant/Newsreader/Inter retirados.
  */
+@import "@fontsource-variable/league-spartan";
 @import "@fontsource-variable/hanken-grotesk";
 @import "@fontsource/jetbrains-mono/400.css";
 @import "@fontsource/jetbrains-mono/500.css";
@@ -36,11 +43,15 @@
   --color-rule-invert:  color-mix(in oklch, #F4F1EA 16%, transparent);
 
   /* ── Typography families ────────────────────────────────────────
-   * Una sola grotesca humanista (display→cuerpo por peso) + mono real.
-   * --font-serif se mantiene como token apuntando a la grotesca para no
-   * romper páginas aún sin migrar; se retirará al rediseñarlas.
+   * League Spartan = display de marca (titulares + nav + etiquetas, la tipo
+   * del logo). Hanken Grotesk = cuerpo (lectura larga). JetBrains Mono = mono
+   * técnico. --font-brand es el alias semántico para nav/etiquetas que NO son
+   * titulares pero sí hablan el idioma del logo (uppercase). --font-serif se
+   * mantiene apuntando a la grotesca de cuerpo por compatibilidad.
    */
-  --font-display:  'Hanken Grotesk Variable', system-ui, sans-serif;
+  --font-league-spartan: 'League Spartan Variable', 'League Spartan', system-ui, sans-serif;
+  --font-display:  'League Spartan Variable', 'League Spartan', system-ui, sans-serif;
+  --font-brand:    'League Spartan Variable', 'League Spartan', system-ui, sans-serif;
   --font-sans:     'Hanken Grotesk Variable', system-ui, sans-serif;
   --font-serif:    'Hanken Grotesk Variable', system-ui, sans-serif;
   --font-mono:     'JetBrains Mono', ui-monospace, monospace;
@@ -153,27 +164,19 @@ h1, h2, h3, blockquote {
   overflow-wrap: break-word;
 }
 
-/* ── Display — Hanken Grotesk en modo titular ───────────────────────
- * La grotesca lleva el peso de los titulares por contraste de peso/tamaño,
- * no por una familia display aparte. Peso 600, line-height ajustado,
- * tracking ligeramente cerrado (≥ -0.02em, nunca más).
+/* ── Display — League Spartan (la tipo del logo) en modo titular ─────
+ * League Spartan es geométrica: en display grande sentence-case pide menos
+ * peso que la grotesca (560 frente a 600 para no verse pesada) y un tracking
+ * ligeramente negativo (-0.035em) para que las letras geométricas no se
+ * abran de más. Casa con el wordmark ZAN✿VIX.
  */
 .display {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 560;
   font-style: normal;
-  line-height: 1.04;
-  letter-spacing: -0.02em;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
   text-wrap: balance;
-}
-
-/* Alias de compatibilidad para componentes aún sin migrar (capítulos viejos). */
-.display-cormorant {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-display);
-  line-height: 1.04;
-  letter-spacing: -0.02em;
 }
 
 /* ── Simulador GEO (pagina de servicio) ──────────────────────────────
@@ -381,8 +384,8 @@ h1, h2, h3, blockquote {
 .geosim__verdict {
   font-family: var(--font-display);
   font-size: var(--text-h2);
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-weight: 540;
+  letter-spacing: -0.025em;
   line-height: 1.2;
   color: var(--color-teal-bright);
   margin: 0 0 1.25rem;
@@ -539,8 +542,8 @@ h1, h2, h3, blockquote {
 .rcheck__legend {
   font-family: var(--font-display);
   font-size: var(--text-h3);
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-weight: 540;
+  letter-spacing: -0.025em;
   line-height: 1.25;
   color: var(--paper-on-dark);
   padding: 0;
@@ -665,9 +668,9 @@ h1, h2, h3, blockquote {
 }
 .rcheck__tag {
   display: inline-block;
-  font-family: var(--font-mono);
+  font-family: var(--font-brand);
   font-size: var(--text-eyebrow);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   border-radius: 999px;
   padding: 0.3rem 0.7rem;
@@ -689,8 +692,8 @@ h1, h2, h3, blockquote {
 .rcheck__verdict {
   font-family: var(--font-display);
   font-size: var(--text-h2);
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-weight: 540;
+  letter-spacing: -0.025em;
   line-height: 1.2;
   color: var(--color-teal-bright);
   margin: 0 0 1.25rem;
@@ -939,8 +942,8 @@ h1, h2, h3, blockquote {
 .asketch__verdict {
   font-family: var(--font-display);
   font-size: var(--text-h2);
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-weight: 540;
+  letter-spacing: -0.025em;
   line-height: 1.2;
   color: var(--color-teal-bright);
   margin: 0 0 1.25rem;
@@ -1030,9 +1033,9 @@ h1, h2, h3, blockquote {
   margin: 0 0 clamp(1.5rem, 4vw, 3rem);
 }
 .svc__back a {
-  font-family: var(--font-mono);
+  font-family: var(--font-brand);
   font-size: var(--text-eyebrow);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   color: var(--ink-mute-strong);
   text-decoration: none;
 }
@@ -1044,9 +1047,9 @@ h1, h2, h3, blockquote {
 /* Enlace al diagnóstico desde un detalle de intervención: recuerda que el
  * trabajo empieza por la puerta del embudo. */
 .svc__from {
-  font-family: var(--font-mono);
+  font-family: var(--font-brand);
   font-size: var(--text-eyebrow);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-mute-strong);
   margin: 0 0 clamp(1.5rem, 4vw, 2.5rem);
@@ -1064,7 +1067,7 @@ h1, h2, h3, blockquote {
  * Texto en ink-mute-strong (AA sobre paper); el teal solo como acento de
  * marcador, nunca como color de texto legible. */
 .svc__sim-tag {
-  font-family: var(--font-mono);
+  font-family: var(--font-brand);
   font-size: var(--text-eyebrow);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1104,9 +1107,9 @@ h1, h2, h3, blockquote {
 }
 .svc__h2 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 540;
   font-size: var(--text-h2);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.03em;
   color: var(--color-ink);
   margin: 0 0 1.25rem;
 }
@@ -1151,6 +1154,56 @@ h1, h2, h3, blockquote {
   max-width: 62ch;
   margin: 1.5rem 0 0;
 }
+
+/* ── Pausa de marca: banda forest a sangre (mundo drenched) ────────────
+ * Las paginas de servicio (.svc) corren al container estrecho y son casi todo
+ * ink-sobre-paper. Esta banda rompe el tramo mas largo con un momento de color
+ * forest, igual que .method en home y .accomp en el hub: mismo ritmo visual y
+ * la firma de petalos. Breakout full-bleed (100vw) desde el contenedor estrecho,
+ * con el inner capado al container wide. Una sola por pagina: calma, no circo.
+ */
+.svc__pause {
+  /* Full-bleed desde el contenedor estrecho sin desbordar: el ancho de viewport
+   * se logra con margenes negativos calculados (50% - 50vw a cada lado), tecnica
+   * estable que no suma scrollbar como haria width:100vw. */
+  margin-inline: calc(50% - 50vw);
+  margin-block: clamp(2.5rem, 6vw, 4.5rem);
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+}
+.svc__pause-inner {
+  position: relative;
+  overflow: hidden;
+  max-width: var(--container-wide);
+  margin: 0 auto;
+  padding: clamp(2.75rem, 6vw, 4.5rem) var(--spacing-section-x);
+}
+.svc__pause-inner > :not(.brandpetals) {
+  position: relative;
+  z-index: 1;
+}
+.svc__pause-eyebrow {
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper-on-dark-mute);
+  margin: 0 0 0.85rem;
+}
+.svc__pause-title {
+  font-size: var(--text-h1);
+  color: var(--paper-on-dark);
+  margin: 0 0 1rem;
+  max-width: 22ch;
+}
+.svc__pause-body {
+  font-size: var(--text-lede);
+  line-height: 1.6;
+  color: var(--paper-on-dark-soft);
+  max-width: 58ch;
+  margin: 0;
+}
+
 .svc__cta {
   margin-top: clamp(2rem, 5vw, 3.5rem);
   padding-top: clamp(2rem, 5vw, 3.5rem);
@@ -1404,9 +1457,9 @@ h1, h2, h3, blockquote {
 }
 .leadform__result-title {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 540;
   font-size: var(--text-h2);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.03em;
   color: var(--color-ink);
   margin: 0 0 0.75rem;
 }
@@ -1482,7 +1535,7 @@ h1, h2, h3, blockquote {
   transform: rotate(-45deg);
 }
 .cdialog__eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-brand);
   font-size: var(--text-eyebrow);
   /* Regla de marca: el teal NO sirve para texto pequeno (contraste < 4.5:1).
      El eyebrow usa la tinta de label (AA holgado); el teal queda como acento. */
@@ -1493,9 +1546,9 @@ h1, h2, h3, blockquote {
 }
 .cdialog__title {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 540;
   font-size: var(--text-h2);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.03em;
   color: var(--color-ink);
   margin: 0 0 0.6rem;
   max-width: 18ch;
@@ -1652,9 +1705,9 @@ h1, h2, h3, blockquote {
 }
 .cdialog__result-title {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 540;
   font-size: var(--text-h2);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.03em;
   color: var(--color-ink);
   margin: 0 0 0.75rem;
 }
@@ -1743,14 +1796,18 @@ h1, h2, h3, blockquote {
   padding: 0.65rem 1rem;
   background: var(--color-forest);
   color: var(--paper-on-dark);
-  border: 1px solid var(--color-rule-invert);
+  /* Afordancia "flotante" sin sombra estructural (Plano Absoluto): hairline
+   * exterior clara + un anillo de superficie paper (0 blur, 0 desplazamiento)
+   * que despega el boton del contenido por CONTRASTE de superficie, no por
+   * elevacion. No proyecta sombra: es un filo de superficie. */
+  border: 1px solid color-mix(in oklab, var(--paper-on-dark) 24%, transparent);
   border-radius: 999px;
+  box-shadow: 0 0 0 3px var(--color-paper);
   font-family: var(--font-mono);
   font-size: var(--text-eyebrow);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 0 6px 24px color-mix(in oklab, #14201B 22%, transparent);
 }
 .assistant-launcher[hidden] {
   display: none;

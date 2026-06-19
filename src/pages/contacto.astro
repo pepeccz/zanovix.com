@@ -28,68 +28,98 @@ import LeadForm from '../components/react/LeadForm.tsx'
   showCompanion={false}
 >
   <section
-    style="
-      max-width: var(--container-wide);
-      margin: 0 auto;
-      padding: var(--spacing-hero-y) var(--spacing-section-x) var(--spacing-section-y);
-    "
+    id="contacto-form"
+    class="ctc"
+    aria-labelledby="contacto-title"
   >
-    <!-- Eyebrow -->
-    <p
-      style="
-        font-family: var(--font-mono);
-        font-size: var(--text-eyebrow);
-        color: var(--color-teal-deep);
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        margin-bottom: 1.5rem;
-      "
-    >
-      // conversación
-    </p>
+    <div class="ctc__inner">
+      <aside class="ctc__aside" data-reveal>
+        <p class="ctc__eyebrow">Conversación</p>
+        <h1 id="contacto-title" class="display ctc__title">Hablemos.</h1>
+        <p class="ctc__lede">
+          Cuéntanos tu caso en un minuto. Si ya has hablado con el asistente, llegas
+          con el contexto a mano y lo puedes corregir. Respondemos en menos de 24h
+          hábiles.
+        </p>
+      </aside>
 
-    <!-- H1 -->
-    <h1
-      class="display"
-      style="
-        font-size: var(--text-display);
-        color: var(--color-ink);
-        margin-bottom: 1.25rem;
-        max-width: 16ch;
-      "
-    >
-      Hablemos.
-    </h1>
-
-    <!-- Sub -->
-    <p
-      style="
-        font-size: var(--text-lede);
-        line-height: 1.55;
-        color: var(--ink-soft);
-        max-width: 50ch;
-        margin-bottom: clamp(2rem, 5vw, 3rem);
-      "
-    >
-      Cuéntanos tu caso en un minuto. Si ya has hablado con el asistente, llegas
-      con el contexto a mano y lo puedes corregir. Respondemos en menos de 24h
-      hábiles.
-    </p>
-
-    <!-- Formulario real (isla React). Prefill desde el compañero en cliente. -->
-    <LeadForm client:load />
-
-    <!-- Mini-info -->
-    <p
-      style="
-        font-family: var(--font-mono);
-        font-size: var(--text-eyebrow);
-        color: var(--ink-mute);
-        letter-spacing: 0.05em;
-        margin-top: clamp(2.5rem, 5vw, 3.5rem);
-      "
-    >
-      Málaga · ES
-    </p>
+      <div data-reveal data-reveal-i="1">
+        <LeadForm client:load />
+        <p class="ctc__meta">Málaga · ES</p>
+      </div>
+    </div>
   </section>
 </PageLayout>
+
+<style>
+  .ctc {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: var(--spacing-hero-y) var(--spacing-section-x) var(--spacing-section-y);
+  }
+  /* El lanzador del asistente flota fijo abajo-derecha. En movil el formulario
+   * es de una columna y su submit cae justo en esa esquina: reservamos una zona
+   * inferior segura para que el boton "Enviar mensaje" se pueda desplazar SIEMPRE
+   * por encima del lanzador y quede plenamente pulsable en el punto de conversion.
+   * Alto del lanzador (~2.4rem) + su offset inferior (hasta 1.75rem) + holgura. */
+  @media (max-width: 879px) {
+    .ctc {
+      padding-bottom: calc(var(--spacing-section-y) + 5.5rem);
+    }
+  }
+  .ctc__inner {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+  @media (min-width: 880px) {
+    .ctc__inner {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: clamp(2.5rem, 5vw, 5rem);
+      align-items: start;
+    }
+    .ctc__aside {
+      position: sticky;
+      top: 6rem;
+      align-self: start;
+    }
+  }
+  .ctc__eyebrow {
+    font-family: var(--font-brand);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute-strong);
+    margin: 0 0 0.75rem;
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .ctc__eyebrow::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-teal-deep);
+  }
+  .ctc__title {
+    font-size: var(--text-display);
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+  }
+  .ctc__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin: 0;
+  }
+  .ctc__meta {
+    font-family: var(--font-brand);
+    font-size: var(--text-eyebrow);
+    color: var(--ink-mute);
+    letter-spacing: 0.08em;
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+</style>

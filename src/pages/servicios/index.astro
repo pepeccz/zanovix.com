@@ -47,7 +47,7 @@ const servicios = [
   page="servicios"
 >
   <!-- ── Intro: intervenciones POST-diagnóstico ─────────────────────── -->
-  <section class="intro" aria-labelledby="intro-title">
+  <section class="intro" aria-labelledby="intro-title" data-reveal>
     <p class="intro__from">Esto empieza con un <a href="/diagnostico" data-open-contact data-contact-origin="servicios-intro-diagnostico">diagnóstico</a></p>
     <h1 id="intro-title" class="display intro__title">
       Esto es lo que hacemos si el diagnóstico lo recomienda.
@@ -64,8 +64,8 @@ const servicios = [
   <section class="list" aria-label="Servicios de Zanovix">
     <ul class="list__items">
       {
-        servicios.map((s) => (
-          <li class="list__item">
+        servicios.map((s, i) => (
+          <li class="list__item" data-reveal data-reveal-i={i}>
             <a class="list__link" href={`/servicios/${s.slug}`}>
               <h2 class="list__name">{s.name}</h2>
               <p class="list__lede">{s.lede}</p>
@@ -86,9 +86,8 @@ const servicios = [
    * relleno: marca el cambio de fase (de elegir intervención a la relación).
    -->
   <section class="accomp" aria-labelledby="accomp-title">
-    <div class="accomp__inner">
+    <div class="accomp__inner" data-reveal>
       <BrandPetals tone="paper" corner="top-right" size={260} />
-      <p class="accomp__tag">Después de la intervención</p>
       <h2 id="accomp-title" class="display accomp__title">
         Lo que hacemos no se entrega y se olvida.
       </h2>
@@ -101,7 +100,7 @@ const servicios = [
   </section>
 
   <!-- ── Cierre: a la puerta del embudo ─────────────────────────────── -->
-  <section class="close" aria-labelledby="close-title">
+  <section class="close" aria-labelledby="close-title" data-reveal>
     <h2 id="close-title" class="display close__title">
       ¿No tienes claro por dónde empezar?
     </h2>
@@ -140,9 +139,9 @@ const servicios = [
     margin: 0 0 1.5rem;
   }
   .intro__from {
-    font-family: var(--font-mono);
+    font-family: var(--font-brand);
     font-size: var(--text-eyebrow);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--ink-mute-strong);
     margin: 0 0 1rem;
@@ -157,9 +156,9 @@ const servicios = [
     text-decoration-color: var(--color-teal);
   }
   .intro__sign {
-    font-family: var(--font-mono);
+    font-family: var(--font-brand);
     font-size: var(--text-eyebrow);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     color: var(--ink-mute);
     margin: 0;
   }
@@ -180,14 +179,6 @@ const servicios = [
   .accomp__inner > :not(.brandpetals) {
     position: relative;
     z-index: 1;
-  }
-  .accomp__tag {
-    font-family: var(--font-mono);
-    font-size: var(--text-eyebrow);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--paper-on-dark-soft);
-    margin: 0 0 0.75rem;
   }
   .accomp__title {
     font-size: var(--text-h1);
@@ -236,9 +227,9 @@ const servicios = [
   }
   .list__name {
     font-family: var(--font-display);
-    font-weight: 600;
+    font-weight: 540;
     font-size: var(--text-h2);
-    letter-spacing: -0.015em;
+    letter-spacing: -0.03em;
     line-height: 1.1;
     color: var(--color-ink);
     margin: 0;
@@ -257,7 +248,7 @@ const servicios = [
     flex-wrap: wrap;
     gap: 0.5rem 1.25rem;
     align-items: baseline;
-    font-family: var(--font-mono);
+    font-family: var(--font-brand);
     font-size: var(--text-eyebrow);
     color: var(--ink-mute);
     margin: 0.25rem 0 0;
@@ -326,9 +317,9 @@ const servicios = [
     text-decoration-color: var(--color-teal);
   }
   .close__meta {
-    font-family: var(--font-mono);
+    font-family: var(--font-brand);
     font-size: var(--text-eyebrow);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     color: var(--ink-mute);
     margin: 0;
   }
