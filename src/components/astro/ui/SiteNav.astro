@@ -1,0 +1,854 @@
+---
+/**
+ * SiteNav.astro — nav de PRODUCCIÓN (isla flotante con floración desde la flor)
+ *
+ * Nav de la web: isla flotante con floración desde la flor. Mecánica:
+ *   - Desktop (lg+): PÍLDORA flotante fixed, centrada (no full-width), que abraza
+ *     su contenido. El isotipo REAL de Zanovix va en el CENTRO y es el pivote
+ *     (capullo al recoger / corola abierta al florecer). Los 6 enlaces se reparten
+ *     3/3 a ambos lados de la flor y se trasladan hacia/desde el centro.
+ *   - Al BAJAR (pasado el umbral): recoge (la píldora encoge a la flor, los enlaces
+ *     convergen y se desvanecen). Al SUBIR: florece (la píldora crece, los enlaces
+ *     salen con stagger por distancia al centro).
+ *   - Driver por dirección de scroll (rAF, umbral, jitter, gesture-anchor).
+ *   - El logo central es un ENLACE a la home (/). En estado RECOGIDO muestra el
+ *     wordmark completo (ZAN✿VIX); en estado FLORECIDO muestra la flor sola
+ *     (isotipo) con los enlaces a los lados. La flor es la "O" del wordmark, así
+ *     que entre estados hacemos un cross-fade alineando la flor para que parezca
+ *     permanecer mientras "ZAN"/"VIX" y los enlaces entran/salen.
+ *   - Accesibilidad del menú sin click-toggle: floración por dirección de scroll
+ *     (subir despliega) + :focus-within fuerza el despliegue para que los enlaces
+ *     sean alcanzables por teclado aunque esté recogido. Esc recoge.
+ *   - Móvil: hamburguesa + overlay full-screen con floración L/R, focus trap, Esc.
+ *   - reduced-motion: píldora SIEMPRE desplegada (sin colapso ni traslación).
+ *
+ * PÁGINA ACTIVA (subrayado teal): se calcula con `Astro.url.pathname`. Un enlace
+ * está activo si pathname === href, o pathname.startsWith(href + '/') para subrutas
+ * (excluyendo la home '/' del startsWith). El enlace activo recibe la clase --active
+ * (subrayado teal-deep) + aria-current="page". También en el overlay móvil.
+ *
+ * Reparto 3/3 alrededor de la flor central (para simetría):
+ *   izquierda (fuera -> dentro): Diagnóstico · Servicios · Casos
+ *   FLOR (centro / pivote)
+ *   derecha (dentro -> fuera): Metodología · Sobre · Contacto
+ */
+
+const pathname = Astro.url.pathname
+
+/** Normaliza quitando la barra final (salvo raíz) para comparar rutas. */
+function normalize(p: string): string {
+  if (p.length > 1 && p.endsWith('/')) return p.slice(0, -1)
+  return p
+}
+
+/** Activo si la ruta coincide exactamente o es subruta del href.
+ *  La home '/' se excluye del startsWith para no marcar todo. */
+function isActive(href: string): boolean {
+  const path = normalize(pathname)
+  const target = normalize(href)
+  if (path === target) return true
+  if (target !== '/' && path.startsWith(target + '/')) return true
+  return false
+}
+
+const leftLinks = [
+  { href: '/diagnostico', label: 'Diagnóstico' },
+  { href: '/servicios', label: 'Servicios' },
+  { href: '/casos', label: 'Casos' },
+]
+const rightLinks = [
+  { href: '/metodologia', label: 'Metodología' },
+  { href: '/sobre', label: 'Sobre' },
+  { href: '/contacto', label: 'Contacto' },
+]
+const allLinks = [...leftLinks, ...rightLinks]
+---
+
+<header class="snav">
+  <!-- Píldora flotante centrada (desktop lg+). La flor va en el centro (pivote).
+       Los enlaces se reparten 3/3 a ambos lados y entran/salen desde el centro. -->
+  <div class="snav__pill" id="snav-pill">
+    <!-- Grupo izquierdo: enlaces que convergen hacia el centro (+X) al recoger. -->
+    <nav class="snav__side snav__side--left" aria-label="Navegación principal (izquierda)">
+      <ul class="snav__links">
+        {
+          leftLinks.map((link, i) => (
+            <li class="snav__link-item" data-side="left" style={`--d:${leftLinks.length - i}`}>
+              <a
+                href={link.href}
+                class:list={['snav__link', { 'snav__link--active': isActive(link.href) }]}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Marca-inicio central: pivote y ENLACE a la home. La flor es la "O" del
+         wordmark. En FLORECIDO se ve la flor sola (isotipo); en RECOGIDO se ve el
+         wordmark completo (ZAN✿VIX). Cross-fade entre ambos con la flor alineada.
+         No se recolorea el logo (su negro + teal son la marca). -->
+    <a
+      id="snav-trigger"
+      class="snav__trigger"
+      href="/"
+      aria-label="Zanovix · Inicio"
+    >
+      <img
+        class="snav__isotipo"
+        src="/isotipo.svg"
+        alt=""
+        width="32"
+        height="32"
+        aria-hidden="true"
+        draggable="false"
+      />
+      <img
+        class="snav__wordmark"
+        src="/logo-wordmark-trim.svg"
+        alt=""
+        aria-hidden="true"
+        draggable="false"
+      />
+    </a>
+
+    <!-- Grupo derecho: enlaces que convergen hacia el centro (-X) al recoger. -->
+    <nav class="snav__side snav__side--right" aria-label="Navegación principal (derecha)">
+      <ul class="snav__links">
+        {
+          rightLinks.map((link, i) => (
+            <li class="snav__link-item" data-side="right" style={`--d:${i + 1}`}>
+              <a
+                href={link.href}
+                class:list={['snav__link', { 'snav__link--active': isActive(link.href) }]}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Marca-inicio móvil: isotipo a la izquierda (la píldora centrada no se usa
+       en móvil). Enlaza a la home. -->
+  <a href="/" class="snav__home" aria-label="Zanovix · Inicio">
+    <img src="/isotipo.svg" alt="" width="32" height="32" aria-hidden="true" draggable="false" />
+  </a>
+
+  <!-- Botón hamburguesa (solo móvil). -->
+  <button
+    id="snav-toggle"
+    type="button"
+    class="snav__toggle"
+    aria-controls="snav-mobile"
+    aria-expanded="false"
+    aria-label="Abrir menú de navegación"
+  >
+    <span class="snav__toggle-bar"></span>
+    <span class="snav__toggle-bar"></span>
+    <span class="snav__toggle-bar"></span>
+  </button>
+</header>
+
+<!-- Menú móvil: overlay full-screen con floración L/R. -->
+<div id="snav-mobile" class="snav-mobile lg:hidden" hidden>
+  <nav aria-label="Navegación principal" class="snav-mobile__panel">
+    <button
+      id="snav-close"
+      type="button"
+      class="snav-mobile__close"
+      aria-label="Cerrar menú de navegación"
+    >
+      <span class="snav-mobile__close-bar"></span>
+      <span class="snav-mobile__close-bar"></span>
+    </button>
+    <ul class="snav-mobile__list">
+      {
+        allLinks.map((link, i) => (
+          <li class="snav-mobile__item" style={`--i:${i}`}>
+            <a
+              href={link.href}
+              class:list={['snav-mobile__link', { 'snav-mobile__link--active': isActive(link.href) }]}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <ul class="snav-mobile__sublist">
+      <li><a href="/manifiesto" class="snav-mobile__sublink">Manifiesto</a></li>
+      <li><a href="/privacidad" class="snav-mobile__sublink">Privacidad</a></li>
+      <li>
+        <a
+          href="https://github.com/pepeccz"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="snav-mobile__sublink"
+          aria-label="GitHub de Zanovix (abre en nueva pestaña)"
+        >
+          GitHub
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<script is:inline>
+  // ── Floración dirigida por dirección de scroll (isla flotante) ─────────
+  // Patrón "headroom": comparamos scrollY actual vs anterior en cada frame.
+  //   - scroll ABAJO + pasado el umbral -> RECOGER (píldora encoge a la flor)
+  //   - scroll ARRIBA (cualquier delta)  -> FLORECER (píldora crece, links salen)
+  //   - dentro del umbral (zona hero)     -> SIEMPRE florecido
+  // El ancho de la píldora se MIDE en JS (bloomed vs collapsed) y se transiciona.
+  // reduced-motion: estado siempre florecido, ancho auto, sin colapso.
+  (function setupSiteNavScroll() {
+    var header = document.querySelector('.snav')
+    var pill = document.getElementById('snav-pill')
+    var trigger = document.getElementById('snav-trigger')
+    if (!header || !pill) return
+
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    function threshold() {
+      return Math.max(80, header.offsetHeight)
+    }
+
+    var collapsed = false // false = florecido, true = recogido
+    var lastY = window.scrollY || 0
+    var prevY = lastY
+    var ticking = false
+    var forcedAnchor = null
+    var GESTURE = 24
+    var JITTER = 4
+
+    var wordmark = pill.querySelector('.snav__wordmark')
+    var bloomedW = 0
+    var collapsedW = 0
+    var sides = pill.querySelectorAll('.snav__side')
+    var sideW = []
+
+    function isDesktop() {
+      return window.matchMedia('(min-width: 1024px)').matches
+    }
+
+    // Relación de aspecto del wordmark (ancho/alto). Tomada del viewBox del SVG
+    // (376 x 82 -> ~4.585). Sirve de respaldo si el img aún no reporta ancho.
+    var WORDMARK_RATIO = 4.585
+    // Margen para que el wordmark respire dentro de la píldora (no roce bordes).
+    var WORDMARK_AIR = 12
+
+    /** Ancho fiable del wordmark recogido. Si el img ya cargó devuelve su ancho
+     *  renderizado; si no (o sale 0), lo deriva del alto x ratio para no quedarse
+     *  corto y recortar el wordmark. Toma el mayor de ambos por seguridad. */
+    function wordmarkWidth() {
+      if (!wordmark) return 0
+      var measured = wordmark.getBoundingClientRect().width
+      var h = wordmark.getBoundingClientRect().height
+      // Si el alto aún no está, cae al height fijo del CSS (30px).
+      if (!h) h = 30
+      var derived = h * WORDMARK_RATIO
+      return Math.max(measured, derived)
+    }
+
+    function measure() {
+      if (!isDesktop()) return
+      var hadCollapsed = header.classList.contains('nav--collapsed')
+      pill.style.width = 'auto'
+      header.classList.remove('nav--collapsed')
+      sides.forEach(function (s) { s.style.width = '' })
+      void pill.offsetWidth
+      bloomedW = pill.getBoundingClientRect().width
+      sideW = []
+      sides.forEach(function (s) { sideW.push(Math.round(s.getBoundingClientRect().width)) })
+      var cs = window.getComputedStyle(pill)
+      var padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)
+      // Recogido muestra el wordmark completo: la píldora debe abrazarlo con aire.
+      var wmW = wordmarkWidth()
+      var flowerW = trigger ? trigger.getBoundingClientRect().width : 24
+      collapsedW = Math.round(Math.max(wmW, flowerW) + padX + WORDMARK_AIR)
+      if (hadCollapsed) header.classList.add('nav--collapsed')
+      applySides()
+      applyWidth()
+    }
+
+    function applyWidth() {
+      if (!isDesktop() || prefersReduced) {
+        pill.style.width = ''
+        return
+      }
+      pill.style.width = (collapsed ? collapsedW : bloomedW) + 'px'
+    }
+
+    function applySides() {
+      if (!isDesktop() || prefersReduced) {
+        sides.forEach(function (s) { s.style.width = '' })
+        return
+      }
+      sides.forEach(function (s, i) {
+        s.style.width = (collapsed ? 0 : (sideW[i] || 0)) + 'px'
+      })
+    }
+
+    function applyState(next) {
+      if (next === collapsed) return
+      collapsed = next
+      header.classList.toggle('nav--collapsed', collapsed)
+      applySides()
+      applyWidth()
+    }
+
+    if (prefersReduced) {
+      header.classList.remove('nav--collapsed')
+      pill.style.width = ''
+      return
+    }
+
+    function evaluate() {
+      var y = lastY
+      var delta = y - prevY
+      prevY = y
+
+      // Foco-teclado dentro del nav: mantener desplegado para no perder enlaces.
+      if (keyboardHold && pill.contains(document.activeElement)) {
+        applyState(false)
+        return
+      }
+
+      if (y <= threshold()) {
+        forcedAnchor = null
+        applyState(false)
+        return
+      }
+      if (forcedAnchor !== null) {
+        if (Math.abs(y - forcedAnchor) < GESTURE) return
+        forcedAnchor = null
+      }
+      if (Math.abs(delta) < JITTER) return
+      applyState(delta > 0)
+    }
+
+    function onScroll() {
+      lastY = window.scrollY || 0
+      if (ticking) return
+      ticking = true
+      window.requestAnimationFrame(function () {
+        ticking = false
+        evaluate()
+      })
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+
+    var resizeTimer = null
+    window.addEventListener('resize', function () {
+      if (resizeTimer) clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(measure, 120)
+    })
+
+    // Accesibilidad por teclado: al entrar el foco en la zona del nav, forzar el
+    // despliegue para que TODOS los enlaces sean alcanzables aunque esté recogido.
+    // Anclamos al scroll actual para que el driver de scroll no recoja de golpe.
+    var keyboardHold = false
+    pill.addEventListener('focusin', function () {
+      keyboardHold = true
+      forcedAnchor = window.scrollY || 0
+      applyState(false)
+    })
+    pill.addEventListener('focusout', function () {
+      // Si el foco salió de la píldora por completo y seguimos scrolleados,
+      // dejamos que el driver de scroll vuelva a recoger en el próximo gesto.
+      window.requestAnimationFrame(function () {
+        if (pill.contains(document.activeElement)) return
+        keyboardHold = false
+        forcedAnchor = null
+        if ((window.scrollY || 0) > threshold()) applyState(true)
+      })
+    })
+
+    // Esc recoge (si estamos scrolleados, florecidos y sin foco-teclado dentro).
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return
+      if (keyboardHold && pill.contains(document.activeElement)) return
+      if ((window.scrollY || 0) > threshold() && !collapsed) {
+        forcedAnchor = window.scrollY || 0
+        applyState(true)
+      }
+    })
+
+    measure()
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(measure)
+    }
+    // El wordmark es un <img> SVG: su ancho renderizado sólo es fiable una vez
+    // cargado/decodificado. Re-medimos cuando eso ocurra para que collapsedW
+    // abrace el wordmark completo (no depende del timing de carga del img).
+    if (wordmark) {
+      if (wordmark.complete) {
+        measure()
+      } else {
+        wordmark.addEventListener('load', measure)
+      }
+      if (wordmark.decode) {
+        wordmark.decode().then(measure).catch(function () {})
+      }
+    }
+    evaluate()
+  })()
+</script>
+
+<script is:inline>
+  // ── Menú móvil con floración (overlay full-screen) ─────────────────────
+  // focus trap, Esc, cierre por enlace, bloqueo de scroll, restauración de foco.
+  (function setupSiteNavMobile() {
+    var toggle = document.getElementById('snav-toggle')
+    var panel = document.getElementById('snav-mobile')
+    var closeBtn = document.getElementById('snav-close')
+    if (!toggle || !panel) return
+
+    function focusables() {
+      return panel.querySelectorAll('a[href], button:not([disabled])')
+    }
+    function onKeydown(e) {
+      if (e.key === 'Escape') {
+        close()
+        return
+      }
+      if (e.key !== 'Tab') return
+      var f = focusables()
+      if (!f.length) return
+      var first = f[0]
+      var last = f[f.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    function open() {
+      panel.hidden = false
+      void panel.offsetWidth
+      panel.classList.add('is-open')
+      toggle.setAttribute('aria-expanded', 'true')
+      document.documentElement.style.overflow = 'hidden'
+      document.addEventListener('keydown', onKeydown)
+      var f = focusables()
+      if (f.length) f[0].focus()
+    }
+    function close() {
+      panel.classList.remove('is-open')
+      panel.hidden = true
+      toggle.setAttribute('aria-expanded', 'false')
+      document.documentElement.style.overflow = ''
+      document.removeEventListener('keydown', onKeydown)
+      toggle.focus()
+    }
+    toggle.addEventListener('click', open)
+    if (closeBtn) closeBtn.addEventListener('click', close)
+    panel.querySelectorAll('.snav-mobile__link, .snav-mobile__sublink').forEach(function (a) {
+      a.addEventListener('click', close)
+    })
+    window.addEventListener('resize', function () {
+      if (window.innerWidth >= 1024 && !panel.hidden) close()
+    })
+  })()
+</script>
+
+<style>
+  /* ─────────────────────────────────────────────────────────────────────
+   * Header contenedor. La isla flotante va dentro, centrada y fija arriba.
+   * El header en sí no pinta nada (sin barra full-width).
+   * ──────────────────────────────────────────────────────────────────── */
+  .snav {
+    position: relative;
+    z-index: 50;
+  }
+
+  /* Píldora oculta en móvil; se activa en lg+. */
+  .snav__pill {
+    display: none;
+  }
+
+  /* Marca-inicio móvil (isotipo arriba a la izquierda). Oculta en lg+. */
+  .snav__home {
+    position: fixed;
+    top: 1rem;
+    left: var(--spacing-section-x);
+    z-index: 50;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 6px;
+    background: color-mix(in oklab, var(--color-paper) 94%, transparent);
+    border: 1px solid var(--color-rule);
+    border-radius: 999px;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .snav__home img {
+    display: block;
+    width: 30px;
+    height: 30px;
+  }
+  .snav__home:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+
+  /* Hamburguesa móvil: visible por defecto (móvil), oculta en lg+. */
+  .snav__toggle {
+    position: fixed;
+    top: 1rem;
+    right: var(--spacing-section-x);
+    z-index: 50;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    background: color-mix(in oklab, var(--color-paper) 94%, transparent);
+    border: 1px solid var(--color-rule);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .snav__toggle:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+  .snav__toggle-bar {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--color-ink);
+  }
+
+  @media (min-width: 1024px) {
+    .snav__home,
+    .snav__toggle {
+      display: none;
+    }
+    .snav__pill {
+      position: fixed;
+      top: 0.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      padding: 0.5rem 1.25rem;
+      background: color-mix(in oklab, var(--color-paper) 94%, transparent);
+      border: 1px solid var(--color-rule);
+      border-radius: 999px;
+      /* width la fija el JS (medido). Transición de ancho = isla crece/encoge. */
+      overflow: hidden;
+      transition:
+        width 460ms cubic-bezier(0.16, 1, 0.3, 1),
+        gap 460ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    /* Recogido: sin gap para que la flor quede centrada (los lados van a 0). */
+    .snav.nav--collapsed .snav__pill {
+      gap: 0;
+    }
+  }
+
+  /* ── Marca-inicio central (pivote + enlace a la home). ─────────────────
+   * Contiene dos capas superpuestas: el isotipo (flor sola, visible florecido)
+   * y el wordmark completo ZAN✿VIX (visible recogido). Cross-fade entre ambos.
+   * La flor del wordmark es la "O"; la desplazamos para alinearla con el centro
+   * de la flor sola, de modo que parezca PERMANECER mientras ZAN/VIX aparecen.
+   * ──────────────────────────────────────────────────────────────────── */
+  .snav__trigger {
+    flex: 0 0 auto;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* La caja del pivote = tamaño de la flor sola: así la píldora florecida
+       abraza flor + enlaces. El wordmark se desborda en absoluto (recogido). */
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--color-ink);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .snav__trigger:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 4px;
+    border-radius: 999px;
+  }
+  /* La flor sola (isotipo). Visible en FLORECIDO. Al recoger: cross-fade a 0. */
+  .snav__isotipo {
+    width: 30px;
+    height: 30px;
+    display: block;
+    user-select: none;
+    transform-origin: 50% 50%;
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+    transition:
+      transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .snav.nav--collapsed .snav__isotipo {
+    transform: scale(0.82) rotate(-8deg);
+    opacity: 0;
+  }
+
+  /* El wordmark completo. Visible en RECOGIDO. Centrado sobre el pivote, con la
+     flor-O alineada al centro de la flor sola via translateX de corrección.
+     La flor del wordmark está a ~0.55 del ancho, no a 0.5: corregimos el offset.
+     Altura ligada al tamaño de la flor sola (la "O" mide ~como el isotipo). */
+  .snav__wordmark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 30px;
+    width: auto;
+    max-width: none;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+    /* Centrado + corrección de alineación: la flor-O del wordmark está a ~0.55
+       del ancho (a la derecha del centro), así que la empujamos ~3px a la
+       izquierda para que su flor caiga sobre la flor sola del estado florecido. */
+    transform: translate(calc(-50% - 3px), -50%) scale(0.96);
+    opacity: 0;
+    transition:
+      transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .snav.nav--collapsed .snav__wordmark {
+    transform: translate(calc(-50% - 3px), -50%) scale(1);
+    opacity: 1;
+  }
+
+  /* ── Grupos de enlaces a ambos lados de la flor ───────────────────────
+   * Cada item traslada en X hacia/desde el centro. Izquierda converge con +X,
+   * derecha con -X. Stagger por distancia al centro (--d: 1 = más cercano).
+   * ──────────────────────────────────────────────────────────────────── */
+  .snav__side {
+    flex: 0 0 auto;
+    overflow: hidden;
+    transition: width 460ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .snav__links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+  }
+  .snav__link-item {
+    transform: translateX(0);
+    opacity: 1;
+    transition:
+      transform 420ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* Recogido: los enlaces convergen al centro (hacia la flor) y se desvanecen. */
+    .snav.nav--collapsed .snav__link-item[data-side='left'] {
+      transform: translateX(2.5rem);
+      opacity: 0;
+      transition-delay: calc((var(--d) - 1) * 35ms);
+    }
+    .snav.nav--collapsed .snav__link-item[data-side='right'] {
+      transform: translateX(-2.5rem);
+      opacity: 0;
+      transition-delay: calc((var(--d) - 1) * 35ms);
+    }
+    .snav.nav--collapsed .snav__side {
+      pointer-events: none;
+    }
+  }
+
+  /* ── Enlaces ───────────────────────────────────────────────────────────
+   * El enlace de la sección ACTIVA recibe el subrayado teal-deep (--active). */
+  .snav__link {
+    display: inline-block;
+    font-family: var(--font-brand);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-ink);
+    text-decoration: none;
+    transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .snav__link:hover {
+    color: var(--color-teal-deep);
+  }
+  .snav__link--active {
+    border-bottom: 2px solid var(--color-teal-deep);
+    padding-bottom: 2px;
+  }
+  .snav__link--active:hover {
+    border-color: var(--color-teal);
+  }
+
+  /* reduced-motion: píldora SIEMPRE desplegada, sin colapso ni traslación. */
+  @media (prefers-reduced-motion: reduce) {
+    @media (min-width: 1024px) {
+      .snav__pill {
+        width: auto !important;
+        transition: none;
+      }
+    }
+    .snav__link-item {
+      transform: none !important;
+      opacity: 1 !important;
+      transition: none;
+    }
+    /* Estado desplegado fijo: flor sola visible, wordmark oculto, sin animación. */
+    .snav__isotipo {
+      transform: none !important;
+      opacity: 1 !important;
+      transition: none;
+    }
+    .snav__wordmark {
+      opacity: 0 !important;
+      transition: none;
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────
+   * Overlay de navegación móvil + floración.
+   * ──────────────────────────────────────────────────────────────────── */
+  .snav-mobile {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: var(--color-paper);
+  }
+  .snav-mobile[hidden] {
+    display: none;
+  }
+  .snav-mobile:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+  }
+  @media (min-width: 1024px) {
+    .snav-mobile {
+      display: none;
+    }
+  }
+  .snav-mobile__panel {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--spacing-section-x);
+  }
+  .snav-mobile__close {
+    position: absolute;
+    top: 1.5rem;
+    right: var(--spacing-section-x);
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+  .snav-mobile__close:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+  .snav-mobile__close-bar {
+    position: absolute;
+    width: 24px;
+    height: 2px;
+    background: var(--color-ink);
+  }
+  .snav-mobile__close-bar:first-child {
+    transform: rotate(45deg);
+  }
+  .snav-mobile__close-bar:last-child {
+    transform: rotate(-45deg);
+  }
+  .snav-mobile__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .snav-mobile__link {
+    font-family: var(--font-brand);
+    font-size: var(--text-h3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-ink);
+    text-decoration: none;
+    display: inline-block;
+    padding: 0.25rem 0;
+  }
+  .snav-mobile__link--active {
+    color: var(--color-ink);
+    border-bottom: 2px solid var(--color-teal-deep);
+    width: fit-content;
+  }
+
+  /* Enlaces secundarios del overlay móvil (más discretos). */
+  .snav-mobile__sublist {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 1.5rem 0 0;
+    border-top: 1px solid var(--color-rule);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+  }
+  .snav-mobile__sublink {
+    font-family: var(--font-brand);
+    font-size: var(--text-eyebrow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute-strong);
+    text-decoration: none;
+    display: inline-block;
+    padding: 0.25rem 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .snav-mobile .snav-mobile__item {
+      clip-path: inset(0 50% 0 50%);
+      opacity: 0;
+      transition:
+        clip-path 460ms cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 320ms cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: calc(var(--i) * 55ms);
+    }
+    .snav-mobile.is-open .snav-mobile__item {
+      clip-path: inset(0 0 0 0);
+      opacity: 1;
+    }
+    .snav-mobile {
+      transition: opacity 220ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  }
+</style>
