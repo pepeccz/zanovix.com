@@ -52,7 +52,7 @@ const OPEN_CONTACT_TOKEN = '[[ABRIR_CONTACTO]]'
 const INTRO: Turn = {
   role: 'assistant',
   content:
-    'Hola. Soy el asistente de Zanovix. Puedo contarte que hacemos, ayudarte a encontrar lo que buscas o, si lo ves claro, ponerte en contacto con una persona del equipo. Cuentame, ¿que te trae por aqui?',
+    'Hola. Soy el asistente de Zanovix. Puedo orientarte por encima y gratis sobre si la IA te aporta de verdad y por donde empezarias, sin venderte humo. No es el diagnostico a fondo, es una primera lectura. Para empezar, ¿a que se dedica tu negocio?',
 }
 
 function prefersReducedMotion(): boolean {
