@@ -37,6 +37,8 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { ASSISTANT_INPUT_MAX } from '../../lib/assistant/assistant'
+import { GEO_FIELD_MAX, GEO_NAME_MIN } from '../../lib/companion/geo'
+import type { GeoSnapshot } from '../../lib/companion/geo'
 import { OPEN_CONTACT_EVENT, OPEN_ASSISTANT_EVENT } from './ContactDialog'
 import type { ContactDialogContext } from './ContactDialog'
 
@@ -49,8 +51,14 @@ interface Turn {
   offerContact?: boolean
   /** El asistente solicita recoger el lead in-chat en este turno. */
   collectLead?: boolean
+  /** El turno solicita ejecutar la radiografia GEO in-chat. */
+  runGeo?: boolean
   /** El turno termino en degradacion (sin IA en vivo). */
   degraded?: boolean
+  /** Tipo especial de turno (para renderizado alternativo). */
+  kind?: 'geo-evidence'
+  /** Snapshot GEO adjunto (solo cuando kind === 'geo-evidence'). */
+  snapshot?: GeoSnapshot
 }
 
 /** Marca que el modelo añade para ofrecer el handoff al formulario. */
@@ -58,6 +66,9 @@ const OPEN_CONTACT_TOKEN = '[[ABRIR_CONTACTO]]'
 
 /** Marca que el modelo añade para solicitar la recogida de lead in-chat. */
 const COLLECT_LEAD_TOKEN = '[[RECOGER_LEAD]]'
+
+/** Marca que el modelo añade para solicitar la radiografia GEO in-chat. */
+const RUN_GEO_TOKEN = '[[RADIOGRAFIA_GEO]]'
 
 // ─── LeadCaptureForm ─────────────────────────────────────────────────────────
 // Mini-form in-chat (nombre + email + consentimiento RGPD + honeypot).
@@ -347,6 +358,211 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
   )
 }
 
+// ─── GeoInlineForm ───────────────────────────────────────────────────────────
+// Compact GEO radiography widget rendered inline when the assistant emits
+// [[RADIOGRAFIA_GEO]]. Runs once per widget instance; locks after a successful
+// result. On success, calls onResult with the snapshot and framed context so
+// the assistant can reinject and produce the verdict.
+
+const GEO_KNOWN_LABEL: Record<GeoSnapshot['known'], string> = {
+  yes: 'Una IA te reconoce',
+  no: 'Una IA no te conoce todavia',
+  unclear: 'Una IA conoce tu categoria, no tu negocio',
+}
+
+interface GeoInlineFormProps {
+  onResult: (
+    snapshot: GeoSnapshot | null,
+    fallbackNotice: string | null,
+    inputName: string,
+    inputSector: string,
+    inputZone: string,
+  ) => void
+}
+
+function GeoInlineForm({ onResult }: GeoInlineFormProps) {
+  const [name, setName] = useState('')
+  const [sector, setSector] = useState('')
+  const [zone, setZone] = useState('')
+  const [nameError, setNameError] = useState(false)
+  const [posting, setPosting] = useState(false)
+  const [locked, setLocked] = useState(false)
+
+  const nameRef = useRef<HTMLInputElement>(null)
+
+  // Auto-focus name on mount.
+  useEffect(() => {
+    requestAnimationFrame(() => nameRef.current?.focus())
+  }, [])
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (posting || locked) return
+
+    const cleanName = name.trim()
+    if (cleanName.length < GEO_NAME_MIN) {
+      setNameError(true)
+      nameRef.current?.focus()
+      return
+    }
+    setNameError(false)
+    setPosting(true)
+
+    try {
+      const res = await fetch('/api/geo-snapshot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: cleanName,
+          sector: sector.trim() || undefined,
+          zone: zone.trim() || undefined,
+        }),
+      })
+
+      const data = (await res.json()) as {
+        source?: 'live' | 'fallback'
+        snapshot?: GeoSnapshot | null
+        fallbackNotice?: string
+      }
+
+      setLocked(true)
+      if (data.source === 'live' && data.snapshot) {
+        onResult(data.snapshot, null, cleanName, sector.trim(), zone.trim())
+      } else {
+        onResult(null, data.fallbackNotice ?? null, cleanName, sector.trim(), zone.trim())
+      }
+    } catch {
+      setPosting(false)
+      // On network error keep the form unlocked so the user can retry.
+    }
+  }
+
+  if (locked) {
+    return (
+      <div className="geo-inline__locked" aria-live="polite">
+        <span className="geo-inline__dot" aria-hidden="true" />
+        Radiografia en curso...
+      </div>
+    )
+  }
+
+  return (
+    <form className="geo-inline" onSubmit={handleSubmit} noValidate aria-label="Radiografia GEO">
+      <p className="geo-inline__eyebrow">Radiografia GEO</p>
+      <p className="geo-inline__lede">
+        Escribe el nombre real de tu negocio y le preguntamos en vivo a una IA que sabe de ti hoy.
+      </p>
+
+      <div className="geo-inline__field">
+        <label className="geo-inline__label" htmlFor="geo-inline-name">
+          Nombre del negocio <span className="geo-inline__req">(necesario)</span>
+        </label>
+        <input
+          ref={nameRef}
+          id="geo-inline-name"
+          className="geo-inline__input"
+          type="text"
+          autoComplete="organization"
+          maxLength={GEO_FIELD_MAX}
+          placeholder="Ej: Bar Manolo"
+          value={name}
+          required
+          aria-required="true"
+          aria-invalid={nameError || undefined}
+          aria-describedby={nameError ? 'geo-inline-name-error' : undefined}
+          onChange={(e) => {
+            setName(e.target.value)
+            if (nameError) setNameError(false)
+          }}
+        />
+        {nameError && (
+          <p id="geo-inline-name-error" className="geo-inline__error" role="alert">
+            Necesito el nombre real de tu negocio para preguntarle a la IA.
+          </p>
+        )}
+      </div>
+
+      <div className="geo-inline__pair">
+        <div className="geo-inline__field">
+          <label className="geo-inline__label" htmlFor="geo-inline-sector">
+            Sector <span className="geo-inline__opt">(recomendado)</span>
+          </label>
+          <input
+            id="geo-inline-sector"
+            className="geo-inline__input"
+            type="text"
+            autoComplete="off"
+            maxLength={GEO_FIELD_MAX}
+            placeholder="Ej: restaurante"
+            value={sector}
+            onChange={(e) => setSector(e.target.value)}
+          />
+        </div>
+        <div className="geo-inline__field">
+          <label className="geo-inline__label" htmlFor="geo-inline-zone">
+            Zona <span className="geo-inline__opt">(recomendado)</span>
+          </label>
+          <input
+            id="geo-inline-zone"
+            className="geo-inline__input"
+            type="text"
+            autoComplete="off"
+            maxLength={GEO_FIELD_MAX}
+            placeholder="Ej: Malaga centro"
+            value={zone}
+            onChange={(e) => setZone(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <p className="geo-inline__note">
+        Envia el nombre a un proveedor de IA (OpenRouter) para generar la radiografia.{' '}
+        <a href="/privacidad" className="geo-inline__link">
+          Como funciona
+        </a>
+        .
+      </p>
+
+      <button className="geo-inline__submit" type="submit" disabled={posting}>
+        {posting ? 'Consultando...' : 'Ver radiografia'}
+      </button>
+    </form>
+  )
+}
+
+// ─── GeoEvidenceCard ─────────────────────────────────────────────────────────
+// Read-only display of a GeoSnapshot as a compact evidence card.
+
+function GeoEvidenceCard({ snapshot }: { snapshot: GeoSnapshot }) {
+  return (
+    <div className="geo-card" aria-label="Resultado de la radiografia GEO">
+      <span
+        className={`geo-card__chip geo-card__chip--${snapshot.known}`}
+        aria-label={`Visibilidad: ${GEO_KNOWN_LABEL[snapshot.known]}`}
+      >
+        {GEO_KNOWN_LABEL[snapshot.known]}
+      </span>
+      <dl className="geo-card__dl">
+        <div className="geo-card__item">
+          <dt>Que sabe de ti</dt>
+          <dd>{snapshot.describes}</dd>
+        </div>
+        <div className="geo-card__item">
+          <dt>Si te recomendaria</dt>
+          <dd>{snapshot.recommend}</dd>
+        </div>
+        <div className="geo-card__item">
+          <dt>Que le falta</dt>
+          <dd>{snapshot.gap}</dd>
+        </div>
+      </dl>
+      <p className="geo-card__note">
+        Respuesta real del modelo. Refleja su conocimiento de entrenamiento, no una auditoria de tu web.
+      </p>
+    </div>
+  )
+}
+
 const INTRO: Turn = {
   role: 'assistant',
   content:
@@ -467,37 +683,49 @@ export default function Assistant() {
     closePanel()
   }
 
-  // ─── Envio de un mensaje ──────────────────────────────────────────────────
-  async function send(text: string) {
-    const clean = text.trim()
-    if (!clean || sending) return
-
-    // Historial para el servidor: lo previo (sin la intro de bienvenida).
-    const priorHistory = turns
-      .filter((t, i) => !(i === 0 && t.role === 'assistant')) // descarta INTRO
+  // ─── Core model call (reusable) ──────────────────────────────────────────
+  /**
+   * Sends a message to /api/assistant and streams the reply into a new turn.
+   *
+   * @param modelMessage - The text sent to the API as the `message` field.
+   * @param displayTurn  - The Turn pushed to `turns` for rendering.
+   *                       Its `content` is also used as history content.
+   * @param currentTurns - Snapshot of turns BEFORE pushing displayTurn.
+   *                       Needed so the caller controls history correctly on
+   *                       reinjection (avoids double-state read race).
+   */
+  async function runAssistantTurn({
+    modelMessage,
+    displayTurn,
+    currentTurns,
+  }: {
+    modelMessage: string
+    displayTurn: Turn
+    currentTurns: Turn[]
+  }) {
+    // Build history from the turns before this one (skip the INTRO assistant turn at i===0).
+    const priorHistory = currentTurns
+      .filter((t, i) => !(i === 0 && t.role === 'assistant'))
       .map((t) => ({ role: t.role, content: t.content }))
 
-    setTurns((prev) => [...prev, { role: 'user', content: clean }])
-    setInput('')
-    setSending(true)
-
-    // Indice del turno del asistente que vamos a rellenar en streaming.
+    // Push the display turn, then reserve a slot for the assistant reply.
     let assistantIndex = -1
     setTurns((prev) => {
-      assistantIndex = prev.length
-      return [...prev, { role: 'assistant', content: '' }]
+      const withDisplay = [...prev, displayTurn]
+      assistantIndex = withDisplay.length
+      return [...withDisplay, { role: 'assistant', content: '' }]
     })
 
     try {
       const res = await fetch('/api/assistant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: clean, history: priorHistory }),
+        body: JSON.stringify({ message: modelMessage, history: priorHistory }),
       })
 
       const isDegraded = res.headers.get('x-assistant-degraded') === '1'
 
-      // Streaming token a token si hay body legible; si no, texto entero.
+      // Streaming token by token; fall back to full text if no ReadableStream.
       let acc = ''
       if (res.body && typeof res.body.getReader === 'function') {
         const reader = res.body.getReader()
@@ -506,10 +734,11 @@ export default function Assistant() {
           const { done, value } = await reader.read()
           if (done) break
           acc += decoder.decode(value, { stream: true })
-          // Strip both tokens from visible text during streaming.
+          // Strip all three tokens from visible text during streaming.
           const visible = acc
             .replace(OPEN_CONTACT_TOKEN, '')
             .replace(COLLECT_LEAD_TOKEN, '')
+            .replace(RUN_GEO_TOKEN, '')
             .trimEnd()
           setTurns((prev) => {
             const next = [...prev]
@@ -524,12 +753,14 @@ export default function Assistant() {
       }
 
       const offerContact = acc.includes(OPEN_CONTACT_TOKEN)
-      // collectLead is only shown when not degraded (degraded falls back to contact form).
       const collectLead = acc.includes(COLLECT_LEAD_TOKEN) && !isDegraded
+      const runGeo = acc.includes(RUN_GEO_TOKEN) && !isDegraded
       const finalText = acc
         .replace(OPEN_CONTACT_TOKEN, '')
         .replace(COLLECT_LEAD_TOKEN, '')
+        .replace(RUN_GEO_TOKEN, '')
         .trim()
+
       setTurns((prev) => {
         const next = [...prev]
         if (next[assistantIndex]) {
@@ -540,6 +771,7 @@ export default function Assistant() {
               'No he podido responderte ahora mismo. Escribenos y te contesta una persona.',
             offerContact: offerContact && !isDegraded,
             collectLead,
+            runGeo,
             degraded: isDegraded,
           }
         }
@@ -558,6 +790,26 @@ export default function Assistant() {
         }
         return next
       })
+    }
+  }
+
+  // ─── Envio de un mensaje (uses runAssistantTurn) ──────────────────────────
+  async function send(text: string) {
+    const clean = text.trim()
+    if (!clean || sending) return
+
+    setInput('')
+    setSending(true)
+
+    // Snapshot of turns BEFORE the new user turn (for history).
+    const currentTurns = turns
+
+    try {
+      await runAssistantTurn({
+        modelMessage: clean,
+        displayTurn: { role: 'user', content: clean },
+        currentTurns,
+      })
     } finally {
       setSending(false)
       requestAnimationFrame(() => inputRef.current?.focus())
@@ -574,6 +826,82 @@ export default function Assistant() {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       void send(input)
+    }
+  }
+
+  // ─── GEO reinjection handler ──────────────────────────────────────────────
+  /**
+   * Called by GeoInlineForm when the user submits the widget and the API
+   * responds. Replaces the placeholder assistant turn with the evidence card
+   * (or a fallback note), then reinjects into the model so it builds its
+   * verdict on the real evidence.
+   *
+   * The reinjection consumes one user turn in history (intentional per spec).
+   */
+  function handleGeoResult(
+    snapshot: GeoSnapshot | null,
+    fallbackNotice: string | null,
+    inputName: string,
+    inputSector: string,
+    inputZone: string,
+  ) {
+    setSending(true)
+
+    if (snapshot) {
+      // Build a concise model-facing summary of the evidence.
+      const sectorPart = inputSector ? `, sector: ${inputSector}` : ''
+      const zonePart = inputZone ? `, zona: ${inputZone}` : ''
+      const modelMessage =
+        `[Resultado de la radiografia GEO para ${inputName}${sectorPart}${zonePart}] ` +
+        `Reconoce el negocio: ${snapshot.known}. ` +
+        `Como lo describe una IA hoy: ${snapshot.describes} ` +
+        `Recomendacion: ${snapshot.recommend} ` +
+        `Lo que falta: ${snapshot.gap}. ` +
+        `Construye ahora tu veredicto honesto sobre esta evidencia, sin repetirla literal: ` +
+        `donde la IA le aporta y donde no. Si encaja, propon el siguiente paso.`
+
+      // The evidence card turn (rendered as card, carries content for history).
+      const evidenceTurn: Turn = {
+        role: 'user',
+        kind: 'geo-evidence',
+        snapshot,
+        content: modelMessage,
+      }
+
+      // Snapshot of turns right now (before evidence turn is pushed).
+      const currentTurns = turns
+
+      void runAssistantTurn({ modelMessage, displayTurn: evidenceTurn, currentTurns }).finally(
+        () => {
+          setSending(false)
+          requestAnimationFrame(() => inputRef.current?.focus())
+        },
+      )
+    } else {
+      // Fallback: no live data — show a honest note and continue qualitatively.
+      const notice = fallbackNotice ?? 'La radiografia GEO no pudo correr ahora mismo.'
+      const modelMessage =
+        `[La radiografia GEO no pudo correr ahora mismo, sin datos en vivo.] ` +
+        `Continua la orientacion de forma cualitativa y honesta, sin inventar lo que ` +
+        `sabria una IA de su negocio. Si encaja, propon el siguiente paso.`
+
+      // The display turn shows the honest notice to the user.
+      // The modelMessage (used for history) carries the framed context to the model.
+      const fallbackDisplayTurn: Turn = {
+        role: 'user',
+        content: notice,
+      }
+
+      const currentTurns = turns
+
+      void runAssistantTurn({
+        modelMessage,
+        displayTurn: fallbackDisplayTurn,
+        currentTurns,
+      }).finally(() => {
+        setSending(false)
+        requestAnimationFrame(() => inputRef.current?.focus())
+      })
     }
   }
 
@@ -641,11 +969,16 @@ export default function Assistant() {
                 key={i}
                 className={`assistant-msg assistant-msg--${t.role}${
                   t.degraded ? ' assistant-msg--degraded' : ''
-                }`}
+                }${t.kind === 'geo-evidence' ? ' assistant-msg--geo-evidence' : ''}`}
               >
-                <p className="assistant-msg__body">
-                  {t.content || (t.role === 'assistant' && sending ? '…' : '')}
-                </p>
+                {/* GEO evidence card: renders instead of plain text body */}
+                {t.kind === 'geo-evidence' && t.snapshot ? (
+                  <GeoEvidenceCard snapshot={t.snapshot} />
+                ) : (
+                  <p className="assistant-msg__body">
+                    {t.content || (t.role === 'assistant' && sending ? '…' : '')}
+                  </p>
+                )}
                 {/* Direct exit to the form: shown on the first assistant message
                     so visitors who already decided can skip the conversation. */}
                 {i === 0 && t.role === 'assistant' && (
@@ -668,6 +1001,10 @@ export default function Assistant() {
                 )}
                 {t.collectLead && (
                   <LeadCaptureForm turns={turns} />
+                )}
+                {/* GEO inline widget: rendered when the model emits [[RADIOGRAFIA_GEO]] */}
+                {t.runGeo && (
+                  <GeoInlineForm onResult={handleGeoResult} />
                 )}
                 {t.degraded && (
                   <button

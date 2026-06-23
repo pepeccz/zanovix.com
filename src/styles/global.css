@@ -2311,3 +2311,261 @@ h1, h2, h3, blockquote {
   outline-offset: 2px;
   border-radius: 2px;
 }
+
+/* ── GeoInlineForm (mini GEO widget in-chat, [[RADIOGRAFIA_GEO]]) ────────────
+ * Compact form: name (required) + sector + zone. Mirrors lcf__ and geosim__
+ * aesthetics: forest surface, hairline borders, League Spartan labels, Hanken
+ * body. No heavy shadows (Regla Plano Absoluto). Teal as accent only.
+ */
+.geo-inline {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+.geo-inline__eyebrow {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-teal-bright);
+}
+
+.geo-inline__lede {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark-soft);
+}
+
+.geo-inline__field {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.geo-inline__pair {
+  display: grid;
+  gap: 0.5rem;
+}
+@media (min-width: 380px) {
+  .geo-inline__pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.geo-inline__label {
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-dark-soft);
+}
+
+.geo-inline__req {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.geo-inline__opt {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.geo-inline__input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+  font-size: var(--text-eyebrow);
+}
+.geo-inline__input::placeholder {
+  color: var(--paper-on-dark-mute);
+}
+.geo-inline__input:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+  border-color: transparent;
+}
+.geo-inline__input[aria-invalid='true'] {
+  border-color: var(--color-teal-bright);
+}
+
+.geo-inline__error {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.45;
+  color: var(--paper-on-dark);
+}
+
+.geo-inline__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+}
+
+.geo-inline__link {
+  color: var(--paper-on-dark-soft);
+  text-underline-offset: 3px;
+}
+
+.geo-inline__submit {
+  justify-self: start;
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.geo-inline__submit:hover {
+  background: var(--color-teal);
+}
+.geo-inline__submit:active {
+  transform: scale(0.97);
+}
+.geo-inline__submit:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.geo-inline__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Locked state: shown after a successful submit */
+.geo-inline__locked {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-forest);
+  color: var(--paper-on-dark-mute);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  font-size: var(--text-eyebrow);
+  font-family: var(--font-sans);
+  max-width: 22rem;
+}
+
+.geo-inline__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-teal-bright);
+  flex: none;
+  opacity: 0.7;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .geo-inline__dot {
+    animation: assistantPulse 2s ease-in-out infinite;
+  }
+}
+
+/* ── GeoEvidenceCard (snapshot result card in-chat) ─────────────────────────
+ * Compact evidence display. Forest surface, hairline border, no heavy shadow.
+ * The known chip uses solid bg with legible contrast (no teal for body text).
+ */
+.geo-card {
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+/* Known chip: solid surface, legible text — NO teal for body text (2.55:1 fail). */
+.geo-card__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  width: fit-content;
+}
+.geo-card__chip--yes {
+  background: color-mix(in oklab, var(--color-teal-bright) 22%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 45%, transparent);
+}
+.geo-card__chip--no {
+  background: color-mix(in oklab, #F4F1EA 14%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, #F4F1EA 28%, transparent);
+}
+.geo-card__chip--unclear {
+  background: color-mix(in oklab, var(--color-teal-bright) 12%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 28%, transparent);
+}
+
+.geo-card__dl {
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.geo-card__item {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.geo-card__item dt {
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-dark-soft);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.geo-card__item dd {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark);
+}
+
+.geo-card__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+  font-style: italic;
+}
+
+/* Suppress body paragraph on geo-evidence turns (card replaces it) */
+.assistant-msg--geo-evidence .assistant-msg__body {
+  display: none;
+}
