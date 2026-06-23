@@ -18,11 +18,16 @@
  * mensaje honesto y la cabecera X-Assistant-Degraded; aqui mostramos ademas un
  * CTA al contacto. Nunca se rompe.
  *
- * HANDOFF: cuando el modelo decide ofrecer hablar con una persona, termina con
- * la marca [[ABRIR_CONTACTO]]. La detectamos, la quitamos del texto visible y
- * mostramos un boton que dispara el evento global `zx:open-contact` con el
- * contexto de la conversacion (resumen), para abrir el ContactDialog. El
- * asistente NO recoge datos: hace handoff al formulario.
+ * HANDOFF [[ABRIR_CONTACTO]]: cuando el modelo decide ofrecer hablar con una
+ * persona, termina con la marca [[ABRIR_CONTACTO]]. La detectamos, la quitamos
+ * del texto visible y mostramos un boton que dispara el evento global
+ * `zx:open-contact` con el contexto de la conversacion (resumen), para abrir
+ * el ContactDialog.
+ *
+ * LEAD CAPTURE [[RECOGER_LEAD]]: cuando el modelo decide recoger el lead
+ * in-chat, emite [[RECOGER_LEAD]]. Se muestra un mini-form (nombre + email +
+ * consentimiento RGPD) que postea a /api/lead con el contexto autorrelleno.
+ * Si degraded=true, no se muestra el form: se hace handoff al ContactDialog.
  *
  * A11y: panel como dialogo (role + aria-labelledby), foco gestionado al abrir y
  * al cerrar (vuelve al lanzador), Esc cierra, foco atrapado dentro del panel,
@@ -42,12 +47,305 @@ interface Turn {
   content: string
   /** El asistente ofrecio abrir el formulario en este turno. */
   offerContact?: boolean
+  /** El asistente solicita recoger el lead in-chat en este turno. */
+  collectLead?: boolean
   /** El turno termino en degradacion (sin IA en vivo). */
   degraded?: boolean
 }
 
 /** Marca que el modelo añade para ofrecer el handoff al formulario. */
 const OPEN_CONTACT_TOKEN = '[[ABRIR_CONTACTO]]'
+
+/** Marca que el modelo añade para solicitar la recogida de lead in-chat. */
+const COLLECT_LEAD_TOKEN = '[[RECOGER_LEAD]]'
+
+// ─── LeadCaptureForm ─────────────────────────────────────────────────────────
+// Mini-form in-chat (nombre + email + consentimiento RGPD + honeypot).
+// Se renderiza como respuesta a [[RECOGER_LEAD]] dentro del log del asistente.
+// El message/context se autorrellena desde buildHandoffMessage(turns): el
+// visitante no escribe nada. POST /api/lead con origin: 'asistente-embudo'.
+
+type LeadStatus = 'idle' | 'sending' | 'success' | 'error'
+
+interface LeadFieldErrors {
+  name?: string
+  email?: string
+  consent?: string
+}
+
+interface LeadApiResponse {
+  ok: boolean
+  delivered: boolean
+  fallbackEmail: string
+  errors?: LeadFieldErrors & { message?: string }
+  error?: string
+}
+
+const FALLBACK_EMAIL = 'info@zanovix.com'
+
+interface LeadCaptureFormProps {
+  turns: Turn[]
+}
+
+function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [consent, setConsent] = useState(false)
+  const [honeypot, setHoneypot] = useState('')
+
+  const [status, setStatus] = useState<LeadStatus>('idle')
+  const [errors, setErrors] = useState<LeadFieldErrors>({})
+  const [globalMsg, setGlobalMsg] = useState<string | null>(null)
+  const [fallback, setFallback] = useState(FALLBACK_EMAIL)
+  const [degraded, setDegraded] = useState(false)
+
+  const nameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const consentRef = useRef<HTMLInputElement>(null)
+  const resultRef = useRef<HTMLDivElement>(null)
+
+  // Focus management: auto-focus name on mount.
+  useEffect(() => {
+    requestAnimationFrame(() => nameRef.current?.focus())
+  }, [])
+
+  // Focus result div on success so screen readers announce it.
+  useEffect(() => {
+    if (status === 'success' && resultRef.current) resultRef.current.focus()
+  }, [status])
+
+  function focusFirstError(e: LeadFieldErrors) {
+    if (e.name) nameRef.current?.focus()
+    else if (e.email) emailRef.current?.focus()
+    else if (e.consent) consentRef.current?.focus()
+  }
+
+  function clientValidate(): LeadFieldErrors {
+    const e: LeadFieldErrors = {}
+    if (name.trim().length < 2) e.name = 'Dime tu nombre para saber con quien hablo.'
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+      e.email = 'Necesito un email valido para poder responderte.'
+    if (!consent) e.consent = 'Necesito tu consentimiento para poder responderte.'
+    return e
+  }
+
+  async function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
+    ev.preventDefault()
+    if (status === 'sending') return
+
+    const clientErrors = clientValidate()
+    if (Object.keys(clientErrors).length > 0) {
+      setErrors(clientErrors)
+      focusFirstError(clientErrors)
+      return
+    }
+
+    setErrors({})
+    setGlobalMsg(null)
+    setStatus('sending')
+
+    const message = buildHandoffMessage(turns)
+
+    try {
+      const res = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          message: message || 'Lead recogido desde el asistente.',
+          consent,
+          company_url: honeypot,
+          context: {
+            raw: message || undefined,
+          },
+          origin: 'asistente-embudo',
+        }),
+      })
+
+      const data = (await res.json()) as LeadApiResponse
+      setFallback(data.fallbackEmail || FALLBACK_EMAIL)
+
+      if (res.status === 429) {
+        setStatus('error')
+        setGlobalMsg(data.error ?? 'Has enviado varios mensajes seguidos. Espera un momento.')
+        return
+      }
+
+      if (!data.ok) {
+        if (data.errors) {
+          const fieldErrors: LeadFieldErrors = {
+            name: data.errors.name,
+            email: data.errors.email,
+            consent: data.errors.consent,
+          }
+          setErrors(fieldErrors)
+          focusFirstError(fieldErrors)
+        }
+        setStatus('error')
+        setGlobalMsg(data.error ?? null)
+        return
+      }
+
+      setDegraded(!data.delivered)
+      setStatus('success')
+    } catch {
+      setStatus('error')
+      setDegraded(true)
+      setGlobalMsg(
+        'No he podido enviar el formulario ahora mismo. Escribenos directamente y te respondemos.',
+      )
+    }
+  }
+
+  const describeField = (field: keyof LeadFieldErrors) =>
+    errors[field] ? `lcf-${field}-error` : undefined
+
+  // ── Success state ──────────────────────────────────────────────────────────
+  if (status === 'success') {
+    return (
+      <div
+        className="lcf__result"
+        ref={resultRef}
+        tabIndex={-1}
+        aria-live="polite"
+      >
+        <p className="lcf__result-title">Recibido. Gracias.</p>
+        {degraded ? (
+          <p className="lcf__result-body">
+            He guardado tu mensaje, pero el envio automatico aun no esta del todo
+            conectado. Para asegurar que llega, escribenos tambien a{' '}
+            <a className="lcf__mail" href={`mailto:${fallback}`}>
+              {fallback}
+            </a>
+            . Respondemos en menos de 24h habiles.
+          </p>
+        ) : (
+          <p className="lcf__result-body">
+            Te respondemos en menos de 24h habiles. Si prefieres, tambien puedes
+            escribirnos a{' '}
+            <a className="lcf__mail" href={`mailto:${fallback}`}>
+              {fallback}
+            </a>
+            .
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  // ── Form ───────────────────────────────────────────────────────────────────
+  return (
+    <form className="lcf" onSubmit={handleSubmit} noValidate aria-label="Reservar diagnostico">
+      {/* Global error message (rate limit, network). */}
+      <div aria-live="assertive" className="lcf__global">
+        {globalMsg && <p className="lcf__global-msg">{globalMsg}</p>}
+      </div>
+
+      {/* Honeypot: hidden from humans, bots fill it. */}
+      <div className="lcf__hp" aria-hidden="true">
+        <label htmlFor="lcf-company_url">No rellenes este campo</label>
+        <input
+          id="lcf-company_url"
+          name="company_url"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+        />
+      </div>
+
+      <div className="lcf__field">
+        <label className="lcf__label" htmlFor="lcf-name">
+          Tu nombre
+        </label>
+        <input
+          id="lcf-name"
+          name="name"
+          ref={nameRef}
+          className="lcf__input"
+          type="text"
+          autoComplete="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          aria-invalid={errors.name ? true : undefined}
+          aria-describedby={describeField('name')}
+          required
+        />
+        {errors.name && (
+          <p id="lcf-name-error" className="lcf__error" role="alert">
+            {errors.name}
+          </p>
+        )}
+      </div>
+
+      <div className="lcf__field">
+        <label className="lcf__label" htmlFor="lcf-email">
+          Tu email
+        </label>
+        <input
+          id="lcf-email"
+          name="email"
+          ref={emailRef}
+          className="lcf__input"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          aria-invalid={errors.email ? true : undefined}
+          aria-describedby={describeField('email')}
+          required
+        />
+        {errors.email && (
+          <p id="lcf-email-error" className="lcf__error" role="alert">
+            {errors.email}
+          </p>
+        )}
+      </div>
+
+      <div className="lcf__consent">
+        <input
+          id="lcf-consent"
+          name="consent"
+          ref={consentRef}
+          className="lcf__check"
+          type="checkbox"
+          checked={consent}
+          onChange={(e) => setConsent(e.target.checked)}
+          aria-invalid={errors.consent ? true : undefined}
+          aria-describedby={errors.consent ? 'lcf-consent-error' : undefined}
+          required
+        />
+        <label className="lcf__consent-label" htmlFor="lcf-consent">
+          Acepto que uses estos datos para responderme. Nada mas. Lee como los
+          tratamos en{' '}
+          <a className="lcf__inline-link" href="/privacidad" target="_blank" rel="noopener">
+            privacidad
+          </a>
+          .
+        </label>
+      </div>
+      {errors.consent && (
+        <p id="lcf-consent-error" className="lcf__error" role="alert">
+          {errors.consent}
+        </p>
+      )}
+
+      <button className="lcf__submit" type="submit" disabled={status === 'sending'}>
+        {status === 'sending' ? 'Enviando...' : 'Reservar diagnostico'}
+      </button>
+
+      <p className="lcf__fallback-note">
+        O escribenos a{' '}
+        <a className="lcf__inline-link" href={`mailto:${fallback}`}>
+          {fallback}
+        </a>
+        .
+      </p>
+    </form>
+  )
+}
 
 const INTRO: Turn = {
   role: 'assistant',
@@ -208,7 +506,11 @@ export default function Assistant() {
           const { done, value } = await reader.read()
           if (done) break
           acc += decoder.decode(value, { stream: true })
-          const visible = acc.replace(OPEN_CONTACT_TOKEN, '').trimEnd()
+          // Strip both tokens from visible text during streaming.
+          const visible = acc
+            .replace(OPEN_CONTACT_TOKEN, '')
+            .replace(COLLECT_LEAD_TOKEN, '')
+            .trimEnd()
           setTurns((prev) => {
             const next = [...prev]
             if (next[assistantIndex]) {
@@ -222,7 +524,12 @@ export default function Assistant() {
       }
 
       const offerContact = acc.includes(OPEN_CONTACT_TOKEN)
-      const finalText = acc.replace(OPEN_CONTACT_TOKEN, '').trim()
+      // collectLead is only shown when not degraded (degraded falls back to contact form).
+      const collectLead = acc.includes(COLLECT_LEAD_TOKEN) && !isDegraded
+      const finalText = acc
+        .replace(OPEN_CONTACT_TOKEN, '')
+        .replace(COLLECT_LEAD_TOKEN, '')
+        .trim()
       setTurns((prev) => {
         const next = [...prev]
         if (next[assistantIndex]) {
@@ -232,6 +539,7 @@ export default function Assistant() {
               finalText ||
               'No he podido responderte ahora mismo. Escribenos y te contesta una persona.',
             offerContact: offerContact && !isDegraded,
+            collectLead,
             degraded: isDegraded,
           }
         }
@@ -357,6 +665,9 @@ export default function Assistant() {
                   >
                     Hablar con una persona
                   </button>
+                )}
+                {t.collectLead && (
+                  <LeadCaptureForm turns={turns} />
                 )}
                 {t.degraded && (
                   <button

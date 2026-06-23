@@ -2102,3 +2102,212 @@ h1, h2, h3, blockquote {
   opacity: 0.55;
   cursor: not-allowed;
 }
+
+/* ── LeadCaptureForm (mini-form in-chat, [[RECOGER_LEAD]]) ───────────────────
+ * Aparece como burbuja del asistente dentro del log. Estética forest (drenched)
+ * coherente con el panel: mismos tokens que geosim/rcheck. Labels League
+ * Spartan (--font-brand), cuerpo Hanken, hairline borders, sin sombras pesadas.
+ * Regla Plano Absoluto.
+ */
+.lcf {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+/* Honeypot: visually hidden, not accessible */
+.lcf__hp {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Global error (rate limit, network) */
+.lcf__global {
+  min-height: 0;
+}
+.lcf__global-msg {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark);
+  background: color-mix(in oklab, var(--color-teal-bright) 18%, var(--color-forest-deep));
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 40%, transparent);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Field */
+.lcf__field {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+/* Label: League Spartan (font-brand), same as geosim/rcheck labels */
+.lcf__label {
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-dark-soft);
+}
+
+/* Input */
+.lcf__input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+  font-size: var(--text-body);
+}
+.lcf__input::placeholder {
+  color: var(--paper-on-dark-mute);
+}
+.lcf__input:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+  border-color: transparent;
+}
+.lcf__input[aria-invalid='true'] {
+  border-color: var(--color-teal-bright);
+}
+
+/* Inline field error */
+.lcf__error {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.45;
+  color: var(--paper-on-dark);
+}
+
+/* Consent row */
+.lcf__consent {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  cursor: pointer;
+}
+.lcf__check {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.1rem;
+  accent-color: var(--color-teal-bright);
+  cursor: pointer;
+}
+.lcf__check:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+}
+.lcf__consent-label {
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-soft);
+  cursor: pointer;
+}
+.lcf__inline-link {
+  color: var(--paper-on-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.lcf__inline-link:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Submit */
+.lcf__submit {
+  justify-self: start;
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lcf__submit:hover {
+  background: var(--color-teal);
+}
+.lcf__submit:active {
+  transform: scale(0.97);
+}
+.lcf__submit:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.lcf__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Fallback note */
+.lcf__fallback-note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+}
+
+/* Success result */
+.lcf__result {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 22rem;
+}
+.lcf__result:focus-visible {
+  outline: none;
+}
+.lcf__result-title {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-teal-bright);
+}
+.lcf__result-body {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark-soft);
+}
+.lcf__mail {
+  color: var(--paper-on-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.lcf__mail:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
