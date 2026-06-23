@@ -32,7 +32,7 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { ASSISTANT_INPUT_MAX } from '../../lib/assistant/assistant'
-import { OPEN_CONTACT_EVENT } from './ContactDialog'
+import { OPEN_CONTACT_EVENT, OPEN_ASSISTANT_EVENT } from './ContactDialog'
 import type { ContactDialogContext } from './ContactDialog'
 
 type Role = 'user' | 'assistant'
@@ -101,6 +101,17 @@ export default function Assistant() {
     // Devolver el foco al lanzador al cerrar.
     requestAnimationFrame(() => launcherRef.current?.focus())
   }, [])
+
+  // Listen for the global zx:open-assistant event dispatched by generic site
+  // CTAs via the delegated script in PageLayout. Opens the panel and focuses
+  // the input (same a11y behaviour as the launcher click).
+  useEffect(() => {
+    function onOpenAssistant() {
+      openPanel()
+    }
+    window.addEventListener(OPEN_ASSISTANT_EVENT, onOpenAssistant)
+    return () => window.removeEventListener(OPEN_ASSISTANT_EVENT, onOpenAssistant)
+  }, [openPanel])
 
   // Al abrir, foco al campo de escritura.
   useEffect(() => {
@@ -327,6 +338,17 @@ export default function Assistant() {
                 <p className="assistant-msg__body">
                   {t.content || (t.role === 'assistant' && sending ? '…' : '')}
                 </p>
+                {/* Direct exit to the form: shown on the first assistant message
+                    so visitors who already decided can skip the conversation. */}
+                {i === 0 && t.role === 'assistant' && (
+                  <button
+                    type="button"
+                    className="assistant-msg__skip-to-form"
+                    onClick={handoff}
+                  >
+                    Prefiero ir al formulario
+                  </button>
+                )}
                 {t.offerContact && (
                   <button
                     type="button"

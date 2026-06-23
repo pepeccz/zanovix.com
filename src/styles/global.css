@@ -2017,6 +2017,36 @@ h1, h2, h3, blockquote {
   outline-offset: 2px;
 }
 
+/* Direct exit to the contact form: rendered on the first assistant message.
+   Secondary visual weight so it does not compete with the conversation,
+   but clearly legible and reachable by keyboard. */
+.assistant-msg__skip-to-form {
+  align-self: flex-start;
+  background: transparent;
+  color: var(--color-ink);
+  border: 1px solid var(--color-rule-strong);
+  border-radius: 10px;
+  padding: 0.45rem 0.9rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  transition: border-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.assistant-msg__skip-to-form:hover {
+  border-color: var(--color-ink);
+  color: var(--color-ink);
+}
+.assistant-msg__skip-to-form:active {
+  transform: scale(0.97);
+}
+.assistant-msg__skip-to-form:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
 .assistant-panel__form {
   display: flex;
   align-items: flex-end;

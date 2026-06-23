@@ -123,33 +123,31 @@ const { title, description, page = '' } = Astro.props
   <ContactDialog client:idle />
 
   <script is:inline>
-    // Captacion como dialogo en contexto: progressive enhancement.
-    // Listener delegado en clicks de [data-open-contact]. Con JS, intercepta
-    // el CTA, evita la navegacion y dispara el evento global que abre el
-    // <dialog>. SIN JS, el CTA sigue siendo <a href="/contacto"> y navega.
-    // El contexto (nombre/sector/zona/veredicto/origen) viaja en data-* y/o
-    // en el detail que pueda inyectar otra isla (p.ej. el simulador GEO).
-    (function setupContactDialogTriggers() {
+    // Generic site CTAs: progressive enhancement.
+    // Delegated click listener on [data-open-contact]. With JS, intercepts the
+    // CTA, prevents navigation, and fires the global event that opens the
+    // Assistant panel. WITHOUT JS, the CTA stays as <a href="/contacto"> and
+    // navigates normally (graceful degradation).
+    // NOTE: Demo CTAs (GeoSimulator / ReadinessCheck / AutomationSketch) call
+    // e.preventDefault() in their own React onClick handlers, so defaultPrevented
+    // is true when the event reaches this listener — they are skipped and continue
+    // dispatching zx:open-contact with their rich context as before.
+    (function setupAssistantTriggers() {
       document.addEventListener('click', function (e) {
         var target = e.target;
         if (!target || typeof target.closest !== 'function') return;
         var trigger = target.closest('[data-open-contact]');
         if (!trigger) return;
-        // Respeta abrir en nueva pestana / con modificadores.
+        // Skip modifier clicks (new tab) and already-handled events (demo CTAs).
         if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
           return;
         }
         e.preventDefault();
         var d = trigger.dataset || {};
         window.dispatchEvent(
-          new CustomEvent('zx:open-contact', {
+          new CustomEvent('zx:open-assistant', {
             detail: {
-              name: d.contactName || undefined,
-              sector: d.contactSector || undefined,
-              zone: d.contactZone || undefined,
-              geoVerdict: d.contactVerdict || undefined,
               origin: d.contactOrigin || trigger.getAttribute('href') || undefined,
-              trigger: trigger,
             },
           })
         );
