@@ -126,6 +126,7 @@ interface LeadCaptureFormProps {
 }
 
 function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
+  const uid = useId()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [consent, setConsent] = useState(false)
@@ -237,7 +238,7 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
   }
 
   const describeField = (field: keyof LeadFieldErrors) =>
-    errors[field] ? `lcf-${field}-error` : undefined
+    errors[field] ? `${uid}-${field}-error` : undefined
 
   // ── Success state ──────────────────────────────────────────────────────────
   if (status === 'success') {
@@ -282,9 +283,9 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
 
       {/* Honeypot: hidden from humans, bots fill it. */}
       <div className="lcf__hp" aria-hidden="true">
-        <label htmlFor="lcf-company_url">No rellenes este campo</label>
+        <label htmlFor={`${uid}-company_url`}>No rellenes este campo</label>
         <input
-          id="lcf-company_url"
+          id={`${uid}-company_url`}
           name="company_url"
           type="text"
           tabIndex={-1}
@@ -295,11 +296,11 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
       </div>
 
       <div className="lcf__field">
-        <label className="lcf__label" htmlFor="lcf-name">
+        <label className="lcf__label" htmlFor={`${uid}-name`}>
           Tu nombre
         </label>
         <input
-          id="lcf-name"
+          id={`${uid}-name`}
           name="name"
           ref={nameRef}
           className="lcf__input"
@@ -312,18 +313,18 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
           required
         />
         {errors.name && (
-          <p id="lcf-name-error" className="lcf__error" role="alert">
+          <p id={`${uid}-name-error`} className="lcf__error" role="alert">
             {errors.name}
           </p>
         )}
       </div>
 
       <div className="lcf__field">
-        <label className="lcf__label" htmlFor="lcf-email">
+        <label className="lcf__label" htmlFor={`${uid}-email`}>
           Tu email
         </label>
         <input
-          id="lcf-email"
+          id={`${uid}-email`}
           name="email"
           ref={emailRef}
           className="lcf__input"
@@ -336,7 +337,7 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
           required
         />
         {errors.email && (
-          <p id="lcf-email-error" className="lcf__error" role="alert">
+          <p id={`${uid}-email-error`} className="lcf__error" role="alert">
             {errors.email}
           </p>
         )}
@@ -344,7 +345,7 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
 
       <div className="lcf__consent">
         <input
-          id="lcf-consent"
+          id={`${uid}-consent`}
           name="consent"
           ref={consentRef}
           className="lcf__check"
@@ -352,10 +353,10 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
           checked={consent}
           onChange={(e) => setConsent(e.target.checked)}
           aria-invalid={errors.consent ? true : undefined}
-          aria-describedby={errors.consent ? 'lcf-consent-error' : undefined}
+          aria-describedby={errors.consent ? `${uid}-consent-error` : undefined}
           required
         />
-        <label className="lcf__consent-label" htmlFor="lcf-consent">
+        <label className="lcf__consent-label" htmlFor={`${uid}-consent`}>
           Acepto que uses estos datos para responderme. Nada mas. Lee como los
           tratamos en{' '}
           <a className="lcf__inline-link" href="/privacidad" target="_blank" rel="noopener">
@@ -365,7 +366,7 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
         </label>
       </div>
       {errors.consent && (
-        <p id="lcf-consent-error" className="lcf__error" role="alert">
+        <p id={`${uid}-consent-error`} className="lcf__error" role="alert">
           {errors.consent}
         </p>
       )}
@@ -412,6 +413,7 @@ interface GeoInlineFormProps {
 }
 
 function GeoInlineForm({ onResult, busy, onBusy }: GeoInlineFormProps) {
+  const uid = useId()
   const [name, setName] = useState('')
   const [sector, setSector] = useState('')
   const [zone, setZone] = useState('')
@@ -486,12 +488,12 @@ function GeoInlineForm({ onResult, busy, onBusy }: GeoInlineFormProps) {
       </p>
 
       <div className="geo-inline__field">
-        <label className="geo-inline__label" htmlFor="geo-inline-name">
+        <label className="geo-inline__label" htmlFor={`${uid}-name`}>
           Nombre del negocio <span className="geo-inline__req">(necesario)</span>
         </label>
         <input
           ref={nameRef}
-          id="geo-inline-name"
+          id={`${uid}-name`}
           className="geo-inline__input"
           type="text"
           autoComplete="organization"
@@ -501,14 +503,14 @@ function GeoInlineForm({ onResult, busy, onBusy }: GeoInlineFormProps) {
           required
           aria-required="true"
           aria-invalid={nameError || undefined}
-          aria-describedby={nameError ? 'geo-inline-name-error' : undefined}
+          aria-describedby={nameError ? `${uid}-name-error` : undefined}
           onChange={(e) => {
             setName(e.target.value)
             if (nameError) setNameError(false)
           }}
         />
         {nameError && (
-          <p id="geo-inline-name-error" className="geo-inline__error" role="alert">
+          <p id={`${uid}-name-error`} className="geo-inline__error" role="alert">
             Necesito el nombre real de tu negocio para preguntarle a la IA.
           </p>
         )}
@@ -516,11 +518,11 @@ function GeoInlineForm({ onResult, busy, onBusy }: GeoInlineFormProps) {
 
       <div className="geo-inline__pair">
         <div className="geo-inline__field">
-          <label className="geo-inline__label" htmlFor="geo-inline-sector">
+          <label className="geo-inline__label" htmlFor={`${uid}-sector`}>
             Sector <span className="geo-inline__opt">(recomendado)</span>
           </label>
           <input
-            id="geo-inline-sector"
+            id={`${uid}-sector`}
             className="geo-inline__input"
             type="text"
             autoComplete="off"
@@ -531,11 +533,11 @@ function GeoInlineForm({ onResult, busy, onBusy }: GeoInlineFormProps) {
           />
         </div>
         <div className="geo-inline__field">
-          <label className="geo-inline__label" htmlFor="geo-inline-zone">
+          <label className="geo-inline__label" htmlFor={`${uid}-zone`}>
             Zona <span className="geo-inline__opt">(recomendado)</span>
           </label>
           <input
-            id="geo-inline-zone"
+            id={`${uid}-zone`}
             className="geo-inline__input"
             type="text"
             autoComplete="off"
@@ -614,6 +616,7 @@ interface ReadinessInlineFormProps {
 }
 
 function ReadinessInlineForm({ onResult, busy }: ReadinessInlineFormProps) {
+  const uid = useId()
   const [answers, setAnswers] = useState<ReadinessAnswers>({})
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [locked, setLocked] = useState(false)
@@ -704,7 +707,7 @@ function ReadinessInlineForm({ onResult, busy }: ReadinessInlineFormProps) {
                     <input
                       type="radio"
                       className="readiness-inline__radio"
-                      name={q.id}
+                      name={`${uid}-${q.id}`}
                       value={opt.id}
                       checked={selected}
                       onChange={() => choose(q.id, opt.id)}
@@ -799,6 +802,7 @@ interface AutomationInlineFormProps {
 }
 
 function AutomationInlineForm({ onResult, busy, onBusy }: AutomationInlineFormProps) {
+  const uid = useId()
   const [task, setTask] = useState('')
   const [taskError, setTaskError] = useState(false)
   const [posting, setPosting] = useState(false)
@@ -874,13 +878,13 @@ function AutomationInlineForm({ onResult, busy, onBusy }: AutomationInlineFormPr
       </p>
 
       <div className="automation-inline__field">
-        <label className="automation-inline__label" htmlFor="automation-inline-task">
+        <label className="automation-inline__label" htmlFor={`${uid}-task`}>
           La tarea que repites{' '}
           <span className="automation-inline__req">(necesario)</span>
         </label>
         <textarea
           ref={taskRef}
-          id="automation-inline-task"
+          id={`${uid}-task`}
           className="automation-inline__textarea"
           rows={3}
           maxLength={SKETCH_INPUT_MAX}
@@ -889,14 +893,14 @@ function AutomationInlineForm({ onResult, busy, onBusy }: AutomationInlineFormPr
           required
           aria-required="true"
           aria-invalid={taskError || undefined}
-          aria-describedby={taskError ? 'automation-inline-task-error' : undefined}
+          aria-describedby={taskError ? `${uid}-task-error` : undefined}
           onChange={(e) => {
             setTask(e.target.value)
             if (taskError) setTaskError(false)
           }}
         />
         {taskError && (
-          <p id="automation-inline-task-error" className="automation-inline__error" role="alert">
+          <p id={`${uid}-task-error`} className="automation-inline__error" role="alert">
             Cuentame un poco mas de la tarea para poder esbozar algo util.
           </p>
         )}
