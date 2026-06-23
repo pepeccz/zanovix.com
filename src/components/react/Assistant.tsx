@@ -91,6 +91,12 @@ const READINESS_TOKEN = '[[AI_READINESS]]'
 /** Marca que el modelo añade para solicitar el esbozo de automatizacion in-chat. */
 const SKETCH_TOKEN = '[[BOCETO_AUTOMATIZACION]]'
 
+/**
+ * Todas las marcas conocidas, para limpiarlas del texto visible de una pasada
+ * (global: tolera repeticiones). El modelo no debe usar otras marcas.
+ */
+const MARKER_RE = /\[\[(?:ABRIR_CONTACTO|RECOGER_LEAD|RADIOGRAFIA_GEO|AI_READINESS|BOCETO_AUTOMATIZACION)\]\]/g
+
 // ─── LeadCaptureForm ─────────────────────────────────────────────────────────
 // Mini-form in-chat (nombre + email + consentimiento RGPD + honeypot).
 // Se renderiza como respuesta a [[RECOGER_LEAD]] dentro del log del asistente.
@@ -399,9 +405,13 @@ interface GeoInlineFormProps {
     inputSector: string,
     inputZone: string,
   ) => void
+  /** True while any model call is in flight: locks the widget to avoid races. */
+  busy: boolean
+  /** Marks the parent busy during the network POST so the composer is disabled. */
+  onBusy: (busy: boolean) => void
 }
 
-function GeoInlineForm({ onResult }: GeoInlineFormProps) {
+function GeoInlineForm({ onResult, busy, onBusy }: GeoInlineFormProps) {
   const [name, setName] = useState('')
   const [sector, setSector] = useState('')
   const [zone, setZone] = useState('')
@@ -418,7 +428,7 @@ function GeoInlineForm({ onResult }: GeoInlineFormProps) {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (posting || locked) return
+    if (posting || locked || busy) return
 
     const cleanName = name.trim()
     if (cleanName.length < GEO_NAME_MIN) {
@@ -428,6 +438,7 @@ function GeoInlineForm({ onResult }: GeoInlineFormProps) {
     }
     setNameError(false)
     setPosting(true)
+    onBusy(true)
 
     try {
       const res = await fetch('/api/geo-snapshot', {
@@ -454,6 +465,7 @@ function GeoInlineForm({ onResult }: GeoInlineFormProps) {
       }
     } catch {
       setPosting(false)
+      onBusy(false)
       // On network error keep the form unlocked so the user can retry.
     }
   }
@@ -543,7 +555,7 @@ function GeoInlineForm({ onResult }: GeoInlineFormProps) {
         .
       </p>
 
-      <button className="geo-inline__submit" type="submit" disabled={posting}>
+      <button className="geo-inline__submit" type="submit" disabled={posting || busy}>
         {posting ? 'Consultando...' : 'Ver radiografia'}
       </button>
     </form>
@@ -597,9 +609,11 @@ const READINESS_TONE_CHIP: Record<ReadinessResult['tone'], string> = {
 
 interface ReadinessInlineFormProps {
   onResult: (result: ReadinessResult) => void
+  /** True while any model call is in flight: locks the widget to avoid races. */
+  busy: boolean
 }
 
-function ReadinessInlineForm({ onResult }: ReadinessInlineFormProps) {
+function ReadinessInlineForm({ onResult, busy }: ReadinessInlineFormProps) {
   const [answers, setAnswers] = useState<ReadinessAnswers>({})
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [locked, setLocked] = useState(false)
@@ -615,7 +629,7 @@ function ReadinessInlineForm({ onResult }: ReadinessInlineFormProps) {
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (locked || submitting) return
+    if (locked || submitting || busy) return
 
     // Validate: all 6 questions must be answered.
     const keys = READINESS_QUESTIONS.map((q) => q.id)
@@ -707,7 +721,7 @@ function ReadinessInlineForm({ onResult }: ReadinessInlineFormProps) {
       <button
         className="readiness-inline__submit"
         type="submit"
-        disabled={submitting}
+        disabled={submitting || busy}
       >
         Ver mi lectura
       </button>
@@ -749,7 +763,12 @@ function ReadinessEvidenceCard({ readiness }: { readiness: ReadinessResult }) {
         </div>
       </dl>
       {readiness.service !== 'ninguno' && (
-        <a className="readiness-card__service" href={readiness.serviceHref}>
+        <a
+          className="readiness-card__service"
+          href={readiness.serviceHref}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           {readiness.serviceLabel}
         </a>
       )}
@@ -773,9 +792,13 @@ interface AutomationInlineFormProps {
     fallbackNotice: string | null,
     task: string,
   ) => void
+  /** True while any model call is in flight: locks the widget to avoid races. */
+  busy: boolean
+  /** Marks the parent busy during the network POST so the composer is disabled. */
+  onBusy: (busy: boolean) => void
 }
 
-function AutomationInlineForm({ onResult }: AutomationInlineFormProps) {
+function AutomationInlineForm({ onResult, busy, onBusy }: AutomationInlineFormProps) {
   const [task, setTask] = useState('')
   const [taskError, setTaskError] = useState(false)
   const [posting, setPosting] = useState(false)
@@ -790,7 +813,7 @@ function AutomationInlineForm({ onResult }: AutomationInlineFormProps) {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (posting || locked) return
+    if (posting || locked || busy) return
 
     const cleanTask = task.trim()
     if (cleanTask.length < SKETCH_INPUT_MIN) {
@@ -800,6 +823,7 @@ function AutomationInlineForm({ onResult }: AutomationInlineFormProps) {
     }
     setTaskError(false)
     setPosting(true)
+    onBusy(true)
 
     try {
       const res = await fetch('/api/automation-sketch', {
@@ -824,6 +848,7 @@ function AutomationInlineForm({ onResult }: AutomationInlineFormProps) {
     } catch {
       // Network error: keep form unlocked so the user can retry.
       setPosting(false)
+      onBusy(false)
     }
   }
 
@@ -885,7 +910,7 @@ function AutomationInlineForm({ onResult }: AutomationInlineFormProps) {
         .
       </p>
 
-      <button className="automation-inline__submit" type="submit" disabled={posting}>
+      <button className="automation-inline__submit" type="submit" disabled={posting || busy}>
         {posting ? 'Consultando...' : 'Ver el esbozo'}
       </button>
     </form>
@@ -1106,14 +1131,8 @@ export default function Assistant() {
           const { done, value } = await reader.read()
           if (done) break
           acc += decoder.decode(value, { stream: true })
-          // Strip all five tokens from visible text during streaming.
-          const visible = acc
-            .replace(OPEN_CONTACT_TOKEN, '')
-            .replace(COLLECT_LEAD_TOKEN, '')
-            .replace(RUN_GEO_TOKEN, '')
-            .replace(READINESS_TOKEN, '')
-            .replace(SKETCH_TOKEN, '')
-            .trimEnd()
+          // Strip every known marker from visible text during streaming.
+          const visible = acc.replace(MARKER_RE, '').trimEnd()
           setTurns((prev) => {
             const next = [...prev]
             if (next[assistantIndex]) {
@@ -1126,18 +1145,26 @@ export default function Assistant() {
         acc = await res.text()
       }
 
-      const offerContact = acc.includes(OPEN_CONTACT_TOKEN)
-      const collectLead = acc.includes(COLLECT_LEAD_TOKEN) && !isDegraded
-      const runGeo = acc.includes(RUN_GEO_TOKEN) && !isDegraded
-      const runReadiness = acc.includes(READINESS_TOKEN) && !isDegraded
-      const runSketch = acc.includes(SKETCH_TOKEN) && !isDegraded
-      const finalText = acc
-        .replace(OPEN_CONTACT_TOKEN, '')
-        .replace(COLLECT_LEAD_TOKEN, '')
-        .replace(RUN_GEO_TOKEN, '')
-        .replace(READINESS_TOKEN, '')
-        .replace(SKETCH_TOKEN, '')
-        .trim()
+      const finalText = acc.replace(MARKER_RE, '').trim()
+
+      // At most ONE action per turn. If the model emits several markers, the
+      // first by position wins and the rest are ignored, so a single turn never
+      // renders two competing widgets. Degraded turns carry no live action.
+      const firstMarker = [
+        { key: 'contact', idx: acc.indexOf(OPEN_CONTACT_TOKEN) },
+        { key: 'lead', idx: acc.indexOf(COLLECT_LEAD_TOKEN) },
+        { key: 'geo', idx: acc.indexOf(RUN_GEO_TOKEN) },
+        { key: 'readiness', idx: acc.indexOf(READINESS_TOKEN) },
+        { key: 'sketch', idx: acc.indexOf(SKETCH_TOKEN) },
+      ]
+        .filter((m) => m.idx !== -1)
+        .sort((a, b) => a.idx - b.idx)[0]?.key
+
+      const offerContact = firstMarker === 'contact' && !isDegraded
+      const collectLead = firstMarker === 'lead' && !isDegraded
+      const runGeo = firstMarker === 'geo' && !isDegraded
+      const runReadiness = firstMarker === 'readiness' && !isDegraded
+      const runSketch = firstMarker === 'sketch' && !isDegraded
 
       setTurns((prev) => {
         const next = [...prev]
@@ -1147,7 +1174,7 @@ export default function Assistant() {
             content:
               finalText ||
               'No he podido responderte ahora mismo. Escribenos y te contesta una persona.',
-            offerContact: offerContact && !isDegraded,
+            offerContact,
             collectLead,
             runGeo,
             runReadiness,
@@ -1497,15 +1524,15 @@ export default function Assistant() {
                 )}
                 {/* GEO inline widget: rendered when the model emits [[RADIOGRAFIA_GEO]] */}
                 {t.runGeo && (
-                  <GeoInlineForm onResult={handleGeoResult} />
+                  <GeoInlineForm onResult={handleGeoResult} busy={sending} onBusy={setSending} />
                 )}
                 {/* AI Readiness inline widget: rendered when model emits [[AI_READINESS]] */}
                 {t.runReadiness && (
-                  <ReadinessInlineForm onResult={handleReadinessResult} />
+                  <ReadinessInlineForm onResult={handleReadinessResult} busy={sending} />
                 )}
                 {/* Automation Sketch inline widget: rendered when model emits [[BOCETO_AUTOMATIZACION]] */}
                 {t.runSketch && (
-                  <AutomationInlineForm onResult={handleSketchResult} />
+                  <AutomationInlineForm onResult={handleSketchResult} busy={sending} onBusy={setSending} />
                 )}
                 {t.degraded && (
                   <button
