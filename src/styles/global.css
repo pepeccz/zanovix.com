@@ -2017,6 +2017,36 @@ h1, h2, h3, blockquote {
   outline-offset: 2px;
 }
 
+/* Direct exit to the contact form: rendered on the first assistant message.
+   Secondary visual weight so it does not compete with the conversation,
+   but clearly legible and reachable by keyboard. */
+.assistant-msg__skip-to-form {
+  align-self: flex-start;
+  background: transparent;
+  color: var(--color-ink);
+  border: 1px solid var(--color-rule-strong);
+  border-radius: 10px;
+  padding: 0.45rem 0.9rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  transition: border-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+              color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.assistant-msg__skip-to-form:hover {
+  border-color: var(--color-ink);
+  color: var(--color-ink);
+}
+.assistant-msg__skip-to-form:active {
+  transform: scale(0.97);
+}
+.assistant-msg__skip-to-form:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
 .assistant-panel__form {
   display: flex;
   align-items: flex-end;
@@ -2071,4 +2101,1032 @@ h1, h2, h3, blockquote {
 .assistant-panel__submit:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+/* ── LeadCaptureForm (mini-form in-chat, [[RECOGER_LEAD]]) ───────────────────
+ * Aparece como burbuja del asistente dentro del log. Estética forest (drenched)
+ * coherente con el panel: mismos tokens que geosim/rcheck. Labels League
+ * Spartan (--font-brand), cuerpo Hanken, hairline borders, sin sombras pesadas.
+ * Regla Plano Absoluto.
+ */
+.lcf {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+/* Honeypot: visually hidden, not accessible */
+.lcf__hp {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Global error (rate limit, network) */
+.lcf__global {
+  min-height: 0;
+}
+.lcf__global-msg {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark);
+  background: color-mix(in oklab, var(--color-teal-bright) 18%, var(--color-forest-deep));
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 40%, transparent);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Field */
+.lcf__field {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+/* Label: League Spartan (font-brand), same as geosim/rcheck labels */
+.lcf__label {
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-dark-soft);
+}
+
+/* Input */
+.lcf__input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+  font-size: var(--text-body);
+}
+.lcf__input::placeholder {
+  color: var(--paper-on-dark-mute);
+}
+.lcf__input:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+  border-color: transparent;
+}
+.lcf__input[aria-invalid='true'] {
+  border-color: var(--color-teal-bright);
+}
+
+/* Inline field error */
+.lcf__error {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.45;
+  color: var(--paper-on-dark);
+}
+
+/* Consent row */
+.lcf__consent {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  cursor: pointer;
+}
+.lcf__check {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.1rem;
+  accent-color: var(--color-teal-bright);
+  cursor: pointer;
+}
+.lcf__check:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+}
+.lcf__consent-label {
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-soft);
+  cursor: pointer;
+}
+.lcf__inline-link {
+  color: var(--paper-on-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.lcf__inline-link:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Submit */
+.lcf__submit {
+  justify-self: start;
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lcf__submit:hover {
+  background: var(--color-teal);
+}
+.lcf__submit:active {
+  transform: scale(0.97);
+}
+.lcf__submit:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.lcf__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Fallback note */
+.lcf__fallback-note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+}
+
+/* Success result */
+.lcf__result {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 22rem;
+}
+.lcf__result:focus-visible {
+  outline: none;
+}
+.lcf__result-title {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-teal-bright);
+}
+.lcf__result-body {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark-soft);
+}
+.lcf__mail {
+  color: var(--paper-on-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.lcf__mail:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── GeoInlineForm (mini GEO widget in-chat, [[RADIOGRAFIA_GEO]]) ────────────
+ * Compact form: name (required) + sector + zone. Mirrors lcf__ and geosim__
+ * aesthetics: forest surface, hairline borders, League Spartan labels, Hanken
+ * body. No heavy shadows (Regla Plano Absoluto). Teal as accent only.
+ */
+.geo-inline {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+.geo-inline__eyebrow {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-teal-bright);
+}
+
+.geo-inline__lede {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark-soft);
+}
+
+.geo-inline__field {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.geo-inline__pair {
+  display: grid;
+  gap: 0.5rem;
+}
+@media (min-width: 380px) {
+  .geo-inline__pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.geo-inline__label {
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-dark-soft);
+}
+
+.geo-inline__req {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.geo-inline__opt {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.geo-inline__input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+  font-size: var(--text-eyebrow);
+}
+.geo-inline__input::placeholder {
+  color: var(--paper-on-dark-mute);
+}
+.geo-inline__input:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+  border-color: transparent;
+}
+.geo-inline__input[aria-invalid='true'] {
+  border-color: var(--color-teal-bright);
+}
+
+.geo-inline__error {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.45;
+  color: var(--paper-on-dark);
+}
+
+.geo-inline__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+}
+
+.geo-inline__link {
+  color: var(--paper-on-dark-soft);
+  text-underline-offset: 3px;
+}
+
+.geo-inline__submit {
+  justify-self: start;
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.geo-inline__submit:hover {
+  background: var(--color-teal);
+}
+.geo-inline__submit:active {
+  transform: scale(0.97);
+}
+.geo-inline__submit:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.geo-inline__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Locked state: shown after a successful submit */
+.geo-inline__locked {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-forest);
+  color: var(--paper-on-dark-mute);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  font-size: var(--text-eyebrow);
+  font-family: var(--font-sans);
+  max-width: 22rem;
+}
+
+.geo-inline__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-teal-bright);
+  flex: none;
+  opacity: 0.7;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .geo-inline__dot {
+    animation: assistantPulse 2s ease-in-out infinite;
+  }
+}
+
+/* ── GeoEvidenceCard (snapshot result card in-chat) ─────────────────────────
+ * Compact evidence display. Forest surface, hairline border, no heavy shadow.
+ * The known chip uses solid bg with legible contrast (no teal for body text).
+ */
+.geo-card {
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+/* Known chip: solid surface, legible text — NO teal for body text (2.55:1 fail). */
+.geo-card__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  width: fit-content;
+}
+.geo-card__chip--yes {
+  background: color-mix(in oklab, var(--color-teal-bright) 22%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 45%, transparent);
+}
+.geo-card__chip--no {
+  background: color-mix(in oklab, #F4F1EA 14%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, #F4F1EA 28%, transparent);
+}
+.geo-card__chip--unclear {
+  background: color-mix(in oklab, var(--color-teal-bright) 12%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 28%, transparent);
+}
+
+.geo-card__dl {
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.geo-card__item {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.geo-card__item dt {
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-dark-soft);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.geo-card__item dd {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark);
+}
+
+.geo-card__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+  font-style: italic;
+}
+
+/* Suppress body paragraph on geo-evidence turns (card replaces it) */
+.assistant-msg--geo-evidence .assistant-msg__body {
+  display: none;
+}
+
+/* ── ReadinessInlineForm (AI Readiness questionnaire in-chat, [[AI_READINESS]]) ─
+ * Compact radio-group form: 6 questions, all must be answered before submit.
+ * Mirrors geo-inline__ aesthetics: forest surface, hairline borders, teal accent.
+ * No heavy shadows (Regla Plano Absoluto). Teal only as accent, not body text.
+ */
+.readiness-inline {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+.readiness-inline__eyebrow {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-teal-bright);
+}
+
+.readiness-inline__lede {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark-soft);
+}
+
+.readiness-inline__global-error-region {
+  /* Reserve space for global error; collapsed when empty */
+  min-height: 0;
+}
+
+.readiness-inline__global-error {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.45;
+  color: var(--paper-on-dark);
+  background: color-mix(in oklab, var(--color-teal-bright) 12%, var(--color-forest));
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 35%, transparent);
+  border-radius: 6px;
+  padding: 0.45rem 0.65rem;
+}
+
+.readiness-inline__fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+  outline: none;
+}
+
+.readiness-inline__legend {
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--paper-on-dark);
+  padding: 0;
+  margin-bottom: 0.15rem;
+  width: 100%;
+}
+
+.readiness-inline__hint {
+  margin: 0 0 0.2rem;
+  font-size: var(--text-eyebrow);
+  line-height: 1.45;
+  color: var(--paper-on-dark-mute);
+}
+
+.readiness-inline__options {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.readiness-inline__option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 120ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 120ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.readiness-inline__option:hover {
+  background: color-mix(in oklab, var(--paper-on-dark) 5%, transparent);
+  border-color: color-mix(in oklab, var(--paper-on-dark) 30%, transparent);
+}
+
+.readiness-inline__option.is-selected {
+  background: color-mix(in oklab, var(--color-teal-bright) 14%, var(--color-forest));
+  border-color: color-mix(in oklab, var(--color-teal-bright) 50%, transparent);
+}
+
+.readiness-inline__radio {
+  /* Visually hidden but accessible */
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.readiness-inline__option-text {
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-soft);
+}
+
+.readiness-inline__option.is-selected .readiness-inline__option-text {
+  color: var(--paper-on-dark);
+}
+
+.readiness-inline__submit {
+  justify-self: start;
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.readiness-inline__submit:hover {
+  background: var(--color-teal);
+}
+.readiness-inline__submit:active {
+  transform: scale(0.97);
+}
+.readiness-inline__submit:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.readiness-inline__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.readiness-inline__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+}
+
+/* Locked state: shown after successful submit */
+.readiness-inline__locked {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-forest);
+  color: var(--paper-on-dark-mute);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  font-size: var(--text-eyebrow);
+  font-family: var(--font-sans);
+  max-width: 22rem;
+}
+
+.readiness-inline__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-teal-bright);
+  flex: none;
+  opacity: 0.7;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .readiness-inline__dot {
+    animation: assistantPulse 2s ease-in-out infinite;
+  }
+}
+
+/* ── ReadinessEvidenceCard (AI Readiness result card in-chat) ────────────────
+ * Compact result display. Forest-deep surface, hairline border, no heavy shadow.
+ * Tone chip uses solid bg with legible contrast (no teal for body text: 2.55:1 fail).
+ */
+.readiness-card {
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+/* Tone chip: solid surface, legible — NO teal for body text (contrast fail). */
+.readiness-card__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  width: fit-content;
+}
+
+/* listo: teal-tinted surface, paper text — stays legible */
+.readiness-card__chip--listo {
+  background: color-mix(in oklab, var(--color-teal-bright) 22%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 45%, transparent);
+}
+
+/* parcial: neutral tint, paper text */
+.readiness-card__chip--parcial {
+  background: color-mix(in oklab, #F4F1EA 14%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, #F4F1EA 28%, transparent);
+}
+
+/* cimientos: subtle teal tint to indicate caution without alarm */
+.readiness-card__chip--cimientos {
+  background: color-mix(in oklab, var(--color-teal-bright) 10%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 25%, transparent);
+}
+
+.readiness-card__verdict {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--paper-on-dark);
+}
+
+.readiness-card__dl {
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.readiness-card__item {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.readiness-card__item dt {
+  font-family: var(--font-brand);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-dark-soft);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.readiness-card__item dd {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark);
+}
+
+.readiness-card__service {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  background: color-mix(in oklab, var(--color-teal-bright) 14%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 40%, transparent);
+  border-radius: 8px;
+  font-size: var(--text-eyebrow);
+  font-family: var(--font-sans);
+  text-decoration: none;
+  width: fit-content;
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.readiness-card__service:hover {
+  background: color-mix(in oklab, var(--color-teal-bright) 22%, var(--color-forest));
+}
+
+.readiness-card__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+  font-style: italic;
+}
+
+/* Suppress body paragraph on readiness-evidence turns (card replaces it) */
+.assistant-msg--readiness-evidence .assistant-msg__body {
+  display: none;
+}
+
+/* ── AutomationInlineForm (esbozo in-chat, [[BOCETO_AUTOMATIZACION]]) ─────────
+ * Compact textarea form for the automation sketch widget. Mirrors geo-inline__
+ * aesthetics: forest surface, hairline borders, teal accent only, no heavy
+ * shadows. Single required textarea (task). WCAG: teal only for accent/focus,
+ * not body text. Locks after result (live or fallback); network errors retry.
+ */
+.automation-inline {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+.automation-inline__eyebrow {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-teal-bright);
+}
+
+.automation-inline__lede {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark-soft);
+}
+
+.automation-inline__field {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.automation-inline__label {
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-dark-soft);
+}
+
+.automation-inline__req {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.automation-inline__textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+  font-size: var(--text-eyebrow);
+  resize: vertical;
+  min-height: 4.5rem;
+}
+.automation-inline__textarea::placeholder {
+  color: var(--paper-on-dark-mute);
+}
+.automation-inline__textarea:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+  border-color: transparent;
+}
+.automation-inline__textarea[aria-invalid='true'] {
+  border-color: var(--color-teal-bright);
+}
+
+.automation-inline__error {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.45;
+  color: var(--paper-on-dark);
+}
+
+.automation-inline__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+}
+
+.automation-inline__link {
+  color: var(--paper-on-dark-soft);
+  text-underline-offset: 3px;
+}
+
+.automation-inline__submit {
+  justify-self: start;
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.automation-inline__submit:hover {
+  background: var(--color-teal);
+}
+.automation-inline__submit:active {
+  transform: scale(0.97);
+}
+.automation-inline__submit:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.automation-inline__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Locked state: shown after a successful submit (form runs once). */
+.automation-inline__locked {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-forest);
+  color: var(--paper-on-dark-mute);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  width: 100%;
+  max-width: 22rem;
+}
+
+.automation-inline__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-teal-bright);
+  flex: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .automation-inline__dot {
+    animation: companionPulse 2.4s ease-in-out infinite;
+  }
+}
+
+/* ── AutomationEvidenceCard (boceto de automatizacion, [[BOCETO_AUTOMATIZACION]]) ─
+ * Read-only evidence card. Mirrors geo-card__ structure with .sketch-card__*
+ * block. Forest-deep surface, hairline borders, no heavy shadows.
+ * Chip: light text on forest surface (paper-on-dark) — legible, no teal body text.
+ * Verdict chip variants mirror geo-card__chip semantics.
+ */
+.sketch-card {
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+/* Verdict chip: light-on-dark forest surface. No teal for body text (2.55:1 fail). */
+.sketch-card__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  width: fit-content;
+}
+.sketch-card__chip--yes {
+  background: color-mix(in oklab, var(--color-teal-bright) 22%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 45%, transparent);
+}
+.sketch-card__chip--partial {
+  background: color-mix(in oklab, var(--color-teal-bright) 14%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 30%, transparent);
+}
+.sketch-card__chip--no {
+  background: color-mix(in oklab, #F4F1EA 14%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, #F4F1EA 28%, transparent);
+}
+.sketch-card__chip--unclear {
+  background: color-mix(in oklab, var(--color-teal-bright) 12%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 28%, transparent);
+}
+
+.sketch-card__dl {
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.sketch-card__item {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.sketch-card__item dt {
+  font-family: var(--font-brand);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-dark-soft);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.sketch-card__item dd {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark);
+}
+
+.sketch-card__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+  font-style: italic;
+}
+
+/* Suppress body paragraph on sketch-evidence turns (card replaces it) */
+.assistant-msg--sketch-evidence .assistant-msg__body {
+  display: none;
 }

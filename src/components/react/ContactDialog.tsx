@@ -73,8 +73,16 @@ export interface ContactDialogContext {
   message?: string
 }
 
-/** Nombre del evento global que abre el dialogo. */
+/** Nombre del evento global que abre el dialogo de contacto. */
 export const OPEN_CONTACT_EVENT = 'zx:open-contact'
+
+/**
+ * Nombre del evento global que abre el panel del asistente.
+ * Dispatched by: generic site CTAs (delegated script in PageLayout.astro).
+ * Listened by: the Assistant component.
+ * Detail: { origin?: string; intent?: string }
+ */
+export const OPEN_ASSISTANT_EVENT = 'zx:open-assistant'
 
 const FALLBACK_EMAIL = 'info@zanovix.com'
 

@@ -18,11 +18,16 @@
  * mensaje honesto y la cabecera X-Assistant-Degraded; aqui mostramos ademas un
  * CTA al contacto. Nunca se rompe.
  *
- * HANDOFF: cuando el modelo decide ofrecer hablar con una persona, termina con
- * la marca [[ABRIR_CONTACTO]]. La detectamos, la quitamos del texto visible y
- * mostramos un boton que dispara el evento global `zx:open-contact` con el
- * contexto de la conversacion (resumen), para abrir el ContactDialog. El
- * asistente NO recoge datos: hace handoff al formulario.
+ * HANDOFF [[ABRIR_CONTACTO]]: cuando el modelo decide ofrecer hablar con una
+ * persona, termina con la marca [[ABRIR_CONTACTO]]. La detectamos, la quitamos
+ * del texto visible y mostramos un boton que dispara el evento global
+ * `zx:open-contact` con el contexto de la conversacion (resumen), para abrir
+ * el ContactDialog.
+ *
+ * LEAD CAPTURE [[RECOGER_LEAD]]: cuando el modelo decide recoger el lead
+ * in-chat, emite [[RECOGER_LEAD]]. Se muestra un mini-form (nombre + email +
+ * consentimiento RGPD) que postea a /api/lead con el contexto autorrelleno.
+ * Si degraded=true, no se muestra el form: se hace handoff al ContactDialog.
  *
  * A11y: panel como dialogo (role + aria-labelledby), foco gestionado al abrir y
  * al cerrar (vuelve al lanzador), Esc cierra, foco atrapado dentro del panel,
@@ -32,7 +37,16 @@
 
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { ASSISTANT_INPUT_MAX } from '../../lib/assistant/assistant'
-import { OPEN_CONTACT_EVENT } from './ContactDialog'
+import { GEO_FIELD_MAX, GEO_NAME_MIN } from '../../lib/companion/geo'
+import type { GeoSnapshot } from '../../lib/companion/geo'
+import {
+  READINESS_QUESTIONS,
+  readReadiness,
+} from '../../lib/readiness/readiness'
+import type { ReadinessAnswers, ReadinessResult } from '../../lib/readiness/readiness'
+import { SKETCH_INPUT_MIN, SKETCH_INPUT_MAX } from '../../lib/automation/sketch'
+import type { AutomationSketch } from '../../lib/automation/sketch'
+import { OPEN_CONTACT_EVENT, OPEN_ASSISTANT_EVENT } from './ContactDialog'
 import type { ContactDialogContext } from './ContactDialog'
 
 type Role = 'user' | 'assistant'
@@ -42,17 +56,918 @@ interface Turn {
   content: string
   /** El asistente ofrecio abrir el formulario en este turno. */
   offerContact?: boolean
+  /** El asistente solicita recoger el lead in-chat en este turno. */
+  collectLead?: boolean
+  /** El turno solicita ejecutar la radiografia GEO in-chat. */
+  runGeo?: boolean
+  /** El turno solicita ejecutar el autodiagnostico AI Readiness in-chat. */
+  runReadiness?: boolean
+  /** El turno solicita ejecutar el esbozo de automatizacion in-chat. */
+  runSketch?: boolean
   /** El turno termino en degradacion (sin IA en vivo). */
   degraded?: boolean
+  /** Tipo especial de turno (para renderizado alternativo). */
+  kind?: 'geo-evidence' | 'readiness-evidence' | 'sketch-evidence'
+  /** Snapshot GEO adjunto (solo cuando kind === 'geo-evidence'). */
+  snapshot?: GeoSnapshot
+  /** Resultado de AI Readiness adjunto (solo cuando kind === 'readiness-evidence'). */
+  readiness?: ReadinessResult
+  /** Resultado del esbozo de automatizacion adjunto (solo cuando kind === 'sketch-evidence'). */
+  sketch?: AutomationSketch
 }
 
 /** Marca que el modelo añade para ofrecer el handoff al formulario. */
 const OPEN_CONTACT_TOKEN = '[[ABRIR_CONTACTO]]'
 
+/** Marca que el modelo añade para solicitar la recogida de lead in-chat. */
+const COLLECT_LEAD_TOKEN = '[[RECOGER_LEAD]]'
+
+/** Marca que el modelo añade para solicitar la radiografia GEO in-chat. */
+const RUN_GEO_TOKEN = '[[RADIOGRAFIA_GEO]]'
+
+/** Marca que el modelo añade para solicitar el autodiagnostico AI Readiness in-chat. */
+const READINESS_TOKEN = '[[AI_READINESS]]'
+
+/** Marca que el modelo añade para solicitar el esbozo de automatizacion in-chat. */
+const SKETCH_TOKEN = '[[BOCETO_AUTOMATIZACION]]'
+
+/**
+ * Todas las marcas conocidas, para limpiarlas del texto visible de una pasada
+ * (global: tolera repeticiones). El modelo no debe usar otras marcas.
+ */
+const MARKER_RE = /\[\[(?:ABRIR_CONTACTO|RECOGER_LEAD|RADIOGRAFIA_GEO|AI_READINESS|BOCETO_AUTOMATIZACION)\]\]/g
+
+// ─── LeadCaptureForm ─────────────────────────────────────────────────────────
+// Mini-form in-chat (nombre + email + consentimiento RGPD + honeypot).
+// Se renderiza como respuesta a [[RECOGER_LEAD]] dentro del log del asistente.
+// El message/context se autorrellena desde buildHandoffMessage(turns): el
+// visitante no escribe nada. POST /api/lead con origin: 'asistente-embudo'.
+
+type LeadStatus = 'idle' | 'sending' | 'success' | 'error'
+
+interface LeadFieldErrors {
+  name?: string
+  email?: string
+  consent?: string
+}
+
+interface LeadApiResponse {
+  ok: boolean
+  delivered: boolean
+  fallbackEmail: string
+  errors?: LeadFieldErrors & { message?: string }
+  error?: string
+}
+
+const FALLBACK_EMAIL = 'info@zanovix.com'
+
+interface LeadCaptureFormProps {
+  turns: Turn[]
+}
+
+function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
+  const uid = useId()
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [consent, setConsent] = useState(false)
+  const [honeypot, setHoneypot] = useState('')
+
+  const [status, setStatus] = useState<LeadStatus>('idle')
+  const [errors, setErrors] = useState<LeadFieldErrors>({})
+  const [globalMsg, setGlobalMsg] = useState<string | null>(null)
+  const [fallback, setFallback] = useState(FALLBACK_EMAIL)
+  const [degraded, setDegraded] = useState(false)
+
+  const nameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const consentRef = useRef<HTMLInputElement>(null)
+  const resultRef = useRef<HTMLDivElement>(null)
+
+  // Focus management: auto-focus name on mount.
+  useEffect(() => {
+    requestAnimationFrame(() => nameRef.current?.focus())
+  }, [])
+
+  // Focus result div on success so screen readers announce it.
+  useEffect(() => {
+    if (status === 'success' && resultRef.current) resultRef.current.focus()
+  }, [status])
+
+  function focusFirstError(e: LeadFieldErrors) {
+    if (e.name) nameRef.current?.focus()
+    else if (e.email) emailRef.current?.focus()
+    else if (e.consent) consentRef.current?.focus()
+  }
+
+  function clientValidate(): LeadFieldErrors {
+    const e: LeadFieldErrors = {}
+    if (name.trim().length < 2) e.name = 'Dime tu nombre para saber con quien hablo.'
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+      e.email = 'Necesito un email valido para poder responderte.'
+    if (!consent) e.consent = 'Necesito tu consentimiento para poder responderte.'
+    return e
+  }
+
+  async function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
+    ev.preventDefault()
+    if (status === 'sending') return
+
+    const clientErrors = clientValidate()
+    if (Object.keys(clientErrors).length > 0) {
+      setErrors(clientErrors)
+      focusFirstError(clientErrors)
+      return
+    }
+
+    setErrors({})
+    setGlobalMsg(null)
+    setStatus('sending')
+
+    const message = buildHandoffMessage(turns)
+
+    try {
+      const res = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim(),
+          message: message || 'Lead recogido desde el asistente.',
+          consent,
+          company_url: honeypot,
+          context: {
+            raw: message || undefined,
+          },
+          origin: 'asistente-embudo',
+        }),
+      })
+
+      const data = (await res.json()) as LeadApiResponse
+      setFallback(data.fallbackEmail || FALLBACK_EMAIL)
+
+      if (res.status === 429) {
+        setStatus('error')
+        setGlobalMsg(data.error ?? 'Has enviado varios mensajes seguidos. Espera un momento.')
+        return
+      }
+
+      if (!data.ok) {
+        if (data.errors) {
+          const fieldErrors: LeadFieldErrors = {
+            name: data.errors.name,
+            email: data.errors.email,
+            consent: data.errors.consent,
+          }
+          setErrors(fieldErrors)
+          focusFirstError(fieldErrors)
+        }
+        setStatus('error')
+        setGlobalMsg(data.error ?? null)
+        return
+      }
+
+      setDegraded(!data.delivered)
+      setStatus('success')
+    } catch {
+      setStatus('error')
+      setDegraded(true)
+      setGlobalMsg(
+        'No he podido enviar el formulario ahora mismo. Escribenos directamente y te respondemos.',
+      )
+    }
+  }
+
+  const describeField = (field: keyof LeadFieldErrors) =>
+    errors[field] ? `${uid}-${field}-error` : undefined
+
+  // ── Success state ──────────────────────────────────────────────────────────
+  if (status === 'success') {
+    return (
+      <div
+        className="lcf__result"
+        ref={resultRef}
+        tabIndex={-1}
+        aria-live="polite"
+      >
+        <p className="lcf__result-title">Recibido. Gracias.</p>
+        {degraded ? (
+          <p className="lcf__result-body">
+            He guardado tu mensaje, pero el envio automatico aun no esta del todo
+            conectado. Para asegurar que llega, escribenos tambien a{' '}
+            <a className="lcf__mail" href={`mailto:${fallback}`}>
+              {fallback}
+            </a>
+            . Respondemos en menos de 24h habiles.
+          </p>
+        ) : (
+          <p className="lcf__result-body">
+            Te respondemos en menos de 24h habiles. Si prefieres, tambien puedes
+            escribirnos a{' '}
+            <a className="lcf__mail" href={`mailto:${fallback}`}>
+              {fallback}
+            </a>
+            .
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  // ── Form ───────────────────────────────────────────────────────────────────
+  return (
+    <form className="lcf" onSubmit={handleSubmit} noValidate aria-label="Reservar diagnostico">
+      {/* Global error message (rate limit, network). */}
+      <div aria-live="assertive" className="lcf__global">
+        {globalMsg && <p className="lcf__global-msg">{globalMsg}</p>}
+      </div>
+
+      {/* Honeypot: hidden from humans, bots fill it. */}
+      <div className="lcf__hp" aria-hidden="true">
+        <label htmlFor={`${uid}-company_url`}>No rellenes este campo</label>
+        <input
+          id={`${uid}-company_url`}
+          name="company_url"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+        />
+      </div>
+
+      <div className="lcf__field">
+        <label className="lcf__label" htmlFor={`${uid}-name`}>
+          Tu nombre
+        </label>
+        <input
+          id={`${uid}-name`}
+          name="name"
+          ref={nameRef}
+          className="lcf__input"
+          type="text"
+          autoComplete="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          aria-invalid={errors.name ? true : undefined}
+          aria-describedby={describeField('name')}
+          required
+        />
+        {errors.name && (
+          <p id={`${uid}-name-error`} className="lcf__error" role="alert">
+            {errors.name}
+          </p>
+        )}
+      </div>
+
+      <div className="lcf__field">
+        <label className="lcf__label" htmlFor={`${uid}-email`}>
+          Tu email
+        </label>
+        <input
+          id={`${uid}-email`}
+          name="email"
+          ref={emailRef}
+          className="lcf__input"
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          aria-invalid={errors.email ? true : undefined}
+          aria-describedby={describeField('email')}
+          required
+        />
+        {errors.email && (
+          <p id={`${uid}-email-error`} className="lcf__error" role="alert">
+            {errors.email}
+          </p>
+        )}
+      </div>
+
+      <div className="lcf__consent">
+        <input
+          id={`${uid}-consent`}
+          name="consent"
+          ref={consentRef}
+          className="lcf__check"
+          type="checkbox"
+          checked={consent}
+          onChange={(e) => setConsent(e.target.checked)}
+          aria-invalid={errors.consent ? true : undefined}
+          aria-describedby={errors.consent ? `${uid}-consent-error` : undefined}
+          required
+        />
+        <label className="lcf__consent-label" htmlFor={`${uid}-consent`}>
+          Acepto que uses estos datos para responderme. Nada mas. Lee como los
+          tratamos en{' '}
+          <a className="lcf__inline-link" href="/privacidad" target="_blank" rel="noopener">
+            privacidad
+          </a>
+          .
+        </label>
+      </div>
+      {errors.consent && (
+        <p id={`${uid}-consent-error`} className="lcf__error" role="alert">
+          {errors.consent}
+        </p>
+      )}
+
+      <button className="lcf__submit" type="submit" disabled={status === 'sending'}>
+        {status === 'sending' ? 'Enviando...' : 'Reservar diagnostico'}
+      </button>
+
+      <p className="lcf__fallback-note">
+        O escribenos a{' '}
+        <a className="lcf__inline-link" href={`mailto:${fallback}`}>
+          {fallback}
+        </a>
+        .
+      </p>
+    </form>
+  )
+}
+
+// ─── GeoInlineForm ───────────────────────────────────────────────────────────
+// Compact GEO radiography widget rendered inline when the assistant emits
+// [[RADIOGRAFIA_GEO]]. Runs once per widget instance; locks after a successful
+// result. On success, calls onResult with the snapshot and framed context so
+// the assistant can reinject and produce the verdict.
+
+const GEO_KNOWN_LABEL: Record<GeoSnapshot['known'], string> = {
+  yes: 'Una IA te reconoce',
+  no: 'Una IA no te conoce todavia',
+  unclear: 'Una IA conoce tu categoria, no tu negocio',
+}
+
+interface GeoInlineFormProps {
+  onResult: (
+    snapshot: GeoSnapshot | null,
+    fallbackNotice: string | null,
+    inputName: string,
+    inputSector: string,
+    inputZone: string,
+  ) => void
+  /** True while any model call is in flight: locks the widget to avoid races. */
+  busy: boolean
+  /** Marks the parent busy during the network POST so the composer is disabled. */
+  onBusy: (busy: boolean) => void
+}
+
+function GeoInlineForm({ onResult, busy, onBusy }: GeoInlineFormProps) {
+  const uid = useId()
+  const [name, setName] = useState('')
+  const [sector, setSector] = useState('')
+  const [zone, setZone] = useState('')
+  const [nameError, setNameError] = useState(false)
+  const [posting, setPosting] = useState(false)
+  const [locked, setLocked] = useState(false)
+
+  const nameRef = useRef<HTMLInputElement>(null)
+
+  // Auto-focus name on mount.
+  useEffect(() => {
+    requestAnimationFrame(() => nameRef.current?.focus())
+  }, [])
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (posting || locked || busy) return
+
+    const cleanName = name.trim()
+    if (cleanName.length < GEO_NAME_MIN) {
+      setNameError(true)
+      nameRef.current?.focus()
+      return
+    }
+    setNameError(false)
+    setPosting(true)
+    onBusy(true)
+
+    try {
+      const res = await fetch('/api/geo-snapshot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: cleanName,
+          sector: sector.trim() || undefined,
+          zone: zone.trim() || undefined,
+        }),
+      })
+
+      const data = (await res.json()) as {
+        source?: 'live' | 'fallback'
+        snapshot?: GeoSnapshot | null
+        fallbackNotice?: string
+      }
+
+      setLocked(true)
+      if (data.source === 'live' && data.snapshot) {
+        onResult(data.snapshot, null, cleanName, sector.trim(), zone.trim())
+      } else {
+        onResult(null, data.fallbackNotice ?? null, cleanName, sector.trim(), zone.trim())
+      }
+    } catch {
+      setPosting(false)
+      onBusy(false)
+      // On network error keep the form unlocked so the user can retry.
+    }
+  }
+
+  if (locked) {
+    return (
+      <div className="geo-inline__locked" aria-live="polite">
+        Radiografia hecha. Tienes el resultado aqui debajo.
+      </div>
+    )
+  }
+
+  return (
+    <form className="geo-inline" onSubmit={handleSubmit} noValidate aria-label="Radiografia GEO">
+      <p className="geo-inline__eyebrow">Radiografia GEO</p>
+      <p className="geo-inline__lede">
+        Escribe el nombre real de tu negocio y le preguntamos en vivo a una IA que sabe de ti hoy.
+      </p>
+
+      <div className="geo-inline__field">
+        <label className="geo-inline__label" htmlFor={`${uid}-name`}>
+          Nombre del negocio <span className="geo-inline__req">(necesario)</span>
+        </label>
+        <input
+          ref={nameRef}
+          id={`${uid}-name`}
+          className="geo-inline__input"
+          type="text"
+          autoComplete="organization"
+          maxLength={GEO_FIELD_MAX}
+          placeholder="Ej: Bar Manolo"
+          value={name}
+          required
+          aria-required="true"
+          aria-invalid={nameError || undefined}
+          aria-describedby={nameError ? `${uid}-name-error` : undefined}
+          onChange={(e) => {
+            setName(e.target.value)
+            if (nameError) setNameError(false)
+          }}
+        />
+        {nameError && (
+          <p id={`${uid}-name-error`} className="geo-inline__error" role="alert">
+            Necesito el nombre real de tu negocio para preguntarle a la IA.
+          </p>
+        )}
+      </div>
+
+      <div className="geo-inline__pair">
+        <div className="geo-inline__field">
+          <label className="geo-inline__label" htmlFor={`${uid}-sector`}>
+            Sector <span className="geo-inline__opt">(recomendado)</span>
+          </label>
+          <input
+            id={`${uid}-sector`}
+            className="geo-inline__input"
+            type="text"
+            autoComplete="off"
+            maxLength={GEO_FIELD_MAX}
+            placeholder="Ej: restaurante"
+            value={sector}
+            onChange={(e) => setSector(e.target.value)}
+          />
+        </div>
+        <div className="geo-inline__field">
+          <label className="geo-inline__label" htmlFor={`${uid}-zone`}>
+            Zona <span className="geo-inline__opt">(recomendado)</span>
+          </label>
+          <input
+            id={`${uid}-zone`}
+            className="geo-inline__input"
+            type="text"
+            autoComplete="off"
+            maxLength={GEO_FIELD_MAX}
+            placeholder="Ej: Malaga centro"
+            value={zone}
+            onChange={(e) => setZone(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <p className="geo-inline__note">
+        Envia el nombre a un proveedor de IA (OpenRouter) para generar la radiografia.{' '}
+        <a href="/privacidad" className="geo-inline__link">
+          Como funciona
+        </a>
+        .
+      </p>
+
+      <button className="geo-inline__submit" type="submit" disabled={posting || busy}>
+        {posting ? 'Consultando...' : 'Ver radiografia'}
+      </button>
+    </form>
+  )
+}
+
+// ─── GeoEvidenceCard ─────────────────────────────────────────────────────────
+// Read-only display of a GeoSnapshot as a compact evidence card.
+
+function GeoEvidenceCard({ snapshot }: { snapshot: GeoSnapshot }) {
+  return (
+    <div className="geo-card" aria-label="Resultado de la radiografia GEO">
+      <span
+        className={`geo-card__chip geo-card__chip--${snapshot.known}`}
+        aria-label={`Visibilidad: ${GEO_KNOWN_LABEL[snapshot.known]}`}
+      >
+        {GEO_KNOWN_LABEL[snapshot.known]}
+      </span>
+      <dl className="geo-card__dl">
+        <div className="geo-card__item">
+          <dt>Que sabe de ti</dt>
+          <dd>{snapshot.describes}</dd>
+        </div>
+        <div className="geo-card__item">
+          <dt>Si te recomendaria</dt>
+          <dd>{snapshot.recommend}</dd>
+        </div>
+        <div className="geo-card__item">
+          <dt>Que le falta</dt>
+          <dd>{snapshot.gap}</dd>
+        </div>
+      </dl>
+      <p className="geo-card__note">
+        Respuesta real del modelo. Refleja su conocimiento de entrenamiento, no una auditoria de tu web.
+      </p>
+    </div>
+  )
+}
+
+// ─── ReadinessInlineForm ──────────────────────────────────────────────────────
+// Compact AI Readiness questionnaire rendered inline when the assistant emits
+// [[AI_READINESS]]. Renders all 6 READINESS_QUESTIONS as compact radio-groups.
+// Requires all 6 answered; focuses first unanswered on incomplete submit.
+// Computes readReadiness() locally (synchronous, no fetch). Locks after submit.
+
+const READINESS_TONE_CHIP: Record<ReadinessResult['tone'], string> = {
+  listo: 'Por aqui si',
+  parcial: 'Con cabeza',
+  cimientos: 'Primero los cimientos',
+}
+
+interface ReadinessInlineFormProps {
+  onResult: (result: ReadinessResult) => void
+  /** True while any model call is in flight: locks the widget to avoid races. */
+  busy: boolean
+}
+
+function ReadinessInlineForm({ onResult, busy }: ReadinessInlineFormProps) {
+  const uid = useId()
+  const [answers, setAnswers] = useState<ReadinessAnswers>({})
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [locked, setLocked] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
+  // Refs per question for focus management on validation error.
+  const fieldsetRefs = useRef<(HTMLFieldSetElement | null)[]>([])
+
+  function choose(key: string, value: string) {
+    setAnswers((prev) => ({ ...prev, [key]: value }))
+    if (submitError) setSubmitError(null)
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (locked || submitting || busy) return
+
+    // Validate: all 6 questions must be answered.
+    const keys = READINESS_QUESTIONS.map((q) => q.id)
+    const firstUnanswered = keys.findIndex((k) => !answers[k])
+    if (firstUnanswered !== -1) {
+      setSubmitError('Responde todas las preguntas para obtener tu lectura.')
+      // Focus the first unanswered fieldset for a11y.
+      requestAnimationFrame(() => {
+        const el = fieldsetRefs.current[firstUnanswered]
+        el?.focus()
+      })
+      return
+    }
+
+    setSubmitting(true)
+    setSubmitError(null)
+
+    // Synchronous: readReadiness does not call any API.
+    const result = readReadiness(answers)
+    setLocked(true)
+    onResult(result)
+  }
+
+  if (locked) {
+    return (
+      <div className="readiness-inline__locked" aria-live="polite">
+        Lectura hecha. Tienes el resultado aqui debajo.
+      </div>
+    )
+  }
+
+  return (
+    <form
+      className="readiness-inline"
+      onSubmit={handleSubmit}
+      noValidate
+      aria-label="Autodiagnostico de AI Readiness"
+    >
+      <p className="readiness-inline__eyebrow">Autodiagnostico AI Readiness</p>
+      <p className="readiness-inline__lede">
+        Seis preguntas rapidas. Una lectura honesta: donde la IA te aporta hoy y donde no.
+        Sin datos personales.
+      </p>
+
+      <div aria-live="assertive" className="readiness-inline__global-error-region">
+        {submitError && (
+          <p className="readiness-inline__global-error" role="alert">
+            {submitError}
+          </p>
+        )}
+      </div>
+
+      {READINESS_QUESTIONS.map((q, i) => {
+        const current = answers[q.id]
+        return (
+          <fieldset
+            key={q.id}
+            className="readiness-inline__fieldset"
+            ref={(el) => { fieldsetRefs.current[i] = el }}
+            tabIndex={-1}
+          >
+            <legend className="readiness-inline__legend">{q.legend}</legend>
+            {q.hint && <p className="readiness-inline__hint">{q.hint}</p>}
+            <div className="readiness-inline__options">
+              {q.options.map((opt) => {
+                const selected = current === opt.id
+                return (
+                  <label
+                    key={opt.id}
+                    className={`readiness-inline__option${selected ? ' is-selected' : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      className="readiness-inline__radio"
+                      name={`${uid}-${q.id}`}
+                      value={opt.id}
+                      checked={selected}
+                      onChange={() => choose(q.id, opt.id)}
+                    />
+                    <span className="readiness-inline__option-text">{opt.label}</span>
+                  </label>
+                )
+              })}
+            </div>
+          </fieldset>
+        )
+      })}
+
+      <button
+        className="readiness-inline__submit"
+        type="submit"
+        disabled={submitting || busy}
+      >
+        Ver mi lectura
+      </button>
+
+      <p className="readiness-inline__note">
+        El resultado sale de tus respuestas con reglas claras, sin IA y sin cifras
+        inventadas. No guardamos nada de esto.
+      </p>
+    </form>
+  )
+}
+
+// ─── ReadinessEvidenceCard ────────────────────────────────────────────────────
+// Read-only display of a ReadinessResult as a compact evidence card.
+// Mirrors GeoEvidenceCard structure. WCAG: no teal for body text.
+
+function ReadinessEvidenceCard({ readiness }: { readiness: ReadinessResult }) {
+  return (
+    <div className="readiness-card" aria-label="Resultado del autodiagnostico AI Readiness">
+      <span
+        className={`readiness-card__chip readiness-card__chip--${readiness.tone}`}
+        aria-label={`Lectura: ${READINESS_TONE_CHIP[readiness.tone]}`}
+      >
+        {READINESS_TONE_CHIP[readiness.tone]}
+      </span>
+      <p className="readiness-card__verdict">{readiness.verdict}</p>
+      <dl className="readiness-card__dl">
+        <div className="readiness-card__item">
+          <dt>Donde te aporta hoy</dt>
+          <dd>{readiness.aporta}</dd>
+        </div>
+        <div className="readiness-card__item">
+          <dt>Donde no, todavia</dt>
+          <dd>{readiness.todavia}</dd>
+        </div>
+        <div className="readiness-card__item">
+          <dt>Tu primer paso</dt>
+          <dd>{readiness.primerPaso}</dd>
+        </div>
+      </dl>
+      {readiness.service !== 'ninguno' && (
+        <a
+          className="readiness-card__service"
+          href={readiness.serviceHref}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {readiness.serviceLabel}
+        </a>
+      )}
+      <p className="readiness-card__note">
+        Sale de tus respuestas con reglas claras, sin IA y sin cifras inventadas.
+        Es una orientacion, no una auditoria: esa va mas a fondo, contigo.
+      </p>
+    </div>
+  )
+}
+
+// ─── AutomationInlineForm ─────────────────────────────────────────────────────
+// Compact automation sketch widget rendered inline when the assistant emits
+// [[BOCETO_AUTOMATIZACION]]. Runs once per widget instance; locks after a
+// successful result (live OR fallback). Network errors keep the form unlocked
+// for retry. On success, calls onResult with the sketch and task.
+
+interface AutomationInlineFormProps {
+  onResult: (
+    sketch: AutomationSketch | null,
+    fallbackNotice: string | null,
+    task: string,
+  ) => void
+  /** True while any model call is in flight: locks the widget to avoid races. */
+  busy: boolean
+  /** Marks the parent busy during the network POST so the composer is disabled. */
+  onBusy: (busy: boolean) => void
+}
+
+function AutomationInlineForm({ onResult, busy, onBusy }: AutomationInlineFormProps) {
+  const uid = useId()
+  const [task, setTask] = useState('')
+  const [taskError, setTaskError] = useState(false)
+  const [posting, setPosting] = useState(false)
+  const [locked, setLocked] = useState(false)
+
+  const taskRef = useRef<HTMLTextAreaElement>(null)
+
+  // Auto-focus textarea on mount.
+  useEffect(() => {
+    requestAnimationFrame(() => taskRef.current?.focus())
+  }, [])
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (posting || locked || busy) return
+
+    const cleanTask = task.trim()
+    if (cleanTask.length < SKETCH_INPUT_MIN) {
+      setTaskError(true)
+      taskRef.current?.focus()
+      return
+    }
+    setTaskError(false)
+    setPosting(true)
+    onBusy(true)
+
+    try {
+      const res = await fetch('/api/automation-sketch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task: cleanTask }),
+      })
+
+      const data = (await res.json()) as {
+        source?: 'live' | 'fallback'
+        sketch?: AutomationSketch | null
+        fallbackNotice?: string
+      }
+
+      // Lock the form — both live and fallback lock so the widget runs once.
+      setLocked(true)
+      if (data.source === 'live' && data.sketch) {
+        onResult(data.sketch, null, cleanTask)
+      } else {
+        onResult(null, data.fallbackNotice ?? null, cleanTask)
+      }
+    } catch {
+      // Network error: keep form unlocked so the user can retry.
+      setPosting(false)
+      onBusy(false)
+    }
+  }
+
+  if (locked) {
+    return (
+      <div className="automation-inline__locked" aria-live="polite">
+        Esbozo hecho. Tienes el resultado aqui debajo.
+      </div>
+    )
+  }
+
+  return (
+    <form
+      className="automation-inline"
+      onSubmit={handleSubmit}
+      noValidate
+      aria-label="Esbozo de automatizacion"
+    >
+      <p className="automation-inline__eyebrow">Esbozo de automatizacion</p>
+      <p className="automation-inline__lede">
+        Describe una tarea repetitiva que te come tiempo. Le preguntamos en
+        vivo a una IA que parte se podria automatizar y que parte no.
+      </p>
+
+      <div className="automation-inline__field">
+        <label className="automation-inline__label" htmlFor={`${uid}-task`}>
+          La tarea que repites{' '}
+          <span className="automation-inline__req">(necesario)</span>
+        </label>
+        <textarea
+          ref={taskRef}
+          id={`${uid}-task`}
+          className="automation-inline__textarea"
+          rows={3}
+          maxLength={SKETCH_INPUT_MAX}
+          placeholder="Ej: cada dia copio los pedidos del correo a un excel a mano, uno por uno."
+          value={task}
+          required
+          aria-required="true"
+          aria-invalid={taskError || undefined}
+          aria-describedby={taskError ? `${uid}-task-error` : undefined}
+          onChange={(e) => {
+            setTask(e.target.value)
+            if (taskError) setTaskError(false)
+          }}
+        />
+        {taskError && (
+          <p id={`${uid}-task-error`} className="automation-inline__error" role="alert">
+            Cuentame un poco mas de la tarea para poder esbozar algo util.
+          </p>
+        )}
+      </div>
+
+      <p className="automation-inline__note">
+        Envia lo que escribas a un proveedor de IA (OpenRouter) para el esbozo.{' '}
+        <a href="/privacidad" className="automation-inline__link">
+          Como funciona
+        </a>
+        .
+      </p>
+
+      <button className="automation-inline__submit" type="submit" disabled={posting || busy}>
+        {posting ? 'Consultando...' : 'Ver el esbozo'}
+      </button>
+    </form>
+  )
+}
+
+// ─── AutomationEvidenceCard ───────────────────────────────────────────────────
+// Read-only display of an AutomationSketch as a compact evidence card.
+// Mirrors GeoEvidenceCard structure with .sketch-card__* block.
+// WCAG: no teal #3BAA8C for body text; chip uses light-on-dark forest surface.
+
+const SKETCH_VERDICT_LABEL: Record<AutomationSketch['verdict'], string> = {
+  yes: 'Tiene buena pinta para automatizar',
+  partial: 'Una parte si, otra parte no',
+  no: 'Tal y como lo cuentas, no compensa',
+  unclear: 'Me falta contexto para decirte algo util',
+}
+
+function AutomationEvidenceCard({ sketch }: { sketch: AutomationSketch }) {
+  return (
+    <div className="sketch-card" aria-label="Resultado del esbozo de automatizacion">
+      <span
+        className={`sketch-card__chip sketch-card__chip--${sketch.verdict}`}
+        aria-label={`Veredicto: ${SKETCH_VERDICT_LABEL[sketch.verdict]}`}
+      >
+        {SKETCH_VERDICT_LABEL[sketch.verdict]}
+      </span>
+      <dl className="sketch-card__dl">
+        <div className="sketch-card__item">
+          <dt>Que se podria automatizar</dt>
+          <dd>{sketch.automatable}</dd>
+        </div>
+        <div className="sketch-card__item">
+          <dt>Enfoque a grandes rasgos</dt>
+          <dd>{sketch.approach}</dd>
+        </div>
+        <div className="sketch-card__item">
+          <dt>Avisos honestos</dt>
+          <dd>{sketch.caveats}</dd>
+        </div>
+      </dl>
+      <p className="sketch-card__note">
+        Esbozo a partir de lo que cuentas. No es una propuesta ni un presupuesto.
+        Sin plazos ni precios: eso sale del discovery.
+      </p>
+    </div>
+  )
+}
+
 const INTRO: Turn = {
   role: 'assistant',
   content:
-    'Hola. Soy el asistente de Zanovix. Puedo contarte que hacemos, ayudarte a encontrar lo que buscas o, si lo ves claro, ponerte en contacto con una persona del equipo. Cuentame, ¿que te trae por aqui?',
+    'Hola. Soy el asistente de Zanovix. Puedo orientarte por encima y gratis sobre si la IA te aporta de verdad y por donde empezarias, sin venderte humo. No es el diagnostico a fondo, es una primera lectura. Para empezar, ¿a que se dedica tu negocio?',
 }
 
 function prefersReducedMotion(): boolean {
@@ -101,6 +1016,17 @@ export default function Assistant() {
     // Devolver el foco al lanzador al cerrar.
     requestAnimationFrame(() => launcherRef.current?.focus())
   }, [])
+
+  // Listen for the global zx:open-assistant event dispatched by generic site
+  // CTAs via the delegated script in PageLayout. Opens the panel and focuses
+  // the input (same a11y behaviour as the launcher click).
+  useEffect(() => {
+    function onOpenAssistant() {
+      openPanel()
+    }
+    window.addEventListener(OPEN_ASSISTANT_EVENT, onOpenAssistant)
+    return () => window.removeEventListener(OPEN_ASSISTANT_EVENT, onOpenAssistant)
+  }, [openPanel])
 
   // Al abrir, foco al campo de escritura.
   useEffect(() => {
@@ -158,37 +1084,49 @@ export default function Assistant() {
     closePanel()
   }
 
-  // ─── Envio de un mensaje ──────────────────────────────────────────────────
-  async function send(text: string) {
-    const clean = text.trim()
-    if (!clean || sending) return
-
-    // Historial para el servidor: lo previo (sin la intro de bienvenida).
-    const priorHistory = turns
-      .filter((t, i) => !(i === 0 && t.role === 'assistant')) // descarta INTRO
+  // ─── Core model call (reusable) ──────────────────────────────────────────
+  /**
+   * Sends a message to /api/assistant and streams the reply into a new turn.
+   *
+   * @param modelMessage - The text sent to the API as the `message` field.
+   * @param displayTurn  - The Turn pushed to `turns` for rendering.
+   *                       Its `content` is also used as history content.
+   * @param currentTurns - Snapshot of turns BEFORE pushing displayTurn.
+   *                       Needed so the caller controls history correctly on
+   *                       reinjection (avoids double-state read race).
+   */
+  async function runAssistantTurn({
+    modelMessage,
+    displayTurn,
+    currentTurns,
+  }: {
+    modelMessage: string
+    displayTurn: Turn
+    currentTurns: Turn[]
+  }) {
+    // Build history from the turns before this one (skip the INTRO assistant turn at i===0).
+    const priorHistory = currentTurns
+      .filter((t, i) => !(i === 0 && t.role === 'assistant'))
       .map((t) => ({ role: t.role, content: t.content }))
 
-    setTurns((prev) => [...prev, { role: 'user', content: clean }])
-    setInput('')
-    setSending(true)
-
-    // Indice del turno del asistente que vamos a rellenar en streaming.
+    // Push the display turn, then reserve a slot for the assistant reply.
     let assistantIndex = -1
     setTurns((prev) => {
-      assistantIndex = prev.length
-      return [...prev, { role: 'assistant', content: '' }]
+      const withDisplay = [...prev, displayTurn]
+      assistantIndex = withDisplay.length
+      return [...withDisplay, { role: 'assistant', content: '' }]
     })
 
     try {
       const res = await fetch('/api/assistant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: clean, history: priorHistory }),
+        body: JSON.stringify({ message: modelMessage, history: priorHistory }),
       })
 
       const isDegraded = res.headers.get('x-assistant-degraded') === '1'
 
-      // Streaming token a token si hay body legible; si no, texto entero.
+      // Streaming token by token; fall back to full text if no ReadableStream.
       let acc = ''
       if (res.body && typeof res.body.getReader === 'function') {
         const reader = res.body.getReader()
@@ -197,7 +1135,8 @@ export default function Assistant() {
           const { done, value } = await reader.read()
           if (done) break
           acc += decoder.decode(value, { stream: true })
-          const visible = acc.replace(OPEN_CONTACT_TOKEN, '').trimEnd()
+          // Strip every known marker from visible text during streaming.
+          const visible = acc.replace(MARKER_RE, '').trimEnd()
           setTurns((prev) => {
             const next = [...prev]
             if (next[assistantIndex]) {
@@ -210,8 +1149,27 @@ export default function Assistant() {
         acc = await res.text()
       }
 
-      const offerContact = acc.includes(OPEN_CONTACT_TOKEN)
-      const finalText = acc.replace(OPEN_CONTACT_TOKEN, '').trim()
+      const finalText = acc.replace(MARKER_RE, '').trim()
+
+      // At most ONE action per turn. If the model emits several markers, the
+      // first by position wins and the rest are ignored, so a single turn never
+      // renders two competing widgets. Degraded turns carry no live action.
+      const firstMarker = [
+        { key: 'contact', idx: acc.indexOf(OPEN_CONTACT_TOKEN) },
+        { key: 'lead', idx: acc.indexOf(COLLECT_LEAD_TOKEN) },
+        { key: 'geo', idx: acc.indexOf(RUN_GEO_TOKEN) },
+        { key: 'readiness', idx: acc.indexOf(READINESS_TOKEN) },
+        { key: 'sketch', idx: acc.indexOf(SKETCH_TOKEN) },
+      ]
+        .filter((m) => m.idx !== -1)
+        .sort((a, b) => a.idx - b.idx)[0]?.key
+
+      const offerContact = firstMarker === 'contact' && !isDegraded
+      const collectLead = firstMarker === 'lead' && !isDegraded
+      const runGeo = firstMarker === 'geo' && !isDegraded
+      const runReadiness = firstMarker === 'readiness' && !isDegraded
+      const runSketch = firstMarker === 'sketch' && !isDegraded
+
       setTurns((prev) => {
         const next = [...prev]
         if (next[assistantIndex]) {
@@ -220,7 +1178,11 @@ export default function Assistant() {
             content:
               finalText ||
               'No he podido responderte ahora mismo. Escribenos y te contesta una persona.',
-            offerContact: offerContact && !isDegraded,
+            offerContact,
+            collectLead,
+            runGeo,
+            runReadiness,
+            runSketch,
             degraded: isDegraded,
           }
         }
@@ -239,6 +1201,26 @@ export default function Assistant() {
         }
         return next
       })
+    }
+  }
+
+  // ─── Envio de un mensaje (uses runAssistantTurn) ──────────────────────────
+  async function send(text: string) {
+    const clean = text.trim()
+    if (!clean || sending) return
+
+    setInput('')
+    setSending(true)
+
+    // Snapshot of turns BEFORE the new user turn (for history).
+    const currentTurns = turns
+
+    try {
+      await runAssistantTurn({
+        modelMessage: clean,
+        displayTurn: { role: 'user', content: clean },
+        currentTurns,
+      })
     } finally {
       setSending(false)
       requestAnimationFrame(() => inputRef.current?.focus())
@@ -255,6 +1237,187 @@ export default function Assistant() {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       void send(input)
+    }
+  }
+
+  // ─── GEO reinjection handler ──────────────────────────────────────────────
+  /**
+   * Called by GeoInlineForm when the user submits the widget and the API
+   * responds. Replaces the placeholder assistant turn with the evidence card
+   * (or a fallback note), then reinjects into the model so it builds its
+   * verdict on the real evidence.
+   *
+   * The reinjection consumes one user turn in history (intentional per spec).
+   */
+  function handleGeoResult(
+    snapshot: GeoSnapshot | null,
+    fallbackNotice: string | null,
+    inputName: string,
+    inputSector: string,
+    inputZone: string,
+  ) {
+    setSending(true)
+
+    if (snapshot) {
+      // The evidence text stays in history as context for later turns.
+      const sectorPart = inputSector ? `, sector: ${inputSector}` : ''
+      const zonePart = inputZone ? `, zona: ${inputZone}` : ''
+      const evidenceText =
+        `[Resultado de la radiografia GEO para ${inputName}${sectorPart}${zonePart}] ` +
+        `Reconoce el negocio: ${snapshot.known}. ` +
+        `Como lo describe una IA hoy: ${snapshot.describes} ` +
+        `Recomendacion: ${snapshot.recommend} ` +
+        `Lo que falta: ${snapshot.gap}.`
+      // The instruction is only needed for THIS reinjection call, not in history.
+      const modelMessage =
+        `${evidenceText} ` +
+        `Construye ahora tu veredicto honesto sobre esta evidencia, sin repetirla literal: ` +
+        `donde la IA le aporta y donde no. Si encaja, propon el siguiente paso.`
+
+      // The evidence card turn (rendered as card; content = evidence only for history).
+      const evidenceTurn: Turn = {
+        role: 'user',
+        kind: 'geo-evidence',
+        snapshot,
+        content: evidenceText,
+      }
+
+      // Snapshot of turns right now (before evidence turn is pushed).
+      const currentTurns = turns
+
+      void runAssistantTurn({ modelMessage, displayTurn: evidenceTurn, currentTurns }).finally(
+        () => {
+          setSending(false)
+          requestAnimationFrame(() => inputRef.current?.focus())
+        },
+      )
+    } else {
+      // Fallback: no live data — show a honest note and continue qualitatively.
+      const notice = fallbackNotice ?? 'La radiografia GEO no pudo correr ahora mismo.'
+      const modelMessage =
+        `[La radiografia GEO no pudo correr ahora mismo, sin datos en vivo.] ` +
+        `Continua la orientacion de forma cualitativa y honesta, sin inventar lo que ` +
+        `sabria una IA de su negocio. Si encaja, propon el siguiente paso.`
+
+      // The display turn shows the honest notice to the user.
+      // The modelMessage (used for history) carries the framed context to the model.
+      const fallbackDisplayTurn: Turn = {
+        role: 'user',
+        content: notice,
+      }
+
+      const currentTurns = turns
+
+      void runAssistantTurn({
+        modelMessage,
+        displayTurn: fallbackDisplayTurn,
+        currentTurns,
+      }).finally(() => {
+        setSending(false)
+        requestAnimationFrame(() => inputRef.current?.focus())
+      })
+    }
+  }
+
+  // ─── AI Readiness reinjection handler ────────────────────────────────────
+  /**
+   * Called by ReadinessInlineForm when the user submits the widget.
+   * readReadiness is synchronous — no fetch involved.
+   * Reinjects the result into the model so it builds a verdict on the evidence.
+   */
+  function handleReadinessResult(result: ReadinessResult) {
+    setSending(true)
+
+    const evidenceText =
+      `[Resultado del autodiagnostico AI Readiness] ` +
+      `Lectura: ${result.tone}. ` +
+      `Veredicto: ${result.verdict} ` +
+      `Donde la IA aporta hoy: ${result.aporta} ` +
+      `Donde no todavia: ${result.todavia} ` +
+      `Primer paso: ${result.primerPaso} ` +
+      `Servicio sugerido: ${result.serviceLabel || 'ninguno'}.`
+    const modelMessage =
+      `${evidenceText} ` +
+      `Construye ahora tu veredicto honesto sobre esta lectura, sin repetirla literal: ` +
+      `donde la IA le aporta y donde no. Si encaja, propon el siguiente paso.`
+
+    const displayTurn: Turn = {
+      role: 'user',
+      kind: 'readiness-evidence',
+      readiness: result,
+      content: evidenceText,
+    }
+
+    const currentTurns = turns
+
+    void runAssistantTurn({ modelMessage, displayTurn, currentTurns }).finally(() => {
+      setSending(false)
+      requestAnimationFrame(() => inputRef.current?.focus())
+    })
+  }
+
+  // ─── Automation Sketch reinjection handler ───────────────────────────────
+  /**
+   * Called by AutomationInlineForm when the user submits the widget and the
+   * API responds. Reinjects the result into the model so it builds a verdict
+   * on the real evidence.
+   */
+  function handleSketchResult(
+    sketch: AutomationSketch | null,
+    fallbackNotice: string | null,
+    task: string,
+  ) {
+    setSending(true)
+
+    if (sketch) {
+      const evidenceText =
+        `[Resultado del boceto de automatizacion para la tarea: ${task}] ` +
+        `Compensa automatizar: ${sketch.verdict}. ` +
+        `Que parte: ${sketch.automatable} ` +
+        `Enfoque: ${sketch.approach} ` +
+        `Avisos: ${sketch.caveats}.`
+      const modelMessage =
+        `${evidenceText} ` +
+        `Construye ahora tu veredicto honesto sobre este esbozo, sin repetirlo literal: ` +
+        `donde la IA le aporta y donde no. Si encaja, propon el siguiente paso.`
+
+      const displayTurn: Turn = {
+        role: 'user',
+        kind: 'sketch-evidence',
+        sketch,
+        content: evidenceText,
+      }
+
+      const currentTurns = turns
+
+      void runAssistantTurn({ modelMessage, displayTurn, currentTurns }).finally(() => {
+        setSending(false)
+        requestAnimationFrame(() => inputRef.current?.focus())
+      })
+    } else {
+      // Fallback: no live data — show honest notice and continue qualitatively.
+      const notice =
+        fallbackNotice ?? 'El boceto de automatizacion no pudo correr ahora mismo.'
+      const modelMessage =
+        `[El boceto de automatizacion no pudo correr ahora mismo, sin datos en vivo.] ` +
+        `Continua la orientacion de forma cualitativa y honesta, sin inventar el detalle del esbozo. ` +
+        `Si encaja, propon el siguiente paso.`
+
+      const fallbackDisplayTurn: Turn = {
+        role: 'user',
+        content: notice,
+      }
+
+      const currentTurns = turns
+
+      void runAssistantTurn({
+        modelMessage,
+        displayTurn: fallbackDisplayTurn,
+        currentTurns,
+      }).finally(() => {
+        setSending(false)
+        requestAnimationFrame(() => inputRef.current?.focus())
+      })
     }
   }
 
@@ -322,11 +1485,35 @@ export default function Assistant() {
                 key={i}
                 className={`assistant-msg assistant-msg--${t.role}${
                   t.degraded ? ' assistant-msg--degraded' : ''
-                }`}
+                }${t.kind === 'geo-evidence' ? ' assistant-msg--geo-evidence' : ''}${
+                  t.kind === 'readiness-evidence' ? ' assistant-msg--readiness-evidence' : ''
+                }${t.kind === 'sketch-evidence' ? ' assistant-msg--sketch-evidence' : ''}`}
               >
-                <p className="assistant-msg__body">
-                  {t.content || (t.role === 'assistant' && sending ? '…' : '')}
-                </p>
+                {/* GEO evidence card: renders instead of plain text body */}
+                {t.kind === 'geo-evidence' && t.snapshot ? (
+                  <GeoEvidenceCard snapshot={t.snapshot} />
+                ) : t.kind === 'readiness-evidence' && t.readiness ? (
+                  /* AI Readiness evidence card: renders instead of plain text body */
+                  <ReadinessEvidenceCard readiness={t.readiness} />
+                ) : t.kind === 'sketch-evidence' && t.sketch ? (
+                  /* Automation Sketch evidence card: renders instead of plain text body */
+                  <AutomationEvidenceCard sketch={t.sketch} />
+                ) : (
+                  <p className="assistant-msg__body">
+                    {t.content || (t.role === 'assistant' && sending ? '…' : '')}
+                  </p>
+                )}
+                {/* Direct exit to the form: shown on the first assistant message
+                    so visitors who already decided can skip the conversation. */}
+                {i === 0 && t.role === 'assistant' && (
+                  <button
+                    type="button"
+                    className="assistant-msg__skip-to-form"
+                    onClick={handoff}
+                  >
+                    Prefiero ir al formulario
+                  </button>
+                )}
                 {t.offerContact && (
                   <button
                     type="button"
@@ -335,6 +1522,21 @@ export default function Assistant() {
                   >
                     Hablar con una persona
                   </button>
+                )}
+                {t.collectLead && (
+                  <LeadCaptureForm turns={turns} />
+                )}
+                {/* GEO inline widget: rendered when the model emits [[RADIOGRAFIA_GEO]] */}
+                {t.runGeo && (
+                  <GeoInlineForm onResult={handleGeoResult} busy={sending} onBusy={setSending} />
+                )}
+                {/* AI Readiness inline widget: rendered when model emits [[AI_READINESS]] */}
+                {t.runReadiness && (
+                  <ReadinessInlineForm onResult={handleReadinessResult} busy={sending} />
+                )}
+                {/* Automation Sketch inline widget: rendered when model emits [[BOCETO_AUTOMATIZACION]] */}
+                {t.runSketch && (
+                  <AutomationInlineForm onResult={handleSketchResult} busy={sending} onBusy={setSending} />
                 )}
                 {t.degraded && (
                   <button
