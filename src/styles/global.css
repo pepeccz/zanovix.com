@@ -2569,3 +2569,312 @@ h1, h2, h3, blockquote {
 .assistant-msg--geo-evidence .assistant-msg__body {
   display: none;
 }
+
+/* ── ReadinessInlineForm (AI Readiness questionnaire in-chat, [[AI_READINESS]]) ─
+ * Compact radio-group form: 6 questions, all must be answered before submit.
+ * Mirrors geo-inline__ aesthetics: forest surface, hairline borders, teal accent.
+ * No heavy shadows (Regla Plano Absoluto). Teal only as accent, not body text.
+ */
+.readiness-inline {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+.readiness-inline__eyebrow {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-teal-bright);
+}
+
+.readiness-inline__lede {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark-soft);
+}
+
+.readiness-inline__global-error-region {
+  /* Reserve space for global error; collapsed when empty */
+  min-height: 0;
+}
+
+.readiness-inline__global-error {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.45;
+  color: var(--paper-on-dark);
+  background: color-mix(in oklab, var(--color-teal-bright) 12%, var(--color-forest));
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 35%, transparent);
+  border-radius: 6px;
+  padding: 0.45rem 0.65rem;
+}
+
+.readiness-inline__fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+  outline: none;
+}
+
+.readiness-inline__legend {
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--paper-on-dark);
+  padding: 0;
+  margin-bottom: 0.15rem;
+  width: 100%;
+}
+
+.readiness-inline__hint {
+  margin: 0 0 0.2rem;
+  font-size: var(--text-eyebrow);
+  line-height: 1.45;
+  color: var(--paper-on-dark-mute);
+}
+
+.readiness-inline__options {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.readiness-inline__option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 120ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 120ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.readiness-inline__option:hover {
+  background: color-mix(in oklab, var(--paper-on-dark) 5%, transparent);
+  border-color: color-mix(in oklab, var(--paper-on-dark) 30%, transparent);
+}
+
+.readiness-inline__option.is-selected {
+  background: color-mix(in oklab, var(--color-teal-bright) 14%, var(--color-forest));
+  border-color: color-mix(in oklab, var(--color-teal-bright) 50%, transparent);
+}
+
+.readiness-inline__radio {
+  /* Visually hidden but accessible */
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.readiness-inline__option-text {
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-soft);
+}
+
+.readiness-inline__option.is-selected .readiness-inline__option-text {
+  color: var(--paper-on-dark);
+}
+
+.readiness-inline__submit {
+  justify-self: start;
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.readiness-inline__submit:hover {
+  background: var(--color-teal);
+}
+.readiness-inline__submit:active {
+  transform: scale(0.97);
+}
+.readiness-inline__submit:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.readiness-inline__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.readiness-inline__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+}
+
+/* Locked state: shown after successful submit */
+.readiness-inline__locked {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-forest);
+  color: var(--paper-on-dark-mute);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  font-size: var(--text-eyebrow);
+  font-family: var(--font-sans);
+  max-width: 22rem;
+}
+
+.readiness-inline__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-teal-bright);
+  flex: none;
+  opacity: 0.7;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .readiness-inline__dot {
+    animation: assistantPulse 2s ease-in-out infinite;
+  }
+}
+
+/* ── ReadinessEvidenceCard (AI Readiness result card in-chat) ────────────────
+ * Compact result display. Forest-deep surface, hairline border, no heavy shadow.
+ * Tone chip uses solid bg with legible contrast (no teal for body text: 2.55:1 fail).
+ */
+.readiness-card {
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+/* Tone chip: solid surface, legible — NO teal for body text (contrast fail). */
+.readiness-card__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  width: fit-content;
+}
+
+/* listo: teal-tinted surface, paper text — stays legible */
+.readiness-card__chip--listo {
+  background: color-mix(in oklab, var(--color-teal-bright) 22%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 45%, transparent);
+}
+
+/* parcial: neutral tint, paper text */
+.readiness-card__chip--parcial {
+  background: color-mix(in oklab, #F4F1EA 14%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, #F4F1EA 28%, transparent);
+}
+
+/* cimientos: subtle teal tint to indicate caution without alarm */
+.readiness-card__chip--cimientos {
+  background: color-mix(in oklab, var(--color-teal-bright) 10%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 25%, transparent);
+}
+
+.readiness-card__verdict {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--paper-on-dark);
+}
+
+.readiness-card__dl {
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.readiness-card__item {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.readiness-card__item dt {
+  font-family: var(--font-brand);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-dark-soft);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.readiness-card__item dd {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark);
+}
+
+.readiness-card__service {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  background: color-mix(in oklab, var(--color-teal-bright) 14%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 40%, transparent);
+  border-radius: 8px;
+  font-size: var(--text-eyebrow);
+  font-family: var(--font-sans);
+  text-decoration: none;
+  width: fit-content;
+  transition: background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.readiness-card__service:hover {
+  background: color-mix(in oklab, var(--color-teal-bright) 22%, var(--color-forest));
+}
+
+.readiness-card__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+  font-style: italic;
+}
+
+/* Suppress body paragraph on readiness-evidence turns (card replaces it) */
+.assistant-msg--readiness-evidence .assistant-msg__body {
+  display: none;
+}

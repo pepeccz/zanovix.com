@@ -39,6 +39,11 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { ASSISTANT_INPUT_MAX } from '../../lib/assistant/assistant'
 import { GEO_FIELD_MAX, GEO_NAME_MIN } from '../../lib/companion/geo'
 import type { GeoSnapshot } from '../../lib/companion/geo'
+import {
+  READINESS_QUESTIONS,
+  readReadiness,
+} from '../../lib/readiness/readiness'
+import type { ReadinessAnswers, ReadinessResult } from '../../lib/readiness/readiness'
 import { OPEN_CONTACT_EVENT, OPEN_ASSISTANT_EVENT } from './ContactDialog'
 import type { ContactDialogContext } from './ContactDialog'
 
@@ -53,12 +58,16 @@ interface Turn {
   collectLead?: boolean
   /** El turno solicita ejecutar la radiografia GEO in-chat. */
   runGeo?: boolean
+  /** El turno solicita ejecutar el autodiagnostico AI Readiness in-chat. */
+  runReadiness?: boolean
   /** El turno termino en degradacion (sin IA en vivo). */
   degraded?: boolean
   /** Tipo especial de turno (para renderizado alternativo). */
-  kind?: 'geo-evidence'
+  kind?: 'geo-evidence' | 'readiness-evidence'
   /** Snapshot GEO adjunto (solo cuando kind === 'geo-evidence'). */
   snapshot?: GeoSnapshot
+  /** Resultado de AI Readiness adjunto (solo cuando kind === 'readiness-evidence'). */
+  readiness?: ReadinessResult
 }
 
 /** Marca que el modelo añade para ofrecer el handoff al formulario. */
@@ -69,6 +78,9 @@ const COLLECT_LEAD_TOKEN = '[[RECOGER_LEAD]]'
 
 /** Marca que el modelo añade para solicitar la radiografia GEO in-chat. */
 const RUN_GEO_TOKEN = '[[RADIOGRAFIA_GEO]]'
+
+/** Marca que el modelo añade para solicitar el autodiagnostico AI Readiness in-chat. */
+const READINESS_TOKEN = '[[AI_READINESS]]'
 
 // ─── LeadCaptureForm ─────────────────────────────────────────────────────────
 // Mini-form in-chat (nombre + email + consentimiento RGPD + honeypot).
@@ -563,6 +575,185 @@ function GeoEvidenceCard({ snapshot }: { snapshot: GeoSnapshot }) {
   )
 }
 
+// ─── ReadinessInlineForm ──────────────────────────────────────────────────────
+// Compact AI Readiness questionnaire rendered inline when the assistant emits
+// [[AI_READINESS]]. Renders all 6 READINESS_QUESTIONS as compact radio-groups.
+// Requires all 6 answered; focuses first unanswered on incomplete submit.
+// Computes readReadiness() locally (synchronous, no fetch). Locks after submit.
+
+const READINESS_TONE_CHIP: Record<ReadinessResult['tone'], string> = {
+  listo: 'Por aqui si',
+  parcial: 'Con cabeza',
+  cimientos: 'Primero los cimientos',
+}
+
+interface ReadinessInlineFormProps {
+  onResult: (result: ReadinessResult) => void
+}
+
+function ReadinessInlineForm({ onResult }: ReadinessInlineFormProps) {
+  const [answers, setAnswers] = useState<ReadinessAnswers>({})
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [locked, setLocked] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
+  // Refs per question for focus management on validation error.
+  const fieldsetRefs = useRef<(HTMLFieldSetElement | null)[]>([])
+
+  function choose(key: string, value: string) {
+    setAnswers((prev) => ({ ...prev, [key]: value }))
+    if (submitError) setSubmitError(null)
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (locked || submitting) return
+
+    // Validate: all 6 questions must be answered.
+    const keys = READINESS_QUESTIONS.map((q) => q.id)
+    const firstUnanswered = keys.findIndex((k) => !answers[k])
+    if (firstUnanswered !== -1) {
+      setSubmitError('Responde todas las preguntas para obtener tu lectura.')
+      // Focus the first unanswered fieldset for a11y.
+      requestAnimationFrame(() => {
+        const el = fieldsetRefs.current[firstUnanswered]
+        el?.focus()
+      })
+      return
+    }
+
+    setSubmitting(true)
+    setSubmitError(null)
+
+    // Synchronous: readReadiness does not call any API.
+    const result = readReadiness(answers)
+    setLocked(true)
+    onResult(result)
+  }
+
+  if (locked) {
+    return (
+      <div className="readiness-inline__locked" aria-live="polite">
+        <span className="readiness-inline__dot" aria-hidden="true" />
+        Calculando tu lectura...
+      </div>
+    )
+  }
+
+  return (
+    <form
+      className="readiness-inline"
+      onSubmit={handleSubmit}
+      noValidate
+      aria-label="Autodiagnostico de AI Readiness"
+    >
+      <p className="readiness-inline__eyebrow">Autodiagnostico AI Readiness</p>
+      <p className="readiness-inline__lede">
+        Seis preguntas rapidas. Una lectura honesta: donde la IA te aporta hoy y donde no.
+        Sin datos personales.
+      </p>
+
+      <div aria-live="assertive" className="readiness-inline__global-error-region">
+        {submitError && (
+          <p className="readiness-inline__global-error" role="alert">
+            {submitError}
+          </p>
+        )}
+      </div>
+
+      {READINESS_QUESTIONS.map((q, i) => {
+        const current = answers[q.id]
+        return (
+          <fieldset
+            key={q.id}
+            className="readiness-inline__fieldset"
+            ref={(el) => { fieldsetRefs.current[i] = el }}
+            tabIndex={-1}
+          >
+            <legend className="readiness-inline__legend">{q.legend}</legend>
+            {q.hint && <p className="readiness-inline__hint">{q.hint}</p>}
+            <div className="readiness-inline__options">
+              {q.options.map((opt) => {
+                const selected = current === opt.id
+                return (
+                  <label
+                    key={opt.id}
+                    className={`readiness-inline__option${selected ? ' is-selected' : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      className="readiness-inline__radio"
+                      name={q.id}
+                      value={opt.id}
+                      checked={selected}
+                      onChange={() => choose(q.id, opt.id)}
+                    />
+                    <span className="readiness-inline__option-text">{opt.label}</span>
+                  </label>
+                )
+              })}
+            </div>
+          </fieldset>
+        )
+      })}
+
+      <button
+        className="readiness-inline__submit"
+        type="submit"
+        disabled={submitting}
+      >
+        Ver mi lectura
+      </button>
+
+      <p className="readiness-inline__note">
+        El resultado sale de tus respuestas con reglas claras, sin IA y sin cifras
+        inventadas. No guardamos nada de esto.
+      </p>
+    </form>
+  )
+}
+
+// ─── ReadinessEvidenceCard ────────────────────────────────────────────────────
+// Read-only display of a ReadinessResult as a compact evidence card.
+// Mirrors GeoEvidenceCard structure. WCAG: no teal for body text.
+
+function ReadinessEvidenceCard({ readiness }: { readiness: ReadinessResult }) {
+  return (
+    <div className="readiness-card" aria-label="Resultado del autodiagnostico AI Readiness">
+      <span
+        className={`readiness-card__chip readiness-card__chip--${readiness.tone}`}
+        aria-label={`Lectura: ${READINESS_TONE_CHIP[readiness.tone]}`}
+      >
+        {READINESS_TONE_CHIP[readiness.tone]}
+      </span>
+      <p className="readiness-card__verdict">{readiness.verdict}</p>
+      <dl className="readiness-card__dl">
+        <div className="readiness-card__item">
+          <dt>Donde te aporta hoy</dt>
+          <dd>{readiness.aporta}</dd>
+        </div>
+        <div className="readiness-card__item">
+          <dt>Donde no, todavia</dt>
+          <dd>{readiness.todavia}</dd>
+        </div>
+        <div className="readiness-card__item">
+          <dt>Tu primer paso</dt>
+          <dd>{readiness.primerPaso}</dd>
+        </div>
+      </dl>
+      {readiness.service !== 'ninguno' && (
+        <a className="readiness-card__service" href={readiness.serviceHref}>
+          {readiness.serviceLabel}
+        </a>
+      )}
+      <p className="readiness-card__note">
+        Sale de tus respuestas con reglas claras, sin IA y sin cifras inventadas.
+        Es una orientacion, no una auditoria: esa va mas a fondo, contigo.
+      </p>
+    </div>
+  )
+}
+
 const INTRO: Turn = {
   role: 'assistant',
   content:
@@ -734,11 +925,12 @@ export default function Assistant() {
           const { done, value } = await reader.read()
           if (done) break
           acc += decoder.decode(value, { stream: true })
-          // Strip all three tokens from visible text during streaming.
+          // Strip all four tokens from visible text during streaming.
           const visible = acc
             .replace(OPEN_CONTACT_TOKEN, '')
             .replace(COLLECT_LEAD_TOKEN, '')
             .replace(RUN_GEO_TOKEN, '')
+            .replace(READINESS_TOKEN, '')
             .trimEnd()
           setTurns((prev) => {
             const next = [...prev]
@@ -755,10 +947,12 @@ export default function Assistant() {
       const offerContact = acc.includes(OPEN_CONTACT_TOKEN)
       const collectLead = acc.includes(COLLECT_LEAD_TOKEN) && !isDegraded
       const runGeo = acc.includes(RUN_GEO_TOKEN) && !isDegraded
+      const runReadiness = acc.includes(READINESS_TOKEN) && !isDegraded
       const finalText = acc
         .replace(OPEN_CONTACT_TOKEN, '')
         .replace(COLLECT_LEAD_TOKEN, '')
         .replace(RUN_GEO_TOKEN, '')
+        .replace(READINESS_TOKEN, '')
         .trim()
 
       setTurns((prev) => {
@@ -772,6 +966,7 @@ export default function Assistant() {
             offerContact: offerContact && !isDegraded,
             collectLead,
             runGeo,
+            runReadiness,
             degraded: isDegraded,
           }
         }
@@ -905,6 +1100,41 @@ export default function Assistant() {
     }
   }
 
+  // ─── AI Readiness reinjection handler ────────────────────────────────────
+  /**
+   * Called by ReadinessInlineForm when the user submits the widget.
+   * readReadiness is synchronous — no fetch involved.
+   * Reinjects the result into the model so it builds a verdict on the evidence.
+   */
+  function handleReadinessResult(result: ReadinessResult) {
+    setSending(true)
+
+    const modelMessage =
+      `[Resultado del autodiagnostico AI Readiness] ` +
+      `Lectura: ${result.tone}. ` +
+      `Veredicto: ${result.verdict} ` +
+      `Donde la IA aporta hoy: ${result.aporta} ` +
+      `Donde no todavia: ${result.todavia} ` +
+      `Primer paso: ${result.primerPaso} ` +
+      `Servicio sugerido: ${result.serviceLabel || 'ninguno'}. ` +
+      `Construye ahora tu veredicto honesto sobre esta lectura, sin repetirla literal: ` +
+      `donde la IA le aporta y donde no. Si encaja, propon el siguiente paso.`
+
+    const displayTurn: Turn = {
+      role: 'user',
+      kind: 'readiness-evidence',
+      readiness: result,
+      content: modelMessage,
+    }
+
+    const currentTurns = turns
+
+    void runAssistantTurn({ modelMessage, displayTurn, currentTurns }).finally(() => {
+      setSending(false)
+      requestAnimationFrame(() => inputRef.current?.focus())
+    })
+  }
+
   return (
     <>
       {/* ── Lanzador discreto (todas las paginas; no se abre solo) ────────── */}
@@ -969,11 +1199,16 @@ export default function Assistant() {
                 key={i}
                 className={`assistant-msg assistant-msg--${t.role}${
                   t.degraded ? ' assistant-msg--degraded' : ''
-                }${t.kind === 'geo-evidence' ? ' assistant-msg--geo-evidence' : ''}`}
+                }${t.kind === 'geo-evidence' ? ' assistant-msg--geo-evidence' : ''}${
+                  t.kind === 'readiness-evidence' ? ' assistant-msg--readiness-evidence' : ''
+                }`}
               >
                 {/* GEO evidence card: renders instead of plain text body */}
                 {t.kind === 'geo-evidence' && t.snapshot ? (
                   <GeoEvidenceCard snapshot={t.snapshot} />
+                ) : t.kind === 'readiness-evidence' && t.readiness ? (
+                  /* AI Readiness evidence card: renders instead of plain text body */
+                  <ReadinessEvidenceCard readiness={t.readiness} />
                 ) : (
                   <p className="assistant-msg__body">
                     {t.content || (t.role === 'assistant' && sending ? '…' : '')}
@@ -1005,6 +1240,10 @@ export default function Assistant() {
                 {/* GEO inline widget: rendered when the model emits [[RADIOGRAFIA_GEO]] */}
                 {t.runGeo && (
                   <GeoInlineForm onResult={handleGeoResult} />
+                )}
+                {/* AI Readiness inline widget: rendered when model emits [[AI_READINESS]] */}
+                {t.runReadiness && (
+                  <ReadinessInlineForm onResult={handleReadinessResult} />
                 )}
                 {t.degraded && (
                   <button
