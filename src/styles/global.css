@@ -2878,3 +2878,255 @@ h1, h2, h3, blockquote {
 .assistant-msg--readiness-evidence .assistant-msg__body {
   display: none;
 }
+
+/* ── AutomationInlineForm (esbozo in-chat, [[BOCETO_AUTOMATIZACION]]) ─────────
+ * Compact textarea form for the automation sketch widget. Mirrors geo-inline__
+ * aesthetics: forest surface, hairline borders, teal accent only, no heavy
+ * shadows. Single required textarea (task). WCAG: teal only for accent/focus,
+ * not body text. Locks after result (live or fallback); network errors retry.
+ */
+.automation-inline {
+  background: var(--color-forest);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+.automation-inline__eyebrow {
+  margin: 0;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-teal-bright);
+}
+
+.automation-inline__lede {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark-soft);
+}
+
+.automation-inline__field {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.automation-inline__label {
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-dark-soft);
+}
+
+.automation-inline__req {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.automation-inline__textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+  font-size: var(--text-eyebrow);
+  resize: vertical;
+  min-height: 4.5rem;
+}
+.automation-inline__textarea::placeholder {
+  color: var(--paper-on-dark-mute);
+}
+.automation-inline__textarea:focus-visible {
+  outline: 2px solid var(--color-teal-bright);
+  outline-offset: 2px;
+  border-color: transparent;
+}
+.automation-inline__textarea[aria-invalid='true'] {
+  border-color: var(--color-teal-bright);
+}
+
+.automation-inline__error {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.45;
+  color: var(--paper-on-dark);
+}
+
+.automation-inline__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+}
+
+.automation-inline__link {
+  color: var(--paper-on-dark-soft);
+  text-underline-offset: 3px;
+}
+
+.automation-inline__submit {
+  justify-self: start;
+  background: var(--color-teal-bright);
+  color: var(--color-ink);
+  border: 0;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-eyebrow);
+  cursor: pointer;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.automation-inline__submit:hover {
+  background: var(--color-teal);
+}
+.automation-inline__submit:active {
+  transform: scale(0.97);
+}
+.automation-inline__submit:focus-visible {
+  outline: 2px solid var(--paper-on-dark);
+  outline-offset: 2px;
+}
+.automation-inline__submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Locked state: shown after a successful submit (form runs once). */
+.automation-inline__locked {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-forest);
+  color: var(--paper-on-dark-mute);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--text-eyebrow);
+  width: 100%;
+  max-width: 22rem;
+}
+
+.automation-inline__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-teal-bright);
+  flex: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .automation-inline__dot {
+    animation: companionPulse 2.4s ease-in-out infinite;
+  }
+}
+
+/* ── AutomationEvidenceCard (boceto de automatizacion, [[BOCETO_AUTOMATIZACION]]) ─
+ * Read-only evidence card. Mirrors geo-card__ structure with .sketch-card__*
+ * block. Forest-deep surface, hairline borders, no heavy shadows.
+ * Chip: light text on forest surface (paper-on-dark) — legible, no teal body text.
+ * Verdict chip variants mirror geo-card__chip semantics.
+ */
+.sketch-card {
+  background: var(--color-forest-deep);
+  color: var(--paper-on-dark);
+  border: 1px solid var(--color-rule-invert);
+  border-radius: 12px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+}
+
+/* Verdict chip: light-on-dark forest surface. No teal for body text (2.55:1 fail). */
+.sketch-card__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-family: var(--font-brand);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  width: fit-content;
+}
+.sketch-card__chip--yes {
+  background: color-mix(in oklab, var(--color-teal-bright) 22%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 45%, transparent);
+}
+.sketch-card__chip--partial {
+  background: color-mix(in oklab, var(--color-teal-bright) 14%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 30%, transparent);
+}
+.sketch-card__chip--no {
+  background: color-mix(in oklab, #F4F1EA 14%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, #F4F1EA 28%, transparent);
+}
+.sketch-card__chip--unclear {
+  background: color-mix(in oklab, var(--color-teal-bright) 12%, var(--color-forest));
+  color: var(--paper-on-dark);
+  border: 1px solid color-mix(in oklab, var(--color-teal-bright) 28%, transparent);
+}
+
+.sketch-card__dl {
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.sketch-card__item {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.sketch-card__item dt {
+  font-family: var(--font-brand);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--paper-on-dark-soft);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.sketch-card__item dd {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.55;
+  color: var(--paper-on-dark);
+}
+
+.sketch-card__note {
+  margin: 0;
+  font-size: var(--text-eyebrow);
+  line-height: 1.5;
+  color: var(--paper-on-dark-mute);
+  font-style: italic;
+}
+
+/* Suppress body paragraph on sketch-evidence turns (card replaces it) */
+.assistant-msg--sketch-evidence .assistant-msg__body {
+  display: none;
+}

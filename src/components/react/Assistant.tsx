@@ -44,6 +44,8 @@ import {
   readReadiness,
 } from '../../lib/readiness/readiness'
 import type { ReadinessAnswers, ReadinessResult } from '../../lib/readiness/readiness'
+import { SKETCH_INPUT_MIN, SKETCH_INPUT_MAX } from '../../lib/automation/sketch'
+import type { AutomationSketch } from '../../lib/automation/sketch'
 import { OPEN_CONTACT_EVENT, OPEN_ASSISTANT_EVENT } from './ContactDialog'
 import type { ContactDialogContext } from './ContactDialog'
 
@@ -60,14 +62,18 @@ interface Turn {
   runGeo?: boolean
   /** El turno solicita ejecutar el autodiagnostico AI Readiness in-chat. */
   runReadiness?: boolean
+  /** El turno solicita ejecutar el esbozo de automatizacion in-chat. */
+  runSketch?: boolean
   /** El turno termino en degradacion (sin IA en vivo). */
   degraded?: boolean
   /** Tipo especial de turno (para renderizado alternativo). */
-  kind?: 'geo-evidence' | 'readiness-evidence'
+  kind?: 'geo-evidence' | 'readiness-evidence' | 'sketch-evidence'
   /** Snapshot GEO adjunto (solo cuando kind === 'geo-evidence'). */
   snapshot?: GeoSnapshot
   /** Resultado de AI Readiness adjunto (solo cuando kind === 'readiness-evidence'). */
   readiness?: ReadinessResult
+  /** Resultado del esbozo de automatizacion adjunto (solo cuando kind === 'sketch-evidence'). */
+  sketch?: AutomationSketch
 }
 
 /** Marca que el modelo añade para ofrecer el handoff al formulario. */
@@ -81,6 +87,9 @@ const RUN_GEO_TOKEN = '[[RADIOGRAFIA_GEO]]'
 
 /** Marca que el modelo añade para solicitar el autodiagnostico AI Readiness in-chat. */
 const READINESS_TOKEN = '[[AI_READINESS]]'
+
+/** Marca que el modelo añade para solicitar el esbozo de automatizacion in-chat. */
+const SKETCH_TOKEN = '[[BOCETO_AUTOMATIZACION]]'
 
 // ─── LeadCaptureForm ─────────────────────────────────────────────────────────
 // Mini-form in-chat (nombre + email + consentimiento RGPD + honeypot).
@@ -754,6 +763,181 @@ function ReadinessEvidenceCard({ readiness }: { readiness: ReadinessResult }) {
   )
 }
 
+// ─── AutomationInlineForm ─────────────────────────────────────────────────────
+// Compact automation sketch widget rendered inline when the assistant emits
+// [[BOCETO_AUTOMATIZACION]]. Runs once per widget instance; locks after a
+// successful result (live OR fallback). Network errors keep the form unlocked
+// for retry. On success, calls onResult with the sketch and task.
+
+interface AutomationInlineFormProps {
+  onResult: (
+    sketch: AutomationSketch | null,
+    fallbackNotice: string | null,
+    task: string,
+  ) => void
+}
+
+function AutomationInlineForm({ onResult }: AutomationInlineFormProps) {
+  const [task, setTask] = useState('')
+  const [taskError, setTaskError] = useState(false)
+  const [posting, setPosting] = useState(false)
+  const [locked, setLocked] = useState(false)
+
+  const taskRef = useRef<HTMLTextAreaElement>(null)
+
+  // Auto-focus textarea on mount.
+  useEffect(() => {
+    requestAnimationFrame(() => taskRef.current?.focus())
+  }, [])
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (posting || locked) return
+
+    const cleanTask = task.trim()
+    if (cleanTask.length < SKETCH_INPUT_MIN) {
+      setTaskError(true)
+      taskRef.current?.focus()
+      return
+    }
+    setTaskError(false)
+    setPosting(true)
+
+    try {
+      const res = await fetch('/api/automation-sketch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task: cleanTask }),
+      })
+
+      const data = (await res.json()) as {
+        source?: 'live' | 'fallback'
+        sketch?: AutomationSketch | null
+        fallbackNotice?: string
+      }
+
+      // Lock the form — both live and fallback lock so the widget runs once.
+      setLocked(true)
+      if (data.source === 'live' && data.sketch) {
+        onResult(data.sketch, null, cleanTask)
+      } else {
+        onResult(null, data.fallbackNotice ?? null, cleanTask)
+      }
+    } catch {
+      // Network error: keep form unlocked so the user can retry.
+      setPosting(false)
+    }
+  }
+
+  if (locked) {
+    return (
+      <div className="automation-inline__locked" aria-live="polite">
+        <span className="automation-inline__dot" aria-hidden="true" />
+        Dibujando el esbozo...
+      </div>
+    )
+  }
+
+  return (
+    <form
+      className="automation-inline"
+      onSubmit={handleSubmit}
+      noValidate
+      aria-label="Esbozo de automatizacion"
+    >
+      <p className="automation-inline__eyebrow">Esbozo de automatizacion</p>
+      <p className="automation-inline__lede">
+        Describe una tarea repetitiva que te come tiempo. Le preguntamos en
+        vivo a una IA que parte se podria automatizar y que parte no.
+      </p>
+
+      <div className="automation-inline__field">
+        <label className="automation-inline__label" htmlFor="automation-inline-task">
+          La tarea que repites{' '}
+          <span className="automation-inline__req">(necesario)</span>
+        </label>
+        <textarea
+          ref={taskRef}
+          id="automation-inline-task"
+          className="automation-inline__textarea"
+          rows={3}
+          maxLength={SKETCH_INPUT_MAX}
+          placeholder="Ej: cada dia copio los pedidos del correo a un excel a mano, uno por uno."
+          value={task}
+          required
+          aria-required="true"
+          aria-invalid={taskError || undefined}
+          aria-describedby={taskError ? 'automation-inline-task-error' : undefined}
+          onChange={(e) => {
+            setTask(e.target.value)
+            if (taskError) setTaskError(false)
+          }}
+        />
+        {taskError && (
+          <p id="automation-inline-task-error" className="automation-inline__error" role="alert">
+            Cuentame un poco mas de la tarea para poder esbozar algo util.
+          </p>
+        )}
+      </div>
+
+      <p className="automation-inline__note">
+        Envia lo que escribas a un proveedor de IA (OpenRouter) para el esbozo.{' '}
+        <a href="/privacidad" className="automation-inline__link">
+          Como funciona
+        </a>
+        .
+      </p>
+
+      <button className="automation-inline__submit" type="submit" disabled={posting}>
+        {posting ? 'Consultando...' : 'Ver el esbozo'}
+      </button>
+    </form>
+  )
+}
+
+// ─── AutomationEvidenceCard ───────────────────────────────────────────────────
+// Read-only display of an AutomationSketch as a compact evidence card.
+// Mirrors GeoEvidenceCard structure with .sketch-card__* block.
+// WCAG: no teal #3BAA8C for body text; chip uses light-on-dark forest surface.
+
+const SKETCH_VERDICT_LABEL: Record<AutomationSketch['verdict'], string> = {
+  yes: 'Tiene buena pinta para automatizar',
+  partial: 'Una parte si, otra parte no',
+  no: 'Tal y como lo cuentas, no compensa',
+  unclear: 'Me falta contexto para decirte algo util',
+}
+
+function AutomationEvidenceCard({ sketch }: { sketch: AutomationSketch }) {
+  return (
+    <div className="sketch-card" aria-label="Resultado del esbozo de automatizacion">
+      <span
+        className={`sketch-card__chip sketch-card__chip--${sketch.verdict}`}
+        aria-label={`Veredicto: ${SKETCH_VERDICT_LABEL[sketch.verdict]}`}
+      >
+        {SKETCH_VERDICT_LABEL[sketch.verdict]}
+      </span>
+      <dl className="sketch-card__dl">
+        <div className="sketch-card__item">
+          <dt>Que se podria automatizar</dt>
+          <dd>{sketch.automatable}</dd>
+        </div>
+        <div className="sketch-card__item">
+          <dt>Enfoque a grandes rasgos</dt>
+          <dd>{sketch.approach}</dd>
+        </div>
+        <div className="sketch-card__item">
+          <dt>Avisos honestos</dt>
+          <dd>{sketch.caveats}</dd>
+        </div>
+      </dl>
+      <p className="sketch-card__note">
+        Esbozo a partir de lo que cuentas. No es una propuesta ni un presupuesto.
+        Sin plazos ni precios: eso sale del discovery.
+      </p>
+    </div>
+  )
+}
+
 const INTRO: Turn = {
   role: 'assistant',
   content:
@@ -925,12 +1109,13 @@ export default function Assistant() {
           const { done, value } = await reader.read()
           if (done) break
           acc += decoder.decode(value, { stream: true })
-          // Strip all four tokens from visible text during streaming.
+          // Strip all five tokens from visible text during streaming.
           const visible = acc
             .replace(OPEN_CONTACT_TOKEN, '')
             .replace(COLLECT_LEAD_TOKEN, '')
             .replace(RUN_GEO_TOKEN, '')
             .replace(READINESS_TOKEN, '')
+            .replace(SKETCH_TOKEN, '')
             .trimEnd()
           setTurns((prev) => {
             const next = [...prev]
@@ -948,11 +1133,13 @@ export default function Assistant() {
       const collectLead = acc.includes(COLLECT_LEAD_TOKEN) && !isDegraded
       const runGeo = acc.includes(RUN_GEO_TOKEN) && !isDegraded
       const runReadiness = acc.includes(READINESS_TOKEN) && !isDegraded
+      const runSketch = acc.includes(SKETCH_TOKEN) && !isDegraded
       const finalText = acc
         .replace(OPEN_CONTACT_TOKEN, '')
         .replace(COLLECT_LEAD_TOKEN, '')
         .replace(RUN_GEO_TOKEN, '')
         .replace(READINESS_TOKEN, '')
+        .replace(SKETCH_TOKEN, '')
         .trim()
 
       setTurns((prev) => {
@@ -967,6 +1154,7 @@ export default function Assistant() {
             collectLead,
             runGeo,
             runReadiness,
+            runSketch,
             degraded: isDegraded,
           }
         }
@@ -1135,6 +1323,69 @@ export default function Assistant() {
     })
   }
 
+  // ─── Automation Sketch reinjection handler ───────────────────────────────
+  /**
+   * Called by AutomationInlineForm when the user submits the widget and the
+   * API responds. Reinjects the result into the model so it builds a verdict
+   * on the real evidence.
+   */
+  function handleSketchResult(
+    sketch: AutomationSketch | null,
+    fallbackNotice: string | null,
+    task: string,
+  ) {
+    setSending(true)
+
+    if (sketch) {
+      const modelMessage =
+        `[Resultado del boceto de automatizacion para la tarea: ${task}] ` +
+        `Compensa automatizar: ${sketch.verdict}. ` +
+        `Que parte: ${sketch.automatable} ` +
+        `Enfoque: ${sketch.approach} ` +
+        `Avisos: ${sketch.caveats}. ` +
+        `Construye ahora tu veredicto honesto sobre este esbozo, sin repetirlo literal: ` +
+        `donde la IA le aporta y donde no. Si encaja, propon el siguiente paso.`
+
+      const displayTurn: Turn = {
+        role: 'user',
+        kind: 'sketch-evidence',
+        sketch,
+        content: modelMessage,
+      }
+
+      const currentTurns = turns
+
+      void runAssistantTurn({ modelMessage, displayTurn, currentTurns }).finally(() => {
+        setSending(false)
+        requestAnimationFrame(() => inputRef.current?.focus())
+      })
+    } else {
+      // Fallback: no live data — show honest notice and continue qualitatively.
+      const notice =
+        fallbackNotice ?? 'El boceto de automatizacion no pudo correr ahora mismo.'
+      const modelMessage =
+        `[El boceto de automatizacion no pudo correr ahora mismo, sin datos en vivo.] ` +
+        `Continua la orientacion de forma cualitativa y honesta, sin inventar el detalle del esbozo. ` +
+        `Si encaja, propon el siguiente paso.`
+
+      const fallbackDisplayTurn: Turn = {
+        role: 'user',
+        content: notice,
+      }
+
+      const currentTurns = turns
+
+      void runAssistantTurn({
+        modelMessage,
+        displayTurn: fallbackDisplayTurn,
+        currentTurns,
+      }).finally(() => {
+        setSending(false)
+        requestAnimationFrame(() => inputRef.current?.focus())
+      })
+    }
+  }
+
   return (
     <>
       {/* ── Lanzador discreto (todas las paginas; no se abre solo) ────────── */}
@@ -1201,7 +1452,7 @@ export default function Assistant() {
                   t.degraded ? ' assistant-msg--degraded' : ''
                 }${t.kind === 'geo-evidence' ? ' assistant-msg--geo-evidence' : ''}${
                   t.kind === 'readiness-evidence' ? ' assistant-msg--readiness-evidence' : ''
-                }`}
+                }${t.kind === 'sketch-evidence' ? ' assistant-msg--sketch-evidence' : ''}`}
               >
                 {/* GEO evidence card: renders instead of plain text body */}
                 {t.kind === 'geo-evidence' && t.snapshot ? (
@@ -1209,6 +1460,9 @@ export default function Assistant() {
                 ) : t.kind === 'readiness-evidence' && t.readiness ? (
                   /* AI Readiness evidence card: renders instead of plain text body */
                   <ReadinessEvidenceCard readiness={t.readiness} />
+                ) : t.kind === 'sketch-evidence' && t.sketch ? (
+                  /* Automation Sketch evidence card: renders instead of plain text body */
+                  <AutomationEvidenceCard sketch={t.sketch} />
                 ) : (
                   <p className="assistant-msg__body">
                     {t.content || (t.role === 'assistant' && sending ? '…' : '')}
@@ -1244,6 +1498,10 @@ export default function Assistant() {
                 {/* AI Readiness inline widget: rendered when model emits [[AI_READINESS]] */}
                 {t.runReadiness && (
                   <ReadinessInlineForm onResult={handleReadinessResult} />
+                )}
+                {/* Automation Sketch inline widget: rendered when model emits [[BOCETO_AUTOMATIZACION]] */}
+                {t.runSketch && (
+                  <AutomationInlineForm onResult={handleSketchResult} />
                 )}
                 {t.degraded && (
                   <button
