@@ -461,8 +461,7 @@ function GeoInlineForm({ onResult }: GeoInlineFormProps) {
   if (locked) {
     return (
       <div className="geo-inline__locked" aria-live="polite">
-        <span className="geo-inline__dot" aria-hidden="true" />
-        Radiografia en curso...
+        Radiografia hecha. Tienes el resultado aqui debajo.
       </div>
     )
   }
@@ -643,8 +642,7 @@ function ReadinessInlineForm({ onResult }: ReadinessInlineFormProps) {
   if (locked) {
     return (
       <div className="readiness-inline__locked" aria-live="polite">
-        <span className="readiness-inline__dot" aria-hidden="true" />
-        Calculando tu lectura...
+        Lectura hecha. Tienes el resultado aqui debajo.
       </div>
     )
   }
@@ -832,8 +830,7 @@ function AutomationInlineForm({ onResult }: AutomationInlineFormProps) {
   if (locked) {
     return (
       <div className="automation-inline__locked" aria-live="polite">
-        <span className="automation-inline__dot" aria-hidden="true" />
-        Dibujando el esbozo...
+        Esbozo hecho. Tienes el resultado aqui debajo.
       </div>
     )
   }
@@ -1231,24 +1228,27 @@ export default function Assistant() {
     setSending(true)
 
     if (snapshot) {
-      // Build a concise model-facing summary of the evidence.
+      // The evidence text stays in history as context for later turns.
       const sectorPart = inputSector ? `, sector: ${inputSector}` : ''
       const zonePart = inputZone ? `, zona: ${inputZone}` : ''
-      const modelMessage =
+      const evidenceText =
         `[Resultado de la radiografia GEO para ${inputName}${sectorPart}${zonePart}] ` +
         `Reconoce el negocio: ${snapshot.known}. ` +
         `Como lo describe una IA hoy: ${snapshot.describes} ` +
         `Recomendacion: ${snapshot.recommend} ` +
-        `Lo que falta: ${snapshot.gap}. ` +
+        `Lo que falta: ${snapshot.gap}.`
+      // The instruction is only needed for THIS reinjection call, not in history.
+      const modelMessage =
+        `${evidenceText} ` +
         `Construye ahora tu veredicto honesto sobre esta evidencia, sin repetirla literal: ` +
         `donde la IA le aporta y donde no. Si encaja, propon el siguiente paso.`
 
-      // The evidence card turn (rendered as card, carries content for history).
+      // The evidence card turn (rendered as card; content = evidence only for history).
       const evidenceTurn: Turn = {
         role: 'user',
         kind: 'geo-evidence',
         snapshot,
-        content: modelMessage,
+        content: evidenceText,
       }
 
       // Snapshot of turns right now (before evidence turn is pushed).
@@ -1297,14 +1297,16 @@ export default function Assistant() {
   function handleReadinessResult(result: ReadinessResult) {
     setSending(true)
 
-    const modelMessage =
+    const evidenceText =
       `[Resultado del autodiagnostico AI Readiness] ` +
       `Lectura: ${result.tone}. ` +
       `Veredicto: ${result.verdict} ` +
       `Donde la IA aporta hoy: ${result.aporta} ` +
       `Donde no todavia: ${result.todavia} ` +
       `Primer paso: ${result.primerPaso} ` +
-      `Servicio sugerido: ${result.serviceLabel || 'ninguno'}. ` +
+      `Servicio sugerido: ${result.serviceLabel || 'ninguno'}.`
+    const modelMessage =
+      `${evidenceText} ` +
       `Construye ahora tu veredicto honesto sobre esta lectura, sin repetirla literal: ` +
       `donde la IA le aporta y donde no. Si encaja, propon el siguiente paso.`
 
@@ -1312,7 +1314,7 @@ export default function Assistant() {
       role: 'user',
       kind: 'readiness-evidence',
       readiness: result,
-      content: modelMessage,
+      content: evidenceText,
     }
 
     const currentTurns = turns
@@ -1337,12 +1339,14 @@ export default function Assistant() {
     setSending(true)
 
     if (sketch) {
-      const modelMessage =
+      const evidenceText =
         `[Resultado del boceto de automatizacion para la tarea: ${task}] ` +
         `Compensa automatizar: ${sketch.verdict}. ` +
         `Que parte: ${sketch.automatable} ` +
         `Enfoque: ${sketch.approach} ` +
-        `Avisos: ${sketch.caveats}. ` +
+        `Avisos: ${sketch.caveats}.`
+      const modelMessage =
+        `${evidenceText} ` +
         `Construye ahora tu veredicto honesto sobre este esbozo, sin repetirlo literal: ` +
         `donde la IA le aporta y donde no. Si encaja, propon el siguiente paso.`
 
@@ -1350,7 +1354,7 @@ export default function Assistant() {
         role: 'user',
         kind: 'sketch-evidence',
         sketch,
-        content: modelMessage,
+        content: evidenceText,
       }
 
       const currentTurns = turns

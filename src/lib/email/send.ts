@@ -63,6 +63,8 @@ export interface LeadPayload {
   email: string
   /** Empresa o mensaje libre del visitante. */
   message: string
+  /** Canal por el que llego el lead (p.ej. 'asistente-embudo', 'contacto'). */
+  origin?: string
   /** Contexto inferido por el Companion (puede venir vacio). */
   context?: {
     sector?: string
@@ -107,6 +109,7 @@ function buildText(lead: LeadPayload): string {
     '',
     `Nombre: ${lead.name}`,
     `Email: ${lead.email}`,
+    ...(lead.origin ? [`Procedencia: ${lead.origin}`] : []),
     '',
     'Mensaje:',
     lead.message || '(sin mensaje)',
@@ -144,6 +147,7 @@ function buildHtml(lead: LeadPayload): string {
     '<h1 style="font-size:1.125rem;margin:0 0 1rem">Nuevo contacto desde zanovix.com</h1>',
     row('Nombre', lead.name),
     row('Email', lead.email),
+    lead.origin ? row('Procedencia', lead.origin) : '',
     '<h2 style="font-size:1rem;margin:1.5rem 0 0.75rem">Mensaje</h2>',
     `<p style="margin:0;white-space:pre-wrap">${escapeHtml(lead.message || '(sin mensaje)')}</p>`,
     contextBlock,

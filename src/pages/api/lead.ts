@@ -90,6 +90,7 @@ interface RawLead {
   message: string
   consent: boolean
   honeypot: string
+  origin?: string
   context?: LeadPayload['context']
 }
 
@@ -104,6 +105,7 @@ async function readBody(request: Request): Promise<RawLead> {
       message: String(data.message ?? ''),
       consent: data.consent === true || data.consent === 'on' || data.consent === 'true',
       honeypot: String(data.company_url ?? ''),
+      origin: data.origin ? String(data.origin) : undefined,
       context:
         data.context && typeof data.context === 'object'
           ? (data.context as LeadPayload['context'])
@@ -120,6 +122,7 @@ async function readBody(request: Request): Promise<RawLead> {
     message: get('message'),
     consent: form.get('consent') === 'on' || form.get('consent') === 'true',
     honeypot: get('company_url'),
+    origin: get('origin') || undefined,
     context: {
       sector: get('ctx_sector') || undefined,
       pain: get('ctx_pain') || undefined,
@@ -182,6 +185,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     name: raw.name.trim(),
     email: raw.email.trim(),
     message: raw.message.trim(),
+    origin: raw.origin,
     context: raw.context,
   })
 
