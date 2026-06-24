@@ -43,6 +43,7 @@ type Status = 'idle' | 'sending' | 'success' | 'error'
 interface FieldErrors {
   name?: string
   email?: string
+  phone?: string
   message?: string
   consent?: string
 }
@@ -107,6 +108,7 @@ export default function ContactDialog() {
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [message, setMessage] = useState('')
   const [consent, setConsent] = useState(false)
   const [honeypot, setHoneypot] = useState('')
@@ -123,6 +125,7 @@ export default function ContactDialog() {
 
   const nameRef = useRef<HTMLInputElement>(null)
   const emailRef = useRef<HTMLInputElement>(null)
+  const phoneRef = useRef<HTMLInputElement>(null)
   const messageRef = useRef<HTMLTextAreaElement>(null)
   const consentRef = useRef<HTMLInputElement>(null)
   const resultRef = useRef<HTMLDivElement>(null)
@@ -157,6 +160,7 @@ export default function ContactDialog() {
       setErrors({})
       setGlobalMsg(null)
       setDegraded(false)
+      setPhone('')
 
       // Mensaje inicial: contexto del CTA + texto libre del companion si lo hay.
       const initial = buildInitialMessage(merged) || saved?.raw || ''
@@ -194,6 +198,7 @@ export default function ContactDialog() {
   function focusFirstError(e: FieldErrors) {
     if (e.name) nameRef.current?.focus()
     else if (e.email) emailRef.current?.focus()
+    else if (e.phone) phoneRef.current?.focus()
     else if (e.message) messageRef.current?.focus()
     else if (e.consent) consentRef.current?.focus()
   }
@@ -207,6 +212,11 @@ export default function ContactDialog() {
     if (name.trim().length < 2) e.name = 'Dime tu nombre para saber con quien hablo.'
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
       e.email = 'Necesito un email valido para poder responderte.'
+    if (!phone.trim()) {
+      e.phone = 'Necesito un telefono para poder llamarte.'
+    } else if (phone.replace(/[^\d]/g, '').length < 9) {
+      e.phone = 'Pon un telefono valido, con al menos 9 cifras.'
+    }
     if (message.trim().length < 5) e.message = 'Cuentanos algo de tu caso, aunque sea una linea.'
     if (!consent) e.consent = 'Necesito tu consentimiento para poder responderte.'
     return e
@@ -242,6 +252,7 @@ export default function ContactDialog() {
         body: JSON.stringify({
           name: name.trim(),
           email: email.trim(),
+          phone: phone.trim(),
           message: message.trim(),
           consent,
           company_url: honeypot,
@@ -407,6 +418,31 @@ export default function ContactDialog() {
                 {errors.email && (
                   <p id="cd-email-error" className="cdialog__error">
                     {errors.email}
+                  </p>
+                )}
+              </div>
+
+              <div className="cdialog__field">
+                <label className="cdialog__label" htmlFor="cd-phone">
+                  Teléfono
+                </label>
+                <input
+                  id="cd-phone"
+                  name="phone"
+                  ref={phoneRef}
+                  className="cdialog__input"
+                  type="tel"
+                  autoComplete="tel"
+                  inputMode="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  aria-invalid={errors.phone ? true : undefined}
+                  aria-describedby={describe('phone')}
+                  required
+                />
+                {errors.phone && (
+                  <p id="cd-phone-error" className="cdialog__error">
+                    {errors.phone}
                   </p>
                 )}
               </div>

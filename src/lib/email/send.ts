@@ -61,6 +61,7 @@ const DEFAULT_SMTP_PORT = 465
 export interface LeadPayload {
   name: string
   email: string
+  phone: string
   /** Empresa o mensaje libre del visitante. */
   message: string
   /** Canal por el que llego el lead (p.ej. 'asistente-embudo', 'contacto'). */
@@ -109,6 +110,7 @@ function buildText(lead: LeadPayload): string {
     '',
     `Nombre: ${lead.name}`,
     `Email: ${lead.email}`,
+    `Telefono: ${lead.phone}`,
     ...(lead.origin ? [`Procedencia: ${lead.origin}`] : []),
     '',
     'Mensaje:',
@@ -147,6 +149,7 @@ function buildHtml(lead: LeadPayload): string {
     '<h1 style="font-size:1.125rem;margin:0 0 1rem">Nuevo contacto desde zanovix.com</h1>',
     row('Nombre', lead.name),
     row('Email', lead.email),
+    row('Telefono', lead.phone),
     lead.origin ? row('Procedencia', lead.origin) : '',
     '<h2 style="font-size:1rem;margin:1.5rem 0 0.75rem">Mensaje</h2>',
     `<p style="margin:0;white-space:pre-wrap">${escapeHtml(lead.message || '(sin mensaje)')}</p>`,

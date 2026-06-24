@@ -33,6 +33,7 @@ type Status = 'idle' | 'sending' | 'success' | 'error'
 interface FieldErrors {
   name?: string
   email?: string
+  phone?: string
   message?: string
   consent?: string
 }
@@ -50,6 +51,7 @@ const FALLBACK_EMAIL = 'info@zanovix.com'
 export default function LeadForm() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [message, setMessage] = useState('')
   const [consent, setConsent] = useState(false)
   const [honeypot, setHoneypot] = useState('')
@@ -68,6 +70,7 @@ export default function LeadForm() {
 
   const nameRef = useRef<HTMLInputElement>(null)
   const emailRef = useRef<HTMLInputElement>(null)
+  const phoneRef = useRef<HTMLInputElement>(null)
   const messageRef = useRef<HTMLTextAreaElement>(null)
   const consentRef = useRef<HTMLInputElement>(null)
   const resultRef = useRef<HTMLDivElement>(null)
@@ -87,6 +90,7 @@ export default function LeadForm() {
   function focusFirstError(e: FieldErrors) {
     if (e.name) nameRef.current?.focus()
     else if (e.email) emailRef.current?.focus()
+    else if (e.phone) phoneRef.current?.focus()
     else if (e.message) messageRef.current?.focus()
     else if (e.consent) consentRef.current?.focus()
   }
@@ -101,6 +105,11 @@ export default function LeadForm() {
     if (name.trim().length < 2) e.name = 'Dime tu nombre para saber con quien hablo.'
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
       e.email = 'Necesito un email valido para poder responderte.'
+    if (!phone.trim()) {
+      e.phone = 'Necesito un telefono para poder llamarte.'
+    } else if (phone.replace(/[^\d]/g, '').length < 9) {
+      e.phone = 'Pon un telefono valido, con al menos 9 cifras.'
+    }
     if (message.trim().length < 5) e.message = 'Cuentame algo de tu caso, aunque sea una linea.'
     if (!consent) e.consent = 'Necesito tu consentimiento para poder responderte.'
     return e
@@ -130,6 +139,7 @@ export default function LeadForm() {
         body: JSON.stringify({
           name: name.trim(),
           email: email.trim(),
+          phone: phone.trim(),
           message: message.trim(),
           consent,
           company_url: honeypot,
@@ -269,6 +279,31 @@ export default function LeadForm() {
         {errors.email && (
           <p id="email-error" className="leadform__error">
             {errors.email}
+          </p>
+        )}
+      </div>
+
+      <div className="leadform__field">
+        <label className="leadform__label" htmlFor="lead-phone">
+          Teléfono
+        </label>
+        <input
+          id="lead-phone"
+          name="phone"
+          ref={phoneRef}
+          className="leadform__input"
+          type="tel"
+          autoComplete="tel"
+          inputMode="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          aria-invalid={errors.phone ? true : undefined}
+          aria-describedby={describe('phone')}
+          required
+        />
+        {errors.phone && (
+          <p id="phone-error" className="leadform__error">
+            {errors.phone}
           </p>
         )}
       </div>

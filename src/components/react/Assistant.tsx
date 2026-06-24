@@ -108,6 +108,7 @@ type LeadStatus = 'idle' | 'sending' | 'success' | 'error'
 interface LeadFieldErrors {
   name?: string
   email?: string
+  phone?: string
   consent?: string
 }
 
@@ -129,6 +130,7 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
   const uid = useId()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [consent, setConsent] = useState(false)
   const [honeypot, setHoneypot] = useState('')
 
@@ -140,6 +142,7 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
 
   const nameRef = useRef<HTMLInputElement>(null)
   const emailRef = useRef<HTMLInputElement>(null)
+  const phoneRef = useRef<HTMLInputElement>(null)
   const consentRef = useRef<HTMLInputElement>(null)
   const resultRef = useRef<HTMLDivElement>(null)
 
@@ -156,6 +159,7 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
   function focusFirstError(e: LeadFieldErrors) {
     if (e.name) nameRef.current?.focus()
     else if (e.email) emailRef.current?.focus()
+    else if (e.phone) phoneRef.current?.focus()
     else if (e.consent) consentRef.current?.focus()
   }
 
@@ -164,6 +168,11 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
     if (name.trim().length < 2) e.name = 'Dime tu nombre para saber con quien hablo.'
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
       e.email = 'Necesito un email valido para poder responderte.'
+    if (!phone.trim()) {
+      e.phone = 'Necesito un telefono para poder llamarte.'
+    } else if (phone.replace(/[^\d]/g, '').length < 9) {
+      e.phone = 'Pon un telefono valido, con al menos 9 cifras.'
+    }
     if (!consent) e.consent = 'Necesito tu consentimiento para poder responderte.'
     return e
   }
@@ -192,6 +201,7 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
         body: JSON.stringify({
           name: name.trim(),
           email: email.trim(),
+          phone: phone.trim(),
           message: message || 'Lead recogido desde el asistente.',
           consent,
           company_url: honeypot,
@@ -216,6 +226,7 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
           const fieldErrors: LeadFieldErrors = {
             name: data.errors.name,
             email: data.errors.email,
+            phone: data.errors.phone,
             consent: data.errors.consent,
           }
           setErrors(fieldErrors)
@@ -339,6 +350,31 @@ function LeadCaptureForm({ turns }: LeadCaptureFormProps) {
         {errors.email && (
           <p id={`${uid}-email-error`} className="lcf__error" role="alert">
             {errors.email}
+          </p>
+        )}
+      </div>
+
+      <div className="lcf__field">
+        <label className="lcf__label" htmlFor={`${uid}-phone`}>
+          Teléfono
+        </label>
+        <input
+          id={`${uid}-phone`}
+          name="phone"
+          ref={phoneRef}
+          className="lcf__input"
+          type="tel"
+          autoComplete="tel"
+          inputMode="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          aria-invalid={errors.phone ? true : undefined}
+          aria-describedby={describeField('phone')}
+          required
+        />
+        {errors.phone && (
+          <p id={`${uid}-phone-error`} className="lcf__error" role="alert">
+            {errors.phone}
           </p>
         )}
       </div>

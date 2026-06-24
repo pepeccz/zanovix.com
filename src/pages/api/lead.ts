@@ -56,13 +56,26 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 interface FieldErrors {
   name?: string
   email?: string
+  phone?: string
   message?: string
   consent?: string
+}
+
+function validatePhone(raw: string): string | undefined {
+  if (!raw || raw.trim().length === 0) {
+    return 'Necesito un telefono para poder llamarte.'
+  }
+  const digits = raw.replace(/[^\d]/g, '')
+  if (digits.length < 9) {
+    return 'Pon un telefono valido, con al menos 9 cifras.'
+  }
+  return undefined
 }
 
 function validate(fields: {
   name: string
   email: string
+  phone: string
   message: string
   consent: boolean
 }): FieldErrors {
@@ -72,6 +85,10 @@ function validate(fields: {
   }
   if (!fields.email || !EMAIL_RE.test(fields.email.trim())) {
     errors.email = 'Necesito un email valido para poder responderte.'
+  }
+  const phoneError = validatePhone(fields.phone)
+  if (phoneError) {
+    errors.phone = phoneError
   }
   if (!fields.message || fields.message.trim().length < 5) {
     errors.message = 'Cuentame algo de tu caso, aunque sea una linea.'
@@ -87,6 +104,7 @@ function validate(fields: {
 interface RawLead {
   name: string
   email: string
+  phone: string
   message: string
   consent: boolean
   honeypot: string
@@ -102,6 +120,7 @@ async function readBody(request: Request): Promise<RawLead> {
     return {
       name: String(data.name ?? ''),
       email: String(data.email ?? ''),
+      phone: String(data.phone ?? ''),
       message: String(data.message ?? ''),
       consent: data.consent === true || data.consent === 'on' || data.consent === 'true',
       honeypot: String(data.company_url ?? ''),
@@ -119,6 +138,7 @@ async function readBody(request: Request): Promise<RawLead> {
   return {
     name: get('name'),
     email: get('email'),
+    phone: get('phone'),
     message: get('message'),
     consent: form.get('consent') === 'on' || form.get('consent') === 'true',
     honeypot: get('company_url'),
@@ -174,6 +194,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const errors = validate({
     name: raw.name,
     email: raw.email,
+    phone: raw.phone,
     message: raw.message,
     consent: raw.consent,
   })
@@ -184,6 +205,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const result = await sendLead({
     name: raw.name.trim(),
     email: raw.email.trim(),
+    phone: raw.phone.trim(),
     message: raw.message.trim(),
     origin: raw.origin,
     context: raw.context,
