@@ -21,6 +21,7 @@ import ReadinessCheck from '../../components/react/ReadinessCheck.tsx'
 import BrandPetals from '../../components/astro/ui/BrandPetals.astro'
 import DimensionGrid from '../../components/astro/ui/DimensionGrid.astro'
 import FlowSteps from '../../components/astro/ui/FlowSteps.astro'
+import { service } from '../../lib/seo/schema'
 
 // Las cuatro etapas del embudo, con el diagnóstico marcado como la puerta.
 // FlowSteps lo dibuja como flujo dirigido: deja claro que todo pasa por aquí.
@@ -57,6 +58,12 @@ const embudo = [
   title="Diagnóstico · Zanovix"
   description="Una mirada humana y a fondo a tu negocio frente a la IA. La puerta de entrada a todo lo que hacemos. Honesta: puede concluir que no necesitas intervención. Se acredita contra el trabajo si decides seguir."
   page="diagnostico"
+  jsonLd={service({
+    name: 'Diagnostico de IA',
+    serviceType: 'Diagnostico y auditoria de IA para pymes',
+    url: 'https://zanovix.com/diagnostico',
+    description: 'Mirada humana y a fondo al negocio frente a la IA: que aporta de verdad, que seria tirar el dinero y por donde tiene sentido empezar. Puede concluir que no se necesita ninguna intervencion. Se acredita contra el trabajo si se decide seguir.',
+  })}
 >
   <article class="svc dgn">
     <header class="svc__head dgn__head" data-reveal>

@@ -13,6 +13,7 @@ import PageLayout from '../../layouts/PageLayout.astro'
 import BrandPetals from '../../components/astro/ui/BrandPetals.astro'
 import GeoSimulator from '../../components/react/GeoSimulator.tsx'
 import RecommendMechanism from '../../components/astro/ui/RecommendMechanism.astro'
+import { service } from '../../lib/seo/schema'
 
 const incluye = [
   'Diseño y desarrollo de la web, rápida y clara, hecha para que la entiendan tus clientes y una IA.',
@@ -26,6 +27,12 @@ const incluye = [
   title="Diseño y desarrollo web, con GEO · Zanovix"
   description="Una web rápida y clara que aparece cuando tus clientes preguntan a una IA. GEO como punta de lanza, SEO clásico por debajo, mediciones honestas."
   page="servicios"
+  jsonLd={service({
+    name: 'Diseño y desarrollo web + GEO',
+    serviceType: 'Diseño web y optimizacion para buscadores de IA (GEO)',
+    url: 'https://zanovix.com/servicios/diseno-desarrollo-web-geo',
+    description: 'Web rapida y clara pensada para personas y modelos de IA. GEO como punta de lanza para aparecer cuando alguien pregunta a ChatGPT o Google AI, con SEO clasico bien hecho por debajo y mediciones honestas.',
+  })}
 >
   <article class="svc">
     <p class="svc__back">

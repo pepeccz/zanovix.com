@@ -31,12 +31,19 @@ interface Props {
   /** Compat: prop historica del dock del Companion (ya retirado). Se acepta
    *  para no romper paginas que aun la pasan; no tiene efecto. */
   showCompanion?: boolean
+  /** Per-page JSON-LD schema object(s). Forwarded to Base.astro's head slot. */
+  jsonLd?: object | object[]
 }
 
-const { title, description, page = '' } = Astro.props
+const { title, description, page = '', jsonLd } = Astro.props
 ---
 
 <Base title={title} description={description} page={page}>
+  <!-- Per-page JSON-LD schema forwarded to Base.astro's named head slot -->
+  {jsonLd && (Array.isArray(jsonLd) ? jsonLd : [jsonLd]).map((obj) => (
+    <script type="application/ld+json" slot="head" set:html={JSON.stringify(obj)} />
+  ))}
+
   <!-- Skip link de accesibilidad (visible al tabular) -->
   <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 

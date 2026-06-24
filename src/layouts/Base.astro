@@ -19,6 +19,7 @@
 
 import '../styles/global.css'
 import '../styles/motion.css'
+import { ORGANIZATION, WEBSITE } from '../lib/seo/schema'
 
 interface Props {
   title?: string
@@ -32,6 +33,8 @@ const {
   description = 'Soluciones de inteligencia artificial para empresas. Resultados medibles, implementación ética.',
   page = '',
 } = Astro.props
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href
 ---
 
 <!doctype html>
@@ -46,6 +49,7 @@ const {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <link rel="canonical" href={canonical} />
 
     <!--
       Fuentes importadas en global.css vía @fontsource (self-hosted, no CDN).
@@ -54,6 +58,10 @@ const {
       @fontsource-variable/hanken-grotesk — Hanken Grotesk Variable (cuerpo)
       @fontsource/jetbrains-mono          — JetBrains Mono 400/500 (técnico puntual)
     -->
+
+    <!-- Site-wide structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify(ORGANIZATION)} />
+    <script type="application/ld+json" set:html={JSON.stringify(WEBSITE)} />
 
     <!-- Slot para preloads e inyecciones de head desde layouts hijos -->
     <slot name="head" />

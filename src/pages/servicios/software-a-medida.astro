@@ -10,6 +10,7 @@ import PageLayout from '../../layouts/PageLayout.astro'
 import BrandPetals from '../../components/astro/ui/BrandPetals.astro'
 import AutomationSketch from '../../components/react/AutomationSketch.tsx'
 import BeforeAfterFlow from '../../components/astro/ui/BeforeAfterFlow.astro'
+import { service } from '../../lib/seo/schema'
 
 const incluye = [
   'Una herramienta hecha a la medida de tu proceso real, no una plantilla a la que te toque adaptarte tú.',
@@ -23,6 +24,12 @@ const incluye = [
   title="Software a medida · Zanovix"
   description="Herramientas hechas para tu proceso concreto, con IA donde de verdad ahorra trabajo. No plantillas a las que te toca adaptarte tú."
   page="servicios"
+  jsonLd={service({
+    name: 'Software a medida',
+    serviceType: 'Desarrollo de software a medida',
+    url: 'https://zanovix.com/servicios/software-a-medida',
+    description: 'Herramientas de software hechas a medida del proceso real de la empresa. IA integrada donde de verdad ahorra trabajo: clasificar, redactar, resumir, avisar. Conexion con las herramientas que ya se usan, sin dejar al cliente atado a una caja negra.',
+  })}
 >
   <article class="svc">
     <p class="svc__back">

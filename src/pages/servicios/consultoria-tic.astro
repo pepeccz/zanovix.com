@@ -9,6 +9,7 @@
 import PageLayout from '../../layouts/PageLayout.astro'
 import BrandPetals from '../../components/astro/ui/BrandPetals.astro'
 import DecisionPath from '../../components/astro/ui/DecisionPath.astro'
+import { service } from '../../lib/seo/schema'
 
 const incluye = [
   'Una segunda opinión técnica honesta antes de firmar, contratar o cambiar de proveedor.',
@@ -22,6 +23,12 @@ const incluye = [
   title="Consultoría TIC · Zanovix"
   description="Criterio técnico para decidir bien antes de gastar, con alguien que te habla claro y no te vende lo que le interesa a él."
   page="servicios"
+  jsonLd={service({
+    name: 'Consultoria TIC',
+    serviceType: 'Consultoria tecnologica',
+    url: 'https://zanovix.com/servicios/consultoria-tic',
+    description: 'Criterio tecnico neutral para tomar decisiones sobre tecnologia: cambiar de sistema, contratar un desarrollo o elegir entre proveedores. Una segunda opinion honesta que trabaja para el cliente, no para colocarle un proyecto.',
+  })}
 >
   <article class="svc">
     <p class="svc__back">
