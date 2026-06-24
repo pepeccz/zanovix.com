@@ -54,7 +54,7 @@ Cuando alguien trabaja con Zanovix nota cosas que en otros sitios no:
 - **No trabajamos con clientes que no respeten el método.** Discovery antes de propuesta. Propuesta antes de código. Sin atajos.
 - **No competimos con los grandes.** Su mercado no es el nuestro; las pymes no necesitan eso.
 - **No escondemos errores.** Los aprendemos en público, dentro del equipo y a veces hacia afuera.
-- **No somos solo Pepe.** Hoy todavía sí, en gran parte. En 5 años, no. Trabajamos cada día para que dejemos de serlo.
+- **No dependemos de un solo nombre.** Somos un equipo pequeño y crecemos despacio, con método documentado para que ningún proyecto dependa de una sola persona.
 
 ## Compromiso
 
@@ -64,4 +64,4 @@ Eso es lo que estamos construyendo.
 
 ---
 
-*Pepe Cabeza · Málaga, 2026*
+*Pepe · Málaga, 2026*

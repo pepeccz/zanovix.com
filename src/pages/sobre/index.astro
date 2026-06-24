@@ -2,20 +2,20 @@
 /**
  * sobre/index.astro — "Sobre nosotros" honesto
  *
- * Evoca "hay personas detrás, no una máquina". Solo cuenta lo que está en las
- * fuentes (PRODUCT.md, manifiesto): Pepe Cabeza, Málaga; ingeniería pausada
- * con IA; el posicionamiento honesto "hoy todavía es en gran parte una
- * persona, construimos para dejar de serlo".
+ * Evoca "hay personas detrás, no una máquina". Hoy somos dos, desde Málaga.
+ * Decisión de marca: NO damos protagonismo a los nombres ni ponemos fotos.
+ * Se menciona a Pepe de pasada (nombre de pila) como quien lo arranca, en
+ * segundo plano; al compañero no se le nombra. Lo que vende es el trabajo y
+ * cómo pensamos, no quién figura.
  *
  * IMPORTANTE: NO se inventa biografía, trayectoria, clientes ni datos
- * personales. Hay un hueco CLARO y marcado (sección "Bio" con borde dashed y
- * comentario BIO_PLACEHOLDER) para que el usuario rellene la bio y la foto
- * reales más adelante. Ver más abajo el marcador.
+ * personales. Sin hueco de foto y sin bio detallada: la presentación es
+ * deliberadamente sobria.
  *
  * Decisiones de diseño:
  *   - Voz cálida y cercana, primera persona del plural y singular donde toca.
- *   - Cadencia propia: intro a sangre + bloque de persona con hueco de foto +
- *     posicionamiento honesto + cierre. Sin card-grid ni eyebrow por sección.
+ *   - Cadencia propia: intro a sangre + bloque de quiénes somos (prosa, sin
+ *     foto ni ficha) + posicionamiento honesto + cierre. Sin card-grid.
  *   - El compañero (dock) se monta desde PageLayout en internas.
  */
 import PageLayout from '../../layouts/PageLayout.astro'
@@ -23,7 +23,7 @@ import PageLayout from '../../layouts/PageLayout.astro'
 
 <PageLayout
   title="Sobre nosotros · Zanovix"
-  description="Quién hay detrás de Zanovix: Pepe Cabeza, desde Málaga, bajando IA aplicada a la pyme con ingeniería pausada. Honestos también con dónde estamos hoy."
+  description="Quién hay detrás de Zanovix: un equipo pequeño desde Málaga que baja la IA aplicada a la pyme con ingeniería pausada. Honestos también con dónde estamos hoy."
   page="sobre"
 >
   <!-- ── Intro: hay personas detrás ─────────────────────────────── -->
@@ -40,42 +40,26 @@ import PageLayout from '../../layouts/PageLayout.astro'
     <p class="lead__sign">IA aplicada, con ingeniería pausada.</p>
   </section>
 
-  <!-- ── La persona / el equipo ─────────────────────────────────── -->
+  <!-- ── Quiénes estamos detrás (prosa sobria, sin foto ni nombres) ── -->
   <section class="person" aria-labelledby="person-title">
-    <h2 id="person-title" class="display person__title" data-reveal>Quién está al frente</h2>
+    <h2 id="person-title" class="display person__title" data-reveal>Quiénes estamos detrás</h2>
 
-    <div class="person__grid" data-reveal>
-      <!--
-        ┌─────────────────────────────────────────────────────────────┐
-        │ BIO_PLACEHOLDER — RELLENAR CON CONTENIDO REAL                 │
-        │ Sustituir el bloque .person__photo por una foto real de Pepe  │
-        │ (img con alt descriptivo) y el bloque .person__bio por la     │
-        │ biografía real (trayectoria, formación, etc.). Hasta entonces │
-        │ se deja honestamente marcado como pendiente, no inventado.    │
-        └─────────────────────────────────────────────────────────────┘
-      -->
-      <figure class="person__photo" aria-label="Foto pendiente">
-        <span class="person__photo-tag">Foto · pendiente</span>
-      </figure>
-
-      <div class="person__bio">
-        <p class="person__name">Pepe Cabeza</p>
-        <p class="person__role">Fundador · Málaga</p>
-
-        <p class="person__body">
-          Zanovix nace en Málaga con una idea sencilla: que una pyme de aquí, de
-          Vigo o de Cuenca pueda usar IA con criterio sin tener que pasar por una
-          consultora cara y lenta ni por un producto enlatado que no entiende su
-          negocio.
-        </p>
-
-        <!-- BIO_PLACEHOLDER: la biografía detallada (trayectoria, formación,
-             foto) la añade el usuario. No se inventa nada aquí. -->
-        <p class="person__pending">
-          Aquí irá la bio completa: trayectoria, formación y el camino hasta
-          aquí. La estamos escribiendo con calma, igual que todo lo demás.
-        </p>
-      </div>
+    <div class="person__prose" data-reveal>
+      <p class="person__lede">
+        Hoy somos dos, desde Málaga. No damos mucho el nombre porque lo que
+        importa es el trabajo y cómo pensamos, no quién figura. Lo arranqué yo,
+        Pepe, y desde hace un tiempo trabajamos codo con codo los dos.
+      </p>
+      <p class="person__body">
+        Zanovix nace con una idea sencilla: que una pyme de aquí, de Vigo o de
+        Cuenca pueda usar IA con criterio sin pasar por una consultora cara y
+        lenta ni por un producto enlatado que no entiende su negocio.
+      </p>
+      <p class="person__body">
+        Trabajamos con método documentado a propósito: para que ningún proyecto
+        dependa de una sola persona y para poder decirte a la cara, sin rodeos,
+        cuándo la IA te aporta y cuándo no te hace falta.
+      </p>
     </div>
   </section>
 
@@ -89,20 +73,19 @@ import PageLayout from '../../layouts/PageLayout.astro'
       </div>
       <div class="honest__main" data-reveal data-reveal-i="1">
         <p class="honest__body">
-          Zanovix está empezando. Hoy todavía es, en gran parte, una persona. No lo
-          escondemos: lo decimos porque es la verdad y porque es justo lo que
-          estamos cambiando.
+          Zanovix está empezando y somos un equipo pequeño. No lo escondemos: lo
+          decimos porque es la verdad y porque marca cómo trabajamos, con calma y
+          sin prometer más de lo que podemos sostener.
         </p>
         <p class="honest__body">
-          Construimos cada día para dejar de serlo: método documentado para que
-          cualquiera del equipo pueda continuar un proyecto, formación de personas
-          con talento que quieren aprender IA aplicada de verdad y procesos que no
-          dependan de un solo nombre. La meta no es ser la empresa más grande. Es
-          ser la que mejor atiende a quien atiende.
+          Crecemos despacio y a propósito: método documentado para que cualquiera
+          que se sume pueda continuar un proyecto, y procesos que no dependan de
+          un solo nombre. La meta no es ser la empresa más grande. Es ser la que
+          mejor atiende a quien atiende.
         </p>
         <p class="honest__quote">
-          No somos solo Pepe. Hoy todavía sí, en gran parte. Trabajamos cada día
-          para que dejemos de serlo.
+          Somos pocos, y nos gusta así. Lo justo para hacerlo bien y responder
+          por cada proyecto.
         </p>
       </div>
     </div>
@@ -167,69 +150,23 @@ import PageLayout from '../../layouts/PageLayout.astro'
     margin: 0 0 clamp(2rem, 4vw, 3rem);
     max-width: 18ch;
   }
-  .person__grid {
-    display: grid;
-    gap: clamp(1.5rem, 4vw, 3rem);
+  .person__prose {
+    max-width: 60ch;
   }
-  @media (min-width: 760px) {
-    .person__grid {
-      grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
-      align-items: start;
-      column-gap: clamp(2.5rem, 6vw, 5rem);
-    }
-  }
-
-  /* Hueco de foto: borde dashed honesto hasta que haya foto real. */
-  .person__photo {
-    margin: 0;
-    aspect-ratio: 4 / 5;
-    border: 1px dashed var(--color-rule-strong);
-    border-radius: 4px;
-    display: flex;
-    align-items: flex-end;
-    padding: 1rem;
-    background: var(--color-surface);
-  }
-  .person__photo-tag {
-    font-family: var(--font-brand);
-    font-size: var(--text-eyebrow);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--ink-mute-strong);
-  }
-
-  .person__name {
-    font-family: var(--font-display);
-    font-weight: 540;
-    font-size: var(--text-h2);
-    letter-spacing: -0.03em;
+  .person__lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
     color: var(--color-ink);
-    margin: 0 0 0.25rem;
-  }
-  .person__role {
-    font-family: var(--font-brand);
-    font-size: var(--text-eyebrow);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    /* ink-mute-strong (8.8:1): teal-deep a 12.8px cae a 4.23:1, bajo AA body. */
-    color: var(--ink-mute-strong);
     margin: 0 0 1.5rem;
   }
   .person__body {
     font-size: var(--text-body);
     line-height: 1.65;
     color: var(--ink-soft);
-    max-width: 60ch;
     margin: 0 0 1.25rem;
   }
-  .person__pending {
-    font-size: var(--text-body);
-    line-height: 1.6;
-    color: var(--ink-mute-strong);
-    max-width: 60ch;
-    margin: 0;
-    padding-left: 1rem;
-    border-left: 1px solid var(--color-rule-strong);
+  .person__body:last-child {
+    margin-bottom: 0;
   }
 
   /* ── Posicionamiento honesto (mundo forest drenched) ──────────── */
