@@ -1,9 +1,8 @@
 {
   "mcpServers": {
     "openpencil": {
-      "command": "<<CAPTURED_FROM_ONE_CLICK_INSTALL>>",
-      "args": ["<<CAPTURED_ARGS_IF_ANY>>"],
-      "env": {}
+      "type": "http",
+      "url": "http://localhost:3100/mcp"
     }
   }
 }
