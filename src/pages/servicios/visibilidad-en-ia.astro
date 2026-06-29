@@ -1,0 +1,248 @@
+---
+/**
+ * servicios/visibilidad-en-ia.astro — producto de entrada "Tu negocio en la IA"
+ *
+ * Auditoria medible de visibilidad en asistentes de IA (ChatGPT, Perplexity,
+ * Gemini, Google AI). Es un producto upstream que alimenta el Diagnostico;
+ * NO es el Diagnostico. Sin precios ni metricas inventadas: precio fundador,
+ * founding-client.
+ *
+ * Veto: "garantizar/posicion/ranking en IA" solo aparecen en la seccion
+ * "Lo que no prometemos" donde se niegan explicitamente. Nunca como promesa.
+ */
+import PageLayout from '../../layouts/PageLayout.astro'
+import BrandPetals from '../../components/astro/ui/BrandPetals.astro'
+import GeoSimulator from '../../components/react/GeoSimulator.tsx'
+import RecommendMechanism from '../../components/astro/ui/RecommendMechanism.astro'
+import { service } from '../../lib/seo/schema'
+---
+
+<PageLayout
+  title="Tu negocio en la IA · Zanovix"
+  description="Medimos tu visibilidad real en ChatGPT, Perplexity, Gemini y Google AI: dónde estás hoy, por qué, y un plan de 90 días. Sin promesas de humo."
+  page="servicios"
+  jsonLd={service({
+    name: 'Analisis de visibilidad en IA',
+    serviceType: 'Auditoria de visibilidad en asistentes de IA (GEO)',
+    url: 'https://zanovix.com/servicios/visibilidad-en-ia',
+    description: 'Medicion real de tu visibilidad en ChatGPT, Perplexity, Gemini y Google AI. Informe con foto actual, scorecard y plan de 90 dias. Sin promesas de humo.',
+  })}
+>
+  <article class="svc">
+    <p class="svc__back">
+      <a href="/servicios">← Servicios</a>
+    </p>
+
+    <header class="svc__head" data-reveal>
+      <p class="svc__eyebrow">Tu negocio en la IA</p>
+      <h1 class="display svc__title">
+        Cuando alguien le pregunta a una IA por tu sector, ¿apareces tú o tu competencia?
+      </h1>
+      <p class="svc__lede">
+        Medimos tu visibilidad real en ChatGPT, Perplexity, Gemini y Google AI.
+        Te enseñamos dónde estás hoy, por qué, y qué mueve la aguja. Sin promesas de humo.
+      </p>
+      <p class="svc__sign">IA aplicada, con ingeniería pausada.</p>
+    </header>
+
+    <!-- ── Radiografia GEO: la prueba en vivo (pieza central) ───────── -->
+    <section class="svc__sim" aria-labelledby="sim-title">
+      <p class="svc__sim-tag">Pruébalo gratis · lo hace una IA en 1 minuto</p>
+      <h2 id="sim-title" class="display svc__sim-title">
+        Mira cómo te ve una IA hoy
+      </h2>
+      <p class="svc__sim-lede">
+        Escribe el nombre real de tu negocio. Le preguntamos en vivo a una IA y
+        te enseñamos su respuesta tal cual, sin maquillar. Esto es la prueba
+        instantánea y gratis. El análisis completo, en todos los modelos y con
+        plan, es lo que verás más abajo.
+      </p>
+      <GeoSimulator client:visible />
+      <noscript>
+        <p class="svc__sim-noscript">
+          La prueba en vivo necesita JavaScript activado. Si lo prefieres,
+          cuéntanos tu caso en <a href="/contacto">contacto</a> y la hacemos
+          contigo.
+        </p>
+      </noscript>
+    </section>
+
+    <section class="svc__block" aria-labelledby="problema" data-reveal>
+      <h2 id="problema" class="svc__h2">El problema</h2>
+      <p class="svc__body">
+        Cada vez más gente no busca en Google: le pregunta directo a una IA quién
+        le recomienda. Si la IA no te nombra, no existes para ese cliente. Y ese
+        cliente antes lo capturabas tú.
+      </p>
+      <p class="svc__body">
+        El problema es que casi nadie sabe medir esto en serio, y casi todo lo
+        que se vende como visibilidad en IA es humo.
+      </p>
+    </section>
+
+    <section class="svc__block" aria-labelledby="que-hacemos" data-reveal>
+      <h2 id="que-hacemos" class="svc__h2">Qué hacemos</h2>
+      <p class="svc__body">
+        Medimos tu visibilidad real con un sistema que le hace a las IAs decenas
+        de preguntas como las de un cliente, en varios modelos y varias veces.
+        Y medimos tres cosas:
+      </p>
+      <ul class="svc__list">
+        <li class="svc__item">En cuántas apareces, y quién aparece en tu lugar.</li>
+        <li class="svc__item">Qué parte de las fuentes que cita la IA son tuyas.</li>
+        <li class="svc__item">Por qué: qué tienen tus competidores que tú no.</li>
+      </ul>
+      <p class="svc__note">
+        Después te entregamos un plan priorizado de 90 días con lo que de verdad
+        mueve la aguja.
+      </p>
+    </section>
+
+    <!-- ── El mecanismo: cómo te recomienda (o no) una IA ───────────────
+     * Explica el modelo mental detras de la medicion: la pregunta entra, el
+     * modelo busca señales y reparte sus citas. Sin señales tuyas, te quedas
+     * fuera. Trabajar esas señales es lo que mueve tu visibilidad.
+     -->
+    <section class="svc__block" aria-labelledby="mecanismo" data-reveal>
+      <h2 id="mecanismo" class="svc__h2">Cómo te recomienda, o no, una IA</h2>
+      <p class="svc__body">
+        No es magia ni un ranking secreto. Es un mecanismo: la IA reparte sus
+        recomendaciones entre los negocios de los que tiene señales claras.
+        Trabajar esas señales es lo que te mete en la respuesta.
+      </p>
+      <RecommendMechanism tone="forest" />
+    </section>
+
+    <section class="svc__block" aria-labelledby="no-prometemos" data-reveal>
+      <h2 id="no-prometemos" class="svc__h2">Lo que no te prometemos</h2>
+      <p class="svc__body">Lo que no te vamos a prometer:</p>
+      <ul class="svc__list">
+        <li class="svc__item">
+          Posición número uno en ChatGPT. No existen las posiciones.
+          Quien te lo promete, miente.
+        </li>
+        <li class="svc__item">
+          Aparición garantizada. Los modelos son probabilísticos. Trabajamos las
+          palancas y medimos. No vendemos certezas falsas.
+        </li>
+        <li class="svc__item">
+          Trucos para IA tipo llms.txt. La propia Google dice que no sirven.
+          Nosotros tampoco te los cobramos.
+        </li>
+      </ul>
+      <p class="svc__note">
+        Te damos una medición honesta y trabajo sobre las palancas reales.
+        Si la aguja se mueve, lo verás en los números. Si no, también.
+      </p>
+    </section>
+
+    <section class="svc__block" aria-labelledby="que-llevas" data-reveal>
+      <h2 id="que-llevas" class="svc__h2">Qué te llevas</h2>
+      <p class="svc__body">
+        Un informe con tu foto actual, un scorecard, un plan de 90 días y una
+        reunión para explicártelo. Vale por sí solo: aunque no sigas con nosotros,
+        te quedas sabiendo exactamente dónde estás y qué hacer.
+      </p>
+    </section>
+
+    <!-- ── Pausa de marca (forest): dónde encaja en el portfolio ──────────
+     * Rompe el tramo ink-sobre-paper antes del cierre. Mismo ritmo visual que
+     * el hub de servicios y el detalle de la web GEO: paper↔forest↔paper.
+     * El petalo sella el bloque como firma de Zanovix. Ancla la relacion entre
+     * este primer paso, el Diagnostico y la web con GEO sin ruido ni hype.
+     -->
+    <aside class="svc__pause" aria-labelledby="encaja" data-reveal>
+      <div class="svc__pause-inner">
+        <BrandPetals tone="paper" corner="top-right" size={260} />
+        <p class="svc__pause-eyebrow">Primer paso</p>
+        <h2 id="encaja" class="display svc__pause-title">
+          Aquí hacemos la foto. Lo demás es la obra.
+        </h2>
+        <p class="svc__pause-body">
+          Esto mide una sola cosa: tu visibilidad en la IA. Si al verlo descubres
+          que tu negocio necesita más, ahí entra el
+          <a href="/diagnostico">Diagnóstico</a>, una mirada humana y a fondo a
+          todo tu negocio frente a la IA. Y si lo que toca es construir, está
+          el <a href="/servicios/diseno-desarrollo-web">diseño y desarrollo web</a>.
+        </p>
+      </div>
+    </aside>
+
+    <section class="svc__cta" aria-labelledby="cta">
+      <h2 id="cta" class="display svc__cta-title">¿Sabes ya cómo te ve la IA?</h2>
+      <p class="svc__cta-lede">
+        A partir de 750 €, como orientación: no cerramos precio a ciegas en la
+        web, el final lo vemos con tu caso. Estoy cerrando los primeros clientes
+        a precio de lanzamiento mientras construyo casos reales, así que cuando
+        los tenga, sube.
+      </p>
+      <a
+        class="cta-primary"
+        href="/contacto"
+        data-open-contact
+        data-contact-origin="visibilidad-en-ia-cta"
+      >Solicita tu análisis de visibilidad en IA</a>
+      <p class="cta-fallback">
+        Si lo prefieres, escríbenos directo a
+        <a href="mailto:info@zanovix.com">info@zanovix.com</a>.
+      </p>
+      <p class="svc__cta-meta">Málaga · ES · respondemos en menos de 24h hábiles</p>
+    </section>
+  </article>
+</PageLayout>
+
+<style>
+  /* Eyebrow con marcador teal sobre el H1: separa el nombre del producto del
+   * titular. Mismo patron que .svc__eyebrow en diseno-desarrollo-web y
+   * que .svc__sim-tag en global.css (dot bullet + font-brand + uppercase). */
+  .svc__eyebrow {
+    font-family: var(--font-brand);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute-strong);
+    margin: 0 0 0.75rem;
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .svc__eyebrow::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-teal-deep);
+  }
+  /* Firma de marca bajo la lede del hero. Mismo patron que .intro__sign en
+   * servicios/index.astro y .hero__sign en index.astro. */
+  .svc__sign {
+    font-family: var(--font-brand);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    color: var(--ink-mute);
+    margin: 1.5rem 0 0;
+  }
+  /* Links dentro de la pausa forest: legibles sobre --color-forest.
+   * Blanco con subrayado teal-bright mantiene jerarquia de marca y
+   * contraste WCAG AA sobre fondo oscuro. */
+  .svc__pause-body a {
+    color: var(--paper-on-dark);
+    text-decoration: underline;
+    text-decoration-color: var(--color-teal-bright);
+    text-underline-offset: 3px;
+  }
+  .svc__pause-body a:hover {
+    text-decoration-color: var(--paper-on-dark);
+  }
+  /* Linea meta de ubicacion bajo el bloque CTA. Mismo tono que .close__meta
+   * en el resto del sitio; scoped aqui para no contaminar el BEM global. */
+  .svc__cta-meta {
+    font-family: var(--font-brand);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    color: var(--ink-mute-strong);
+    margin: 0.75rem 0 0;
+  }
+</style>

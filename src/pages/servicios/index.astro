@@ -5,7 +5,7 @@
  * Cuatro maneras de bajar la IA a una pyme. No es un catálogo: es una guía
  * honesta de por dónde empezar según lo que de verdad te pesa. Patrón de
  * lista con hairlines (coherente con la home), sin card-grid ni eyebrow por
- * sección ni numeración de relleno. GEO es la punta de lanza del servicio web.
+ * sección ni numeración de relleno. Visibilidad en IA es la punta de lanza, como línea propia.
  *
  * El compañero (dock) se monta desde PageLayout en páginas internas: si traes
  * contexto desde la home, lo verás resumido aquí con un enlace a contacto.
@@ -13,15 +13,25 @@
 import PageLayout from '../../layouts/PageLayout.astro'
 import BrandPetals from '../../components/astro/ui/BrandPetals.astro'
 
-/* Tres intervenciones POSIBLES después del diagnóstico. AI Readiness se retiró
- * del catálogo: ahora es el Diagnóstico (la puerta). Estas tres son lo que
- * hacemos si el diagnóstico lo recomienda, no opciones a elegir a ciegas. */
+/* Cuatro líneas de servicio. Visibilidad en IA va primera: es la punta de lanza
+ * (PRODUCT.md) y su entrada es el análisis "Tu negocio en la IA", que se puede
+ * empezar directamente. Las otras tres suelen venir del diagnóstico (la puerta).
+ * AI Readiness se retiró del catálogo: ahora es el Diagnóstico.
+ * Nota: la web sigue siendo GEO-ready por debajo, pero GEO ya no es el titular
+ * de la web; vive como línea propia (Visibilidad en IA). */
 const servicios = [
   {
-    slug: 'diseno-desarrollo-web-geo',
-    name: 'Diseño y desarrollo web, con GEO',
+    slug: 'visibilidad-en-ia',
+    name: 'Visibilidad en IA',
     lede:
-      'Una web que carga rápido, se entiende y aparece cuando tus clientes preguntan a una IA por lo que tú haces.',
+      'Que te encuentren y te citen cuando tus clientes preguntan a una IA por lo que tú haces. Empieza por medir dónde estás hoy.',
+    para: 'el dueño que ya no aparece donde sus clientes preguntan',
+  },
+  {
+    slug: 'diseno-desarrollo-web',
+    name: 'Diseño y desarrollo web',
+    lede:
+      'Una web que carga rápido y se entiende, hecha para que tu negocio por fin esté a la altura de lo que haces.',
     para: 'el dueño que sabe que su web no está a la altura del negocio',
   },
   {
@@ -43,19 +53,20 @@ const servicios = [
 
 <PageLayout
   title="Servicios · Zanovix"
-  description="Lo que hacemos cuando el diagnóstico lo recomienda: web con GEO, software a medida y consultoría TIC. Intervenciones a medida, no un catálogo para elegir a ciegas."
+  description="Lo que hacemos: visibilidad en IA, diseño y desarrollo web, software a medida y consultoría TIC. Intervenciones a medida, no un catálogo para elegir a ciegas."
   page="servicios"
 >
   <!-- ── Intro: intervenciones POST-diagnóstico ─────────────────────── -->
   <section class="intro" aria-labelledby="intro-title" data-reveal>
     <p class="intro__from">Esto empieza con un <a href="/diagnostico" data-open-contact data-contact-origin="servicios-intro-diagnostico">diagnóstico</a></p>
     <h1 id="intro-title" class="display intro__title">
-      Esto es lo que hacemos si el diagnóstico lo recomienda.
+      Esto es lo que hacemos.
     </h1>
     <p class="intro__lede">
-      No es un catálogo para que elijas a ciegas. Primero entendemos tu negocio
-      con el diagnóstico, y desde ahí decidimos qué intervención tiene sentido,
-      en qué orden y por qué. Estas son las tres que hacemos.
+      No es un catálogo para que elijas a ciegas. Lo normal es empezar por el
+      diagnóstico: entendemos tu negocio y desde ahí decidimos qué tiene
+      sentido, en qué orden y por qué. Pero si tu pregunta ya es concreta, como
+      tu visibilidad en IA, puedes entrar directo. Estas son las cuatro.
     </p>
     <p class="intro__sign">IA aplicada, con ingeniería pausada.</p>
   </section>

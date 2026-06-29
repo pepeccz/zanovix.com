@@ -1,0 +1,198 @@
+---
+/**
+ * servicios/diseno-desarrollo-web.astro — detalle de servicio
+ *
+ * Servicio de construccion web puro: rapido, claro, GEO-ready por debajo. NO
+ * es el dueño del simulador ni del mecanismo GEO (esos viven en
+ * /servicios/visibilidad-en-ia). Titular que nombra la situacion del cliente,
+ * que es y para quien, que incluye sin letra pequeña, y handoff al diagnostico.
+ * Sin metricas, plazos ni precios inventados: nada de cifras que no esten firmadas.
+ */
+import PageLayout from '../../layouts/PageLayout.astro'
+import BrandPetals from '../../components/astro/ui/BrandPetals.astro'
+import { service } from '../../lib/seo/schema'
+
+const incluye = [
+  'Diseño y desarrollo de una web rápida y clara, hecha para que la entiendan tus clientes desde el primer vistazo.',
+  'Rendimiento y accesibilidad de serie: carga rápida, funciona en cualquier dispositivo y la puede usar todo el mundo.',
+  'Construida GEO-ready por debajo: estructura, datos y SEO técnico listos para que una IA también te entienda.',
+  'Hecha a medida de tu negocio, sin plantillas a las que te toque adaptarte tú.',
+]
+---
+
+<PageLayout
+  title="Diseño y desarrollo web · Zanovix"
+  description="Una web rápida, clara y a la altura de tu negocio, construida GEO-ready por debajo. Hecha a medida, sin plantillas, pensada para tus clientes."
+  page="servicios"
+  jsonLd={service({
+    name: 'Diseño y desarrollo web',
+    serviceType: 'Diseño y desarrollo web a medida',
+    url: 'https://zanovix.com/servicios/diseno-desarrollo-web',
+    description: 'Web rapida y clara, hecha a medida del negocio y no de una plantilla. Construida GEO-ready por debajo. Pensada para personas y para los modelos de IA.',
+  })}
+>
+  <article class="svc">
+    <p class="svc__back">
+      <a href="/servicios">← Servicios</a>
+    </p>
+
+    <p class="svc__from">
+      Esto es una intervención: empieza con un
+      <a href="/diagnostico" data-open-contact data-contact-origin="servicio-web-diagnostico">diagnóstico</a>.
+    </p>
+
+    <header class="svc__head" data-reveal>
+      <h1 class="display svc__title">
+        Tu web no está a la altura de tu negocio. Y tus clientes lo notan.
+      </h1>
+      <p class="svc__lede">
+        Tienes un buen negocio y una web que no lo cuenta: lenta, confusa, o que
+        ya no se parece a lo que haces hoy. La rehacemos para que esté a la
+        altura, y para que la entiendan tanto las personas como las IAs que cada
+        vez responden por ellas.
+      </p>
+    </header>
+
+    <section class="svc__block" aria-labelledby="que-es" data-reveal>
+      <h2 id="que-es" class="svc__h2">Qué es y para quién</h2>
+      <p class="svc__body">
+        Una web nueva o renovada, hecha a medida de tu negocio y no de una
+        plantilla. Rápida, clara, fácil de usar, y construida desde el principio
+        GEO-ready: con la estructura y las señales que una IA necesita para
+        entenderte. La web es el cimiento. Que te encuentren y te citen las IAs
+        es un trabajo propio, y eso lo vemos en
+        <a href="/servicios/visibilidad-en-ia">Visibilidad en IA</a>.
+      </p>
+      <p class="svc__body">
+        Para dueños y gerentes de pyme que saben que su presencia digital está
+        por debajo de la calidad real de su negocio.
+      </p>
+    </section>
+
+    <!-- ── Pausa de marca (forest): sin atajos ─────────────────────────
+     * Rompe el tramo largo de ink-sobre-paper como bisagra entre "para quién"
+     * y "qué incluye". Mismo ritmo paper↔forest que home y el hub; el petalo
+     * sella el bloque como firma. Copia fiel al veto: ningún número prometido.
+     -->
+    <aside class="svc__pause" aria-labelledby="pausa" data-reveal>
+      <div class="svc__pause-inner">
+        <BrandPetals tone="paper" corner="top-right" size={260} />
+        <p class="svc__pause-eyebrow">Sin atajos</p>
+        <h2 id="pausa" class="display svc__pause-title">
+          Una web no se hace en un fin de semana con una plantilla.
+        </h2>
+        <p class="svc__pause-body">
+          Se piensa, se construye y se mide. Te decimos qué necesita tu negocio
+          de verdad y qué no, sin venderte páginas de relleno ni mantenimientos
+          que no usas. Lo que hacemos se queda contigo, y se puede explicar.
+        </p>
+      </div>
+    </aside>
+
+    <section class="svc__block svc__incluye-wide" aria-labelledby="incluye">
+      <div class="svc__incluye-2col">
+        <aside class="svc__incluye-aside" data-reveal>
+          <p class="svc__eyebrow">Qué incluye</p>
+          <h2 id="incluye" class="svc__h2">Qué incluye, sin letra pequeña</h2>
+        </aside>
+        <div>
+          <ul class="svc__incluye-list">
+            {incluye.map((item, i) => (
+              <li class="svc__incluye-item" data-reveal data-reveal-i={i}>{item}</li>
+            ))}
+          </ul>
+          <p class="svc__note">
+            GEO-ready significa que la base queda lista, no que te garanticemos
+            aparecer en ChatGPT: eso no existe y quien lo venda te miente. Medir
+            y mover tu visibilidad es un trabajo aparte, en
+            <a href="/servicios/visibilidad-en-ia">Visibilidad en IA</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="svc__cta" aria-labelledby="cta">
+      <h2 id="cta" class="display svc__cta-title">¿Lo vemos a fondo con tu caso?</h2>
+      <p class="svc__cta-lede">
+        Esto empieza por el diagnóstico: miramos tu negocio entero, no solo la
+        web, y decidimos si esta intervención tiene sentido. Si seguimos, lo que
+        construimos puede continuar con un acompañamiento mensual sin candado.
+      </p>
+      <a class="cta-primary" href="/diagnostico" data-open-contact data-contact-origin="reservar-diagnostico">Reservar diagnóstico</a>
+      <p class="cta-fallback">
+        Si lo prefieres, escríbenos directo a
+        <a href="mailto:info@zanovix.com">info@zanovix.com</a>.
+      </p>
+    </section>
+  </article>
+</PageLayout>
+
+<style>
+  /* Break the "Qué incluye" section out to the wide container width while
+   * keeping the rest of the article at the narrow container (~720px).
+   * Classic full-bleed breakout: center on viewport, cap at wide container. */
+  .svc__incluye-wide {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(var(--container-wide), 100vw);
+    padding-left: var(--spacing-section-x);
+    padding-right: var(--spacing-section-x);
+  }
+  .svc__incluye-2col {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+  @media (min-width: 880px) {
+    .svc__incluye-2col {
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: clamp(2.5rem, 5vw, 5rem);
+      align-items: start;
+    }
+    .svc__incluye-aside {
+      position: sticky;
+      top: 6rem;
+      align-self: start;
+    }
+  }
+  .svc__eyebrow {
+    font-family: var(--font-brand);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute-strong);
+    margin: 0 0 0.75rem;
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .svc__eyebrow::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-teal-deep);
+  }
+  .svc__incluye-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .svc__incluye-item {
+    border-top: 1px solid var(--color-rule);
+    padding: clamp(1rem, 2.5vw, 1.5rem) 0;
+  }
+  .svc__incluye-item:first-child {
+    border-top: none;
+  }
+  .svc__incluye-item:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  @media (min-width: 880px) {
+    .svc__incluye-item:first-child {
+      border-top: 1px solid var(--color-rule);
+    }
+  }
+</style>

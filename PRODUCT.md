@@ -28,9 +28,10 @@ asistente IA que acompaña al visitante, le da valor primero (mini-diagnóstico)
 precalifica (sector, dolor, urgencia, presupuesto, poder de decisión) mientras el
 propio uso del asistente **demuestra el producto en vivo**.
 
-Posicionamiento **Puente**: vende lo entregable hoy (IA aplicada a pyme, GEO como
-punta de lanza) con honestidad total sobre el track record, pero con arquitectura y
-narrativa que escalan a enterprise sin rehacerse.
+Posicionamiento **Puente**: vende lo entregable hoy (IA aplicada a pyme, con la
+visibilidad en IA (GEO) como línea de servicio propia y punta de lanza) con honestidad
+total sobre el track record, pero con arquitectura y narrativa que escalan a enterprise
+sin rehacerse.
 
 Éxito = leads precualificados que llegan ya "educados" sobre el problema y con munición
 para justificar la inversión internamente.

@@ -23,6 +23,13 @@ export default defineConfig({
       status: 301,
       destination: '/diagnostico',
     },
+    // GEO se separa: el servicio web pasa a ser construccion pura, y los
+    // activos GEO (simulador, mecanismo) viven en /servicios/visibilidad-en-ia.
+    // La web mantiene su slug propio sin "-geo". 301 para preservar SEO.
+    '/servicios/diseno-desarrollo-web-geo': {
+      status: 301,
+      destination: '/servicios/diseno-desarrollo-web',
+    },
   },
   vite: {
     plugins: [tailwindcss()],

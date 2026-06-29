@@ -15,7 +15,7 @@
  * objetivo claro), lo honesto es decir "antes que IA, conviene ordenar X".
  * Eso es on-brand, no un fallo.
  *
- * Mapeo a servicios reales cuando procede: GEO (web + visibilidad en IA),
+ * Mapeo a servicios reales cuando procede: visibilidad en IA (cómo te ve una IA),
  * software a medida (automatizar tareas repetitivas), auditoria (cuando hay
  * varios frentes y conviene priorizar con cabeza).
  */
@@ -158,7 +158,7 @@ const SERVICE_META: Record<
   Exclude<ReadinessService, 'ninguno'>,
   { label: string; href: string }
 > = {
-  geo: { label: 'Ver web y visibilidad en IA (GEO)', href: '/servicios/diseno-desarrollo-web-geo' },
+  geo: { label: 'Ver tu visibilidad en IA', href: '/servicios/visibilidad-en-ia' },
   software: { label: 'Ver software a medida', href: '/servicios/software-a-medida' },
   auditoria: { label: 'Ver auditoría AI Readiness', href: '/servicios/auditoria-ai-readiness' },
 }
@@ -241,7 +241,7 @@ export function readReadiness(a: ReadinessAnswers): ReadinessResult {
       todavia:
         'No esperes un "número uno en ChatGPT": eso no existe y quien lo venda miente. Es trabajo de estructura y presencia, con mediciones honestas, no magia.',
       primerPaso:
-        'Empieza por ver cómo te describe una IA hoy. En la página de GEO tienes una radiografía en vivo con el nombre real de tu negocio: ahí se ve el hueco.',
+        'Empieza por ver cómo te describe una IA hoy. En Visibilidad en IA tienes una radiografía en vivo con el nombre real de tu negocio: ahí se ve el hueco.',
       service: 'geo',
       serviceLabel: SERVICE_META.geo.label,
       serviceHref: SERVICE_META.geo.href,
